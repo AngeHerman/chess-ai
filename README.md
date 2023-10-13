@@ -13,9 +13,8 @@ Ce site internet permettrait donc d'aider ce genre de profil mais aussi de perme
 
 ## Objectifs
 
-- Principaux :
-On pourra naviguer et voir les services proposés par les personnes autour de nous.
-On pourra discuter avec les personnes proposant des services et 
+- Principaux :  Implémenter un système de navigation, afin qu'un utilisateur puisse accéder aux services proposés par les personnes autour de lui.  
+Implémenter un moyen de pour que les utilisateurs puissent discuter avec les autres utilisateur proposant des services et 
 convenir d'un accord concernant la rétribution. 
 Un utilisateur, pourra s'attribuer des compétences, qui pourront être consultable par les autres utilisateurs.
 - Intermédiaire :
