@@ -1,4 +1,4 @@
-| Nom          | Prénom             | E-Mail | Telephone   |
+| Nom          | Prénom             | E-Mail | Numéro étudiant   |
 | ------------ | ------------------ | --------------- | -------- |
-| NZABA     | Eric          | eric.nzaba@outlook.fr        |    |
-| KOUE-HEMAZRO | Kankoé Ange Herman | angeherman08@gmail.com       |  |
+| NZABA     | Eric          | eric.nzaba@outlook.fr        | 21957963   |
+| KOUE-HEMAZRO | Kankoé Ange Herman | angeherman08@gmail.com       |  22032729|
