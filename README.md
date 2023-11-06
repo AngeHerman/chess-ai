@@ -35,7 +35,7 @@ Les boss seront dotés de plusieurs armes.
 - Tester le bon déroulement du niveau, si les différentes vagues d'ennemis s'enchainent bien et le niveau se termine si le boss est battu.
 - Tester les mouvements de notre vaisseau
 - Tester l'enregistrement de balles sur les vaisseaux adverse et le notre (diminution de la vie)
-- 
+
 ## Originalité
 On utilise un language basé sur un paradigme de programmation
 qui n'est pas généralement utiliser pour le developpement de jeu vidéo.
@@ -46,13 +46,10 @@ On utilise aucune API, uniquement Ocaml
 ## Calendrier/ Jalons
 
 - Implémentation des différents entités et du système de niveau : Novembre - Décembre
-- Etude des bibliothèque graphique d'OCaml : 
-Novembre - Décembre
-- Création de la partie graphique : Décembre - Janvier
-
-// à voir ...
-- debut implémentation de l'interface : Decembre - 3/4 Janvier  
-- Liaisons interfaces et données : Janvier - Mi Mars   
-- Rendre les aliennes plus intelligents : Debut Mars - Mi Avril  
-- Tests : Avril
+- Etude des bibliothèque graphique d'OCaml : Décembre
+- Mise en place de la partie graphique : Janvier - Fevrier
+- Lier la partie graphique avec le backend : Fevrier - Mars
+- Ajouter des niveaux jouables : Fevrier - Mars
+- Implémenter le système de configuration de niveau : Mars - Avril
+- Effectuer les tests et rédiger la documentation : Avril
 
