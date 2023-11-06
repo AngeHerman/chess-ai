@@ -2,54 +2,62 @@
 
 ## Problèmes
 
-Implémenter une version du jeu Star Defenders, en utilisant un 
-language de programmation fonctionnel OCaml.
-Le but du jeu est le suivant : contrôler un vaiseau pouvant se déplacer de gauche à droite et tirer des projectile en ligne droite.
-Afin de passer au niveau suivant, l'utilisateur doit vaincre des vagues d'ennemies ainsi qu'un boss final.
-Chaque niveau deviendra plus complexe, avec des vaiseaux adverses
-différents (plus rapide, plus fort)
+Implémenter une version du jeu Morpion, ainsi qu'un algorithme de recherche 
+de solution en utilisant un language de programmation fonctionnel 
+OCaml.
+Le but du jeu est le suivant : aligner cinq de ses 
+symboles horizontalement, verticalement ou en diagonale.
+Notre version du jeu est dans un quadrillage 11x11.
+Le joueur sera informé à chaque coup si il est toujours apte à 
+gagner la partie ou non.
+On implémentera pour cela un algorithme de recherche deterministe, qui indiquera au joueur les places optimales ou placer son symbole
+afin d'avoir une chance de gagner la partie.
+
 
 ## Objectifs
 
-- Principaux :  
-Implémenter les différentes entités nécessaires au bon déroulement du jeu.  
-Etudier les différentes bibliothèque graphique d'OCaml, en sélectionner 
+- Principaux :  Implémenter l'algorithme de recherche.
+Mettre en place le jeu du morpion en version textuel 
+Ce qui impliuque :
+Pouvoir placer les symboles dans les cases. 
+Les cases doivent donc être nommées.
+Vérifier lorsque nous sommes dans un état de défaite ou victoire.
+Mettre en place un système de tour
+Etudier les différentes bibliothèques graphique d'OCaml, en sélectionner.
 une afin d'implémenter un système de fenêtre graphique.
-Implémenter un système de déplacement afin de pouvoir controler son vaiseau. Le vaiseau de l'utilisateur pourra être de capable de tirer sur ses ennemies et prendre des dégats, cela implique que l'utilisateur aura accès à son nombre de points de vie.
-Implémenter un système de niveau, dans lequel se trouvera un certain nombre d'entités (vaiseaux ennemis, boss)
-L'utilisateur pourra savoir à quel niveau, il se trouve actuellement, ainsi que le nombre d'adversaires restants.
 
 - Intermédiaire : 
-Pouvoir accéder au nombre de vie restantes du boss du niveau.
-Ajouter la possibilité de recupérer des bonus permettant d'altérer
-le vaiseau de l'utilisateur.
+Implémenter un bot pouvant jouer contre le joueur.
 
-- Supplémentaires : 
-Un utilisateur pourrait être capable de configurer son propre niveau.
-Rendre les adversaires assez complexe.
-Les boss seront dotés de plusieurs armes.
+- Supplémentaires :  
+Mettre en surbrillance les cases qui peuvent nous emmener a la victoire.
+Afficher les pourcentages de réusite pour chaque case en surbrillance.
+Barrer les cases concernées quand un des joueurs gagne.
+Intégrer la possibilité d'avoir un bot contre un autre bot.
+
 
 
 ## Testabilité
-- Tester la configuration des niveaux
-- Tester le bon déroulement du niveau, si les différentes vagues d'ennemis s'enchainent bien et le niveau se termine si le boss est battu.
-- Tester les mouvements de notre vaisseau
-- Tester l'enregistrement de balles sur les vaisseaux adverse et le notre (diminution de la vie)
+- Vérifier la fin du jeu.
+- Tester le fonctionnement de l'algorithme de recherche.
+- Tester la liaison entre le bakcend et le plateau en frontend.
+- Tester l'intelligence des bots.
 
 ## Originalité
 On utilise un language basé sur un paradigme de programmation
 qui n'est pas généralement utiliser pour le developpement de jeu vidéo.
 
 ## Collage API
-On utilise aucune API, uniquement Ocaml
+On utilise aucune API, uniquement Ocaml from scratch
 
 ## Calendrier/ Jalons
 
-- Implémentation des différents entités et du système de niveau : Novembre - Décembre
-- Etude des bibliothèque graphique d'OCaml : Décembre
+- Implémentation des différents entités du système : Novembre - Décembre
+- Mise en place de la version textuel du jeu : Novembre - Fevrier
+- Etude des bibliothèques graphique d'OCaml : Décembre
+- Implémenter l'algorithme de recherche : Janvier
 - Mise en place de la partie graphique : Janvier - Fevrier
 - Lier la partie graphique avec le backend : Fevrier - Mars
-- Ajouter des niveaux jouables : Fevrier - Mars
-- Implémenter le système de configuration de niveau : Mars - Avril
+- Finir les tâches non terminées : Mars - Avril
 - Effectuer les tests et rédiger la documentation : Avril
 
