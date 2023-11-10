@@ -1,4 +1,6 @@
-| Nom          | Prénom             | E-Mail | Numéro étudiant   |
-| ------------ | ------------------ | --------------- | -------- |
-| NZABA     | Eric          | eric.nzaba@outlook.fr        | 21957963   |
-| KOUE-HEMAZRO | Kankoé Ange Herman | angeherman08@gmail.com       |  22032729|
+# 10/11/2023
+
+TODO:
+- literature research on the state of the art on algorithms to play chess
+- prepare a summary of every paper
+- prepare a project on the implementation of at least one of these algorithms

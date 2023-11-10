@@ -3,14 +3,14 @@
 ## Problèmes
 
 Implémenter une version du jeu Morpion, ainsi qu'un algorithme de recherche 
-de solution en utilisant un language de programmation fonctionnel 
-OCaml.
+de solution en utilisant un language de programmation fonctionnel OCaml.
 Le but du jeu est le suivant : aligner cinq de ses 
 symboles horizontalement, verticalement ou en diagonale.
 Notre version du jeu est dans un quadrillage 11x11.
 Le joueur sera informé à chaque coup si il est toujours apte à 
 gagner la partie ou non.
-On implémentera pour cela un algorithme de recherche deterministe, qui indiquera au joueur les places optimales ou placer son symbole
+On implémentera pour cela un algorithme de recherche deterministe,
+qui indiquera au joueur les places optimales ou placer son symbole
 afin d'avoir une chance de gagner la partie.
 
 
@@ -42,6 +42,7 @@ Intégrer la possibilité d'avoir un bot contre un autre bot.
 - Tester le fonctionnement de l'algorithme de recherche.
 - Tester la liaison entre le bakcend et le plateau en frontend.
 - Tester l'intelligence des bots.
+
 
 ## Originalité
 On utilise un language basé sur un paradigme de programmation
