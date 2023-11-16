@@ -2,63 +2,69 @@
 
 ## Problèmes
 
-Implémenter une version du jeu Morpion, ainsi qu'un algorithme de recherche 
-de solution en utilisant un language de programmation fonctionnel OCaml.
-Le but du jeu est le suivant : aligner cinq de ses 
-symboles horizontalement, verticalement ou en diagonale.
-Notre version du jeu est dans un quadrillage 11x11.
-Le joueur sera informé à chaque coup si il est toujours apte à 
-gagner la partie ou non.
-On implémentera pour cela un algorithme de recherche deterministe,
-qui indiquera au joueur les places optimales ou placer son symbole
-afin d'avoir une chance de gagner la partie.
-
+Implémenter le jeu d'Echec ainsi qu'un IA se basant sur l'IA d'echecs mondialement connu Stockfish.
+Premièrement on implémentera, une version du jeu d'echec, ensuite
+on implémentera une IA qui se base sur l'algorithme de d'élagage alpha beta avec une fonction d'évaluation qu'on complétera au fil du temps.
+On évite d'utiliser un algorithme brute force pour l'implémentation
+du joueur IA, afin d'éviter de parcourir des sommets inutiles ce qui augmente
+la complexité de l'algorithme.
+Avec l'algorithme d'élagage, on évite d'explorer des sommets inutiles, de ce
+fait la complexité de celui-ci est meilleur.
 
 ## Objectifs
 
-- Principaux :  Implémenter l'algorithme de recherche.
-Mettre en place le jeu du morpion en version textuel 
-Ce qui impliuque :
-Pouvoir placer les symboles dans les cases. 
-Les cases doivent donc être nommées.
-Vérifier lorsque nous sommes dans un état de défaite ou victoire.
-Mettre en place un système de tour
-Etudier les différentes bibliothèques graphique d'OCaml, en sélectionner.
-une afin d'implémenter un système de fenêtre graphique.
+- Principaux : 
+Mettre en place une version textuel du jeu d'Echec.
+Analyser les facteurs rentrant en jeu pour la fonction d'évaluation
+de sommets de l'arbre de recherche de meilleur coup afin d'ensuite
+Implémenter l'algorithme d'élagage Alpha-Beta de notre IA.
 
 - Intermédiaire : 
-Implémenter un bot pouvant jouer contre le joueur.
+Implémenter des niveaux de difficultés pour l'IA, qui sera basé sur 
+l'amélioration de la fonction d'évaluation
+Ajouter une version graphique du jeu d'Echec
 
 - Supplémentaires :  
-Mettre en surbrillance les cases qui peuvent nous emmener a la victoire.
-Afficher les pourcentages de réusite pour chaque case en surbrillance.
-Barrer les cases concernées quand un des joueurs gagne.
-Intégrer la possibilité d'avoir un bot contre un autre bot.
-
+Ameliorer l'IA en rajoutant d'autres facteurs dans la fonction d'évaluation
+Implémenter l'annulation du dernier coup
 
 
 ## Testabilité
 - Vérifier la fin du jeu.
-- Tester le fonctionnement de l'algorithme de recherche.
-- Tester la liaison entre le bakcend et le plateau en frontend.
-- Tester l'intelligence des bots.
+- Tester l'amelioration des fonctions d'évaluation en faisant jouer les IA les unes contre les autres.
+- Tester la liaison entre le backend et le plateau en frontend.
 
 
 ## Originalité
-On utilise un language basé sur un paradigme de programmation
-qui n'est pas généralement utiliser pour le developpement de jeu vidéo.
+Implémenter le jeu d'Echec ainsi qu'un IA se basant sur l'IA d'echecs mondialement connu Stockfish
 
 ## Collage API
-On utilise aucune API, uniquement Ocaml from scratch
+On utilise aucune API
 
 ## Calendrier/ Jalons
 
 - Implémentation des différents entités du système : Novembre - Décembre
 - Mise en place de la version textuel du jeu : Novembre - Fevrier
-- Etude des bibliothèques graphique d'OCaml : Décembre
-- Implémenter l'algorithme de recherche : Janvier
+- Etudier les différents paramètres rentrant en compte dans les facteurs d'évalutation : Décembre - Janvier
+- Implémenter l'algorithme d'élagage Alpha-Beta : Janvier - Avril
 - Mise en place de la partie graphique : Janvier - Fevrier
 - Lier la partie graphique avec le backend : Fevrier - Mars
 - Finir les tâches non terminées : Mars - Avril
 - Effectuer les tests et rédiger la documentation : Avril
 
+
+
+## Les IA d'échecs trouvé
+- Deep blue : première victoire d'un ordinateur contre un humain en mai 1997. Il a battu le champion du monde Garry Kasparov lors d’un match en six parties.
+C'est l'alogrythme bếte dont on avais parlé la dernière fois. IBM a créer un ordi special avec un super chip de 32 microprocesseur pour que l'IA puisse
+parcourir a fond tout l'arbre de recherche et prendre les meilleures coups, ça a une complexité énorme et n'est pas du tout intélligent.
+- Stockfish: Il fait une recherche des meilleurs coups dans le graphe mais avec de l'élagage alpha beta pour supprimer des noeuds fils inutiles à explorer.il a aussi une fonction
+d'évaluation de sommets. Une mauvaise fonction d'évalutaion peut être la différence entre une IA qui cherche à perdre ou à gagner. La fonction d'evalution
+repose sur la sécurité du roi, du controle du centre, de l'importance des pièces restantes et plein d'autres paramêtres, plus on a des paramêtres plus on a un meilleur algorythme.
+- AlphaGo: utilise le deep learning, il apprend a chaque partie et a des millions de données. Il nécessite un moteur comme aws.
+- Leela Chess Zero: Un meilleur stockfish qui prends quelques mois pour atteindre le niveau d'un grand maître. Il enregistre des tactiques souvent utilisé,
+ainsi que des séquences de coups et les utilise dans ces parties. Il est aussi utlilisé aux dames et surtout au go.
+
+## Source
+https://astrakhan.consulting/fr/blog/analyse-de-lintelligence-artificielle-aux-echecs/
+https://les-echiquiers-du-roi.fr/blogs/blog-echecs/lintelligence-artificielle-et-les-echecs-une-revolution-pour-les-amateurs-et-les-professionnels
