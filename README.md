@@ -65,6 +65,13 @@ repose sur la sécurité du roi, du controle du centre, de l'importance des piè
 - Leela Chess Zero: Un meilleur stockfish qui prends quelques mois pour atteindre le niveau d'un grand maître. Il enregistre des tactiques souvent utilisé,
 ainsi que des séquences de coups et les utilise dans ces parties. Il est aussi utlilisé aux dames et surtout au go.
 
+Analysis and Comparison of Chess Algorithms :
+Cette recherche analyse différents algorithmes au niveau de leur efficacité face à Stockfish.
+Premièrement, les auteurs expliquent le fonctionnement des différents algorithmes analysés, Minmax Algorithm, Monte Carlo Algorithm ainsi que le Genetic Algorithm.
+Les auteurs se basent sur le elo rating afin de pouvoir conclure quel algorithme est le plus adapté dans le jeu d'échec.
+Suite à leur analyse, ils observent que après 7 game, l'algorithme MinMax devance, les deux autres algorithmes.
+Ils concluent, en affirmant que l'algorithme Minmax est le plus adapté mais que ses variantes utilisant des optimisations tel que l'élagage peuvent fournir de meilleures résultats.
 ## Source
 https://astrakhan.consulting/fr/blog/analyse-de-lintelligence-artificielle-aux-echecs/
 https://les-echiquiers-du-roi.fr/blogs/blog-echecs/lintelligence-artificielle-et-les-echecs-une-revolution-pour-les-amateurs-et-les-professionnels
+https://repository.ukim.mk/bitstream/20.500.12188/27381/1/CIIT2023_paper_5.pdf
