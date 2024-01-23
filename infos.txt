@@ -1,0 +1,10 @@
+sudo apt install python3-pip
+sudo apt install python3.10-venv
+python -m venv venv ****pour créer un environnement virtuel
+source venv/bin/activate *** pour activer
+deactivate ***pour desactiver
+pip install -r requirements.txt *** dans env pour installer les bibliothèques de env
+(setup.py voir son utilisation après)
+
+pytest tests ***pour lancer tous les tests dans env
+python3 main.py ***pour lancer le main
