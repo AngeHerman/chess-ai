@@ -4,25 +4,76 @@ import time
 from dotenv import load_dotenv
 import os
 
+GAME_ID = None
+CODE_CHALLENGE_SUCCES = 201
+CODE_MOVE_SUCCES = 200
 BASE_URL = "https://lichess.org"
+LEVEL_IA = 1
+CLOCK_LIMIT = 10800
+CLOCK_INCREMENT = 5
+COLOR = "black"
+GAME_TYPE = "standard"
 load_dotenv()
+token = os.getenv("TOKEN")
+headers = {
+    "Authorization": "Bearer "+token
+}
 
 def stream_events():
-    token = os.getenv("TOKEN")
-    headers = {
-        "Authorization": f"Bearer {token}"
-    }
     url = BASE_URL+"/api/stream/event"
-
     with requests.get(url, headers=headers, stream=True) as response:
         for line in response.iter_lines():
             if line:
                 event = ndjson.loads(line)
                 handle_event(event)
             else:
-                # Empty line for keep alive
-                time.sleep(6)
+                time.sleep(2)
 
+def challenge_ai():
+    url = BASE_URL+"/api/challenge/ai"
+    data = {
+        "level": LEVEL_IA,
+        "clock.limit": CLOCK_LIMIT,
+        "clock.increment": CLOCK_INCREMENT,
+        "color": COLOR,
+        "variant": GAME_TYPE
+    }
+
+    response = requests.post(url, data=data, headers=headers)
+    if response.status_code == CODE_CHALLENGE_SUCCES:
+        print("AI challenge request successful")
+        # C est du ndjon du coup je convertis en python bref en une liste d'objets
+        response_json = process_ndjson_response(response)
+        handle_challenge_accepted(response_json)
+        return True
+    else:
+        print("Failed to send AI challenge request")
+        print(response)
+        return False
+
+def make_move(move):
+    url = f"https://lichess.org/api/bot/game/{GAME_ID}/move/{move}"
+
+    response = requests.post(url, data='', headers=headers)
+
+    if response.status_code == CODE_MOVE_SUCCES:
+        print("Move successful")
+        return True
+    else:
+        print("Failed to make move")
+        return False
+
+def process_ndjson_response(response):
+    response_lines = response.iter_lines()
+    response_json = ndjson.loads(next(response_lines))
+    return response_json
+
+def handle_challenge_accepted(response_json):
+    global GAME_ID
+    GAME_ID = response_json[0].get("id")
+    print("Challenge ID:", GAME_ID)
+    print(response_json)
+    
 def handle_event(event):
     nombre_d_elements = len(event)
     print(nombre_d_elements)
