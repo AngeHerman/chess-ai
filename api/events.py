@@ -4,6 +4,8 @@ import time
 from dotenv import load_dotenv
 import os
 
+
+STREAM_SLEEP_TIME = 1
 GAME_ID = None
 CODE_CHALLENGE_SUCCES = 201
 CODE_MOVE_SUCCES = 200
@@ -27,7 +29,17 @@ def stream_events():
                 event = ndjson.loads(line)
                 handle_event(event)
             else:
-                time.sleep(2)
+                time.sleep(STREAM_SLEEP_TIME)
+
+def stream_board_state(is_my_turn):
+    url = f"{BASE_URL}/api/bot/game/stream/{GAME_ID}"
+    with requests.get(url, headers=headers, stream=True) as response:
+        for line in response.iter_lines():
+            if line:
+                state = ndjson.loads(line)
+                handle_board_state(state,is_my_turn)
+            else:
+                time.sleep(STREAM_SLEEP_TIME)
 
 def challenge_ai():
     url = BASE_URL+"/api/challenge/ai"
@@ -51,12 +63,11 @@ def challenge_ai():
         print(response)
         return False
 
-def make_move(move):
-    url = f"https://lichess.org/api/bot/game/{GAME_ID}/move/{move}"
-
+def make_move(move,is_my_turn):
+    url = f"{BASE_URL}/api/bot/game/{GAME_ID}/move/{move}"
     response = requests.post(url, data='', headers=headers)
-
     if response.status_code == CODE_MOVE_SUCCES:
+        is_my_turn.clear()
         print("Move successful")
         return True
     else:
@@ -68,15 +79,39 @@ def process_ndjson_response(response):
     response_json = ndjson.loads(next(response_lines))
     return response_json
 
+def handle_board_state(state,is_my_turn):
+    print("State:--")
+    print(state)
+    print("-------")
+    string_moves = ""
+    if state[0].get('state'):
+        print(state[0].get('state'))
+        print("-------")
+        #print(state[0].get('state').get('moves'))
+        string_moves = state[0].get('state').get('moves')
+    else:
+        #print(state[0].get('moves'))
+        string_moves = state[0].get('moves')
+    print(string_moves)
+    moves = string_moves.split()
+    len_moves = len(moves)
+    print("-------------------------------------------------------------------Longueur est "+str(len(moves)))
+    if(len_moves %2 == 0):
+        is_my_turn.clear()
+        print("pas mon tour")
+    else:
+        is_my_turn.set()
+        print("mon tour ")
+
 def handle_challenge_accepted(response_json):
     global GAME_ID
     GAME_ID = response_json[0].get("id")
     print("Challenge ID:", GAME_ID)
-    print(response_json)
+    #print(response_json)
     
 def handle_event(event):
     nombre_d_elements = len(event)
-    print(nombre_d_elements)
+    print("Event:--")
     print(event)
     for event_item in event:
         event_type = event_item.get('type')
@@ -94,14 +129,10 @@ def handle_event(event):
             pass
 
 def handle_game_start(event):
-    game_info = event.get('game')
     print("game start")
-    # Process game start event
 
 def handle_game_finish(event):
-    game_info = event.get('game')
     print("game finish")
-    # Process game finish event
 
 def handle_challenge(event):
     challenge_info = event.get('challenge')
