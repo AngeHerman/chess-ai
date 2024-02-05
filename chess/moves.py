@@ -27,21 +27,32 @@ def pawn_movement(board,coord):
     print(movement_list)
         
     return movement_list
-
-def pawn_eatPieceMovements(board,coord,color):
-
+            
+def pawn_ThreatenedCases(board,coord,color):
+    
     move_value = 1 if color < 0 else -1
     movement_list = []
 
     pMovements = [(coord[0]+move_value,coord[1]+move_value),(coord[0]+move_value,coord[1]-move_value)]
 
     for i in range(0,len(pMovements)):
-        if(areCoordinatesBounded(pMovements[i][0],pMovements[i][1]) and checkCaseHasEdible(board,coord,pMovements[i])):
-            movement_list.append(pMovements)
+        if(areCoordinatesBounded(pMovements[i][0],pMovements[i][1])):
+            movement_list.append(pMovements[i])
     
     return movement_list
-            
 
+
+def pawn_eatPieceMovements(board,coord,color):
+
+    threatenedCases = pawn_ThreatenedCases(board,coord,color)
+    movement_list = []
+
+
+    for i in range(0,len(threatenedCases)):
+        if(checkCaseHasEdible(board,coord,threatenedCases[i])):
+            movement_list.append(threatenedCases[i])
+
+    return movement_list
 
 def knight_movement(board,coord):
 
@@ -163,6 +174,7 @@ def king_movement(board,coord):
     opponent_pieces = getPiecesCoordinates(board,FOU_ADVERSE) + getPiecesCoordinates(board,TOUR_ADVERSE) + getPiecesCoordinates(board,DAME_ADVERSE) + getPiecesCoordinates(board,CAVALIER_ADVERSE)
     opponent_pieces += getPiecesCoordinates(board,PION_ADVERSE)
 
+
     for i in range(0,len(opponent_pieces)):
 
         piece = getPiece(board,opponent_pieces[i])
@@ -176,14 +188,12 @@ def king_movement(board,coord):
         elif(piece == DAME_ADVERSE):
             opponent_movements += queen_movement(board,opponent_pieces[i])
         elif(piece == PION_ADVERSE):
-            opponent_movements += pawn_eatPieceMovements(board,opponent_pieces[i],-PION_ADVERSE)
+            print("LISTE :",pawn_ThreatenedCases(board,opponent_pieces[i],-PION_ADVERSE))
+            opponent_movements += pawn_ThreatenedCases(board,opponent_pieces[i],-PION_ADVERSE)
     
-    for j in range(0,len(possible_positions)):
+    positions = [possible_positions[i] for i in range(0,len(possible_positions)) if not(possible_positions[i] in opponent_movements)]
 
-        if(possible_positions[i] in opponent_movements):
-            possible_positions.pop(i)
-    
-    return possible_positions
+    return positions
 
 
 
