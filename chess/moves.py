@@ -5,16 +5,13 @@ from chess.utils import *
 def pawn_movement(board,coord):
 
     movement_list = []
-
     pawn = getPiece(board,coord)
-
     move_value = 1
     special_position = 1
 
     if(pawn < 0):
         move_value = -1
         special_position = HEIGHT - 2
-    
 
     if(areCoordinatesBounded(coord[0] + move_value,coord[1] )):
         movement_list.append((coord[0] + move_value,coord[1]))
@@ -22,10 +19,7 @@ def pawn_movement(board,coord):
         if(coord[0] == special_position) :
             movement_list.append((coord[0]+ move_value * 2,coord[1]))
     
-    movement_list += pawn_eatPieceMovements(board,coord,-move_value)
-
-    print(movement_list)
-        
+    movement_list += pawn_eatPieceMovements(board,coord,-move_value)        
     return movement_list
             
 def pawn_ThreatenedCases(board,coord,color):
@@ -47,7 +41,6 @@ def pawn_eatPieceMovements(board,coord,color):
     threatenedCases = pawn_ThreatenedCases(board,coord,color)
     movement_list = []
 
-
     for i in range(0,len(threatenedCases)):
         if(checkCaseHasEdible(board,coord,threatenedCases[i])):
             movement_list.append(threatenedCases[i])
@@ -57,7 +50,6 @@ def pawn_eatPieceMovements(board,coord,color):
 def knight_movement(board,coord):
 
     movement_list = []
-
     movements = [(2,1),(2,-1),(-2,1),(-2,-1),(1,2),(1,-2),(-1,2),(-1,-2)]
 
     for i in range(len(movements)):
@@ -118,7 +110,6 @@ def bishop_movement(board,coord,MAX):
 def rook_movement(board,coord,width,height):
     
     possible_movements = []
-
     y = coord[0]
     x = coord[1]
 
@@ -174,7 +165,6 @@ def king_movement(board,coord):
     opponent_pieces = getPiecesCoordinates(board,FOU_ADVERSE) + getPiecesCoordinates(board,TOUR_ADVERSE) + getPiecesCoordinates(board,DAME_ADVERSE) + getPiecesCoordinates(board,CAVALIER_ADVERSE)
     opponent_pieces += getPiecesCoordinates(board,PION_ADVERSE)
 
-
     for i in range(0,len(opponent_pieces)):
 
         piece = getPiece(board,opponent_pieces[i])
@@ -188,7 +178,6 @@ def king_movement(board,coord):
         elif(piece == DAME_ADVERSE):
             opponent_movements += queen_movement(board,opponent_pieces[i])
         elif(piece == PION_ADVERSE):
-            print("LISTE :",pawn_ThreatenedCases(board,opponent_pieces[i],-PION_ADVERSE))
             opponent_movements += pawn_ThreatenedCases(board,opponent_pieces[i],-PION_ADVERSE)
     
     positions = [possible_positions[i] for i in range(0,len(possible_positions)) if not(possible_positions[i] in opponent_movements)]
