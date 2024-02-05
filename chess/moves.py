@@ -6,12 +6,42 @@ def pawn_movement(board,coord):
 
     movement_list = []
 
-    if(value_bounded(coord[1],HEIGHT-1) and value_bounded(coord[0],WIDTH - 1)):
-        movement_list.append((coord[0],coord[1]+1))
-        if(coord[1] == 1) :
-            movement_list.append((coord[0],coord[1]+2))
+    pawn = getPiece(board,coord)
 
+    move_value = 1
+    special_position = 1
+
+    if(pawn < 0):
+        move_value = -1
+        special_position = HEIGHT - 2
+    
+
+    if(areCoordinatesBounded(coord[0] + move_value,coord[1] )):
+        movement_list.append((coord[0] + move_value,coord[1]))
+
+        if(coord[0] == special_position) :
+            movement_list.append((coord[0]+ move_value * 2,coord[1]))
+    
+    movement_list += pawn_eatPieceMovements(board,coord,-move_value)
+
+    print(movement_list)
+        
     return movement_list
+
+def pawn_eatPieceMovements(board,coord,color):
+
+    move_value = 1 if color < 0 else -1
+    movement_list = []
+
+    pMovements = [(coord[0]+move_value,coord[1]+move_value),(coord[0]+move_value,coord[1]-move_value)]
+
+    for i in range(0,len(pMovements)):
+        if(areCoordinatesBounded(pMovements[i][0],pMovements[i][1]) and checkCaseHasEdible(board,coord,pMovements[i])):
+            movement_list.append(pMovements)
+    
+    return movement_list
+            
+
 
 def knight_movement(board,coord):
 
@@ -21,22 +51,20 @@ def knight_movement(board,coord):
 
     for i in range(len(movements)):
 
-        new_x = coord[0] + movements[i][0]
-        new_y = coord[1] + movements[i][1]
+        new_y = coord[0] + movements[i][0]
+        new_x = coord[1] + movements[i][1]
 
-        if(value_bounded(new_x,WIDTH - 1) and value_bounded(new_y,HEIGHT -1)):
-            movements.append((new_x,new_y))
+        if(areCoordinatesBounded(new_y,new_x)):
+            movements.append((new_y,new_x))
 
     return movement_list
-
-
 
 def bishop_movement(board,coord,MAX):
     
     movement_list = []
 
-    x = coord[0] 
-    y = coord[1] 
+    y = coord[0] 
+    x = coord[1] 
 
     add_dir1 = True
     add_dir2 = True
@@ -45,72 +73,124 @@ def bishop_movement(board,coord,MAX):
 
     for i in range(1,MAX):
        
-        if(areCoordinatesBounded(x+i,y+i)):
+        if(areCoordinatesBounded(y+i,x+i) and add_dir1):
           
-            if(add_dir1) : movement_list.append((x+i,y+i))
-            if(board[x+i][y+i] != 0):
+            if(checkCanEat(board,coord,(y+i,x+i)) or checkCaseEmpty(board,(y+i,x+i))) : 
+                movement_list.append((y+i,x+i))
+            if(not(checkCaseEmpty(board,(y+i,x+i)))):
                 add_dir1 = False
 
-        if(areCoordinatesBounded(x-i,y-i)):
+        if(areCoordinatesBounded(y-i,x-i) and add_dir2):
             
-            if(add_dir2) : movement_list.append((x-i,y-i))
-            if(board[x-i][y-i] != 0):
+            if(checkCanEat(board,coord,(y-i,x-i)) or checkCaseEmpty(board,(y-i,x-i))) : 
+                movement_list.append((y-i,x-i))
+            if(not(checkCaseEmpty(board,(y-i,x-i)))):
                 add_dir2 = False
         
-        if(areCoordinatesBounded(x+i,y-i)):
+        if(areCoordinatesBounded(y+i,x-i) and add_dir3):
 
-            if(add_dir3) : movement_list.append((x+i,y-i))
-            if(board[x+i][y-i] != 0):
+            if(checkCanEat(board,coord,(y+i,x-i)) or checkCaseEmpty(board,(y+i,x-i))) : 
+                movement_list.append((y+i,x-i))
+            if(not(checkCaseEmpty(board,(y+i,x-i)))):
                 add_dir3 = False
 
-        if(areCoordinatesBounded(x-i,y+i)):
+        if(areCoordinatesBounded(y-i,x+i) and add_dir4):
 
-            if(add_dir4) : movement_list.append((x-i,y+i))
-            if(board[x-i][y+i] != 0):
+            if(checkCanEat(board,coord,(y-i,x+i)) or checkCaseEmpty(board,(y-i,x+i))) :
+                movement_list.append((y-i,x+i))
+            if(not(checkCaseEmpty(board,(y-i,x+i)))):
                 add_dir4 = False
 
     return movement_list
 
 
-def tower_movement(board,coord,width,height):
+def rook_movement(board,coord,width,height):
     
     possible_movements = []
 
-    x = coord[0]
-    y = coord[1]
+    y = coord[0]
+    x = coord[1]
 
     add1 = True
     add2 = True
 
-    for i in range(1,width):
-        if(areCoordinatesBounded(x+i,y)):
-            if(add1):
-                possible_movements.append(x+i,y)
-            if(board[x+i][y] != 0) : add1 = False
-        if(areCoordinatesBounded(x-i,y)):
-            if(add2):
-                possible_movements.append(x-i,y)
-            if(board[x-i][y] != 0) : add2 = False
+    for i in range(1,height):
+
+        if(areCoordinatesBounded(y+i,x) and add1):
+            if(checkCanEat(board,coord,(y+i,x)) or checkCaseEmpty(board,(y+i,x))):
+                possible_movements.append((y+i,x))
+            if(not(checkCaseEmpty(board,(y+i,x)))) : add1 = False
+
+        if(areCoordinatesBounded(y-i,x) and add2):
+            if(checkCanEat(board,coord,(y-i,x)) or checkCaseEmpty(board,(y-i,x))):
+                possible_movements.append((y-i,x))
+            if(not(checkCaseEmpty(board,(y-i,x)))) : add2 = False
     
     add1 = True
     add2 = True
 
-    for j in range(1,height):
-        if(areCoordinatesBounded(x,y+j)):
-            if(add1):
-                possible_movements.append(x,y+j)
-            if(board[x][y+j] != 0) : add1 = False
-        if(areCoordinatesBounded(x,y-j)):
-            if(add2):
-                possible_movements.append(x-j,y)
-            if(board[x][y-j] != 0) : add2 = False
+    for j in range(1,width):
 
+        if(areCoordinatesBounded(y,x+j) and add1):
+            if(checkCanEat(board,coord,(y,x+j)) or checkCaseEmpty(board,(y,x+j))):
+                possible_movements.append((y,x+j))
+            if(not(checkCaseEmpty(board,(y,x+j)))): add1 = False
+
+        if(areCoordinatesBounded(y,x-j) and add2):
+            if(checkCanEat(board,coord,(y,x-j)) or checkCaseEmpty(board,(y,x-j))):
+                possible_movements.append((y,x-j))
+            if(not(checkCaseEmpty(board,(y,x-j)))) : add2 = False
 
     return possible_movements
 
 
 def queen_movement(board,coord):
-    return tower_movement(board,coord,WIDTH,HEIGHT) + bishop_movement(board,coord,WIDTH)
+    return rook_movement(board,coord,WIDTH,HEIGHT) + bishop_movement(board,coord,WIDTH)
 
 def king_movement(board,coord):
-    return tower_movement(board,coord,2,2) + bishop_movement(board,coord,2)
+
+    possible_positions = rook_movement(board,coord,2,2) + bishop_movement(board,coord,2)
+    opponent_movements = []
+
+    king = getPiece(board,coord)
+
+    FOU_ADVERSE = FOU_NOIR if king == ROI_BLANC else FOU_BLANC
+    TOUR_ADVERSE = TOUR_NOIR if king == ROI_BLANC else TOUR_BLANC
+    CAVALIER_ADVERSE = CAVALIER_NOIR if king == ROI_BLANC else CAVALIER_BLANC
+    DAME_ADVERSE = DAME_NOIRE if king == ROI_BLANC else DAME_BLANCHE
+    PION_ADVERSE = PION_NOIR if king == ROI_BLANC else PION_BLANC
+
+    opponent_pieces = getPiecesCoordinates(board,FOU_ADVERSE) + getPiecesCoordinates(board,TOUR_ADVERSE) + getPiecesCoordinates(board,DAME_ADVERSE) + getPiecesCoordinates(board,CAVALIER_ADVERSE)
+    opponent_pieces += getPiecesCoordinates(board,PION_ADVERSE)
+
+    for i in range(0,len(opponent_pieces)):
+
+        piece = getPiece(board,opponent_pieces[i])
+
+        if(piece == FOU_ADVERSE):
+            opponent_movements += bishop_movement(board,opponent_pieces[i],WIDTH)
+        elif(piece == TOUR_ADVERSE):
+            opponent_movements += rook_movement(board,opponent_pieces[i],WIDTH,HEIGHT)
+        elif(piece == CAVALIER_ADVERSE):
+            opponent_movements += knight_movement(board,opponent_pieces[i])
+        elif(piece == DAME_ADVERSE):
+            opponent_movements += queen_movement(board,opponent_pieces[i])
+        elif(piece == PION_ADVERSE):
+            opponent_movements += pawn_eatPieceMovements(board,opponent_pieces[i],-PION_ADVERSE)
+    
+    for j in range(0,len(possible_positions)):
+
+        if(possible_positions[i] in opponent_movements):
+            possible_positions.pop(i)
+    
+    return possible_positions
+
+
+
+
+
+
+
+            
+
+    
