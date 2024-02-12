@@ -1,7 +1,7 @@
 from chess.constants import *
 from chess.utils import *
 
-
+"""
 def pawn_movement(board,coord):
 
     movement_list = []
@@ -182,7 +182,7 @@ def king_movement(board,coord):
     
     positions = [possible_positions[i] for i in range(0,len(possible_positions)) if not(possible_positions[i] in opponent_movements)]
 
-    return positions
+    return positions"""
 
 
 

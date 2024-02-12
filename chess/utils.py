@@ -43,5 +43,16 @@ def getPiecesCoordinates(board,piece):
     
     return coords
 
-    
+
+def getAllPiecesCoordinatesFromColor(board,color):
+
+    pieces = []
+
+    for i in range(0,WIDTH):
+        for j in range(0,HEIGHT):
+            if color > 0  == board[i][j] > 0 : 
+                pieces.append((i,j))
+
+    return pieces
+
 
