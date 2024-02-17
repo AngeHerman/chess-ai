@@ -5,8 +5,7 @@ import threading
 import time
 import os
 
-
-if __name__ == "__main__":
+def play_against_ai():
     # all_moves = [""]
     is_my_turn = threading.Event()
     moves = ["a7a6", "b7b6", "c7c6", "d7d6", "e7e6", "f7f6", "g7g6", "h7h6"]
@@ -36,3 +35,17 @@ if __name__ == "__main__":
         # print("Meilleur coup calculé par MCTS :", best_move)
     stream_events_thread.join()
     stream_board_thread.join()
+    
+def play_against_player():
+    api = Lichess()
+    stream_events_thread = threading.Thread(target=api.stream_events)
+    stream_events_thread.start()
+    while(not api.game_started):
+        time.sleep(0.5)
+    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!Ca a commencé")
+    stream_events_thread.join()
+    
+if __name__ == "__main__":
+    # play_against_ai()
+    play_against_player()
+    

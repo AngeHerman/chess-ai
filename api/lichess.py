@@ -8,6 +8,7 @@ import os
 STREAM_SLEEP_TIME = 1
 GAME_ID = None
 CODE_CHALLENGE_SUCCES = 201
+CODE_CHALLENGE_ACCEPTED_SUCCES = 200
 CODE_MOVE_SUCCES = 200
 BASE_URL = "https://lichess.org"
 LEVEL_IA = 1
@@ -24,6 +25,7 @@ headers = {
 class Lichess:
     def __init__(self):
         self.moves = ""
+        self.game_started = False
     
     def stream_events(self):
         url = BASE_URL+"/api/stream/event"
@@ -137,6 +139,7 @@ class Lichess:
 
     def handle_game_start(self,event):
         print("game start")
+        self.game_started = True
 
     def handle_game_finish(self,event):
         print("game finish")
@@ -158,7 +161,19 @@ class Lichess:
         print(f"Color: {color}")
         print(f"Final color: {final_color}")
         print(f"Speed: {speed}")
-
+        self.accept_challenge(challenge_id)
+    
+    def accept_challenge(self,challenge_id):
+        url = f"{BASE_URL}/api/challenge/{challenge_id}/accept"
+        response = requests.post(url, headers=headers)
+        if response.status_code == CODE_CHALLENGE_ACCEPTED_SUCCES:
+            print("challenge request successful")
+            global GAME_ID
+            GAME_ID = challenge_id
+        else:
+            print("Failed to accept challenge request")
+            print(response)
+        
     def handle_challenge_canceled(self,event):
         print("Challenge cancelled")
 
