@@ -50,7 +50,7 @@ def getAllPiecesCoordinatesFromColor(board,color):
 
     for i in range(0,WIDTH):
         for j in range(0,HEIGHT):
-            if color > 0  == board[i][j] > 0 : 
+            if color > 0  and board[i][j] > 0 or color < 0 and board[i][j] < 0 : 
                 pieces.append((i,j))
 
     return pieces
