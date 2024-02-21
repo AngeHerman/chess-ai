@@ -14,30 +14,35 @@ class Board:
             [TOUR_NOIR, CAVALIER_NOIR, FOU_NOIR, DAME_NOIRE, ROI_NOIR, FOU_NOIR, CAVALIER_NOIR, TOUR_NOIR]
         ]
         self.turn = 0
+        self.pMoves = []
+        self.isGameEnded = False
 
     def print_Board(self):
         for ligne in self.grille:
             print(ligne)
 
     def play_move(self, coup):
-        # Creeeer coup apres
-        pass
+
+        if coup in self.pMoves:
+
+            piece = getPiece(self.grille,coup[0])
+            emptyCase(self.grille,coup[0])
+            addPieceToCase(self.grille,coup[1],piece)
+            return True
+        
+        return False
+
     
 
     def moves(self, coord_depart):
-        pieces = self.getAllPlayerPieces()
-
-
-
-        return 
-
+        pass
         # Trouver un moyen de generrer les coups 
        # pass  
     def getAllMovesBasedOnTurn(self):
 
         self.turn += 1
         color = BLANC if self.turn%2 == 1 else NOIR
-        return self.getAllAvailableMoves(color)
+        self.pMoves = self.getAllAvailableMoves(color)            
 
             
 
