@@ -14,3 +14,6 @@ ROI_NOIR = -6
 
 HEIGHT = 8
 WIDTH = 8
+
+NOIR = -10
+BLANC = 10

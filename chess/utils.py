@@ -23,6 +23,15 @@ def checkCanEat(board,coord,coord2):
 
     return (piece > 0 and targetPiece < 0) or (piece < 0 and targetPiece > 0)
 
+def emptyCase(board,coord):
+    board[coord[0]][coord[1]] = 0
+
+def addPieceToCase(board,coord,piece):
+    board[coord[0]][coord[1]] = piece
+
+
+    
+    
 
 def checkCaseHasEdible(board,coord,coord2):
     return not(checkCaseEmpty(board,coord2)) and checkCanEat(board,coord,coord2)

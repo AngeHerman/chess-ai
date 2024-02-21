@@ -22,6 +22,7 @@ class Board:
     def play_move(self, coup):
         # Creeeer coup apres
         pass
+    
 
     def moves(self, coord_depart):
         pieces = self.getAllPlayerPieces()
@@ -32,50 +33,13 @@ class Board:
 
         # Trouver un moyen de generrer les coups 
        # pass  
-    
-    def checkMovementsOnSameDiagonal(diagonals,coord,wantedPosition):
+    def getAllMovesBasedOnTurn(self):
 
-        sameDiagonal = False
+        self.turn += 1
+        color = BLANC if self.turn%2 == 1 else NOIR
+        return self.getAllAvailableMoves(color)
 
-        for i in range(diagonals):
-            if coord and wantedPosition in diagonals[i]:
-                sameDiagonal = True
-                
-        return sameDiagonal
-
-    
-    def compareCoordinatesStraight(self,coord,coord2):
-
-        return coord[0] == coord2[0] or coord[1] == coord2[1]
-    
-    def removePerilingMoves(self,pMoves,kingPosition):
-
-        straightPaths = self.straightPathsFromPiece(kingPosition,HEIGHT,WIDTH)
-        diagonalPaths = self.diagonalPathsFromPiece(kingPosition,HEIGHT)
-        
-        pMovesCorrected = []
-          
-        straightLinePieces = self.getPiecesInBetween(kingPosition,straightPaths)
-        diagonalLinePieces = self.getPiecesInBetween(kingPosition,diagonalPaths)
-
-        if len(straightLinePieces) > 0:
-            for i in range(len(pMoves)):
-                checkInLinePieces = pMoves[i] in straightLinePieces
-
-                if (checkInLinePieces and self.compareCoordinates(pMoves[i][1],kingPosition)) or not(checkInLinePieces):
-                    pMovesCorrected.append(pMoves[i])
-        
-        if len(diagonalLinePieces) > 0:
-            for i in range(len(pMoves)):
-                checkInDiagonalPieces = pMoves[i] in diagonalLinePieces
-
-                if (checkInDiagonalPieces and self.checkMovementsOnSameDiagonal(pMoves[i][0],pMoves[i][1],kingPosition)) or not(checkInDiagonalPieces):
-                    pMovesCorrected.append(pMoves[i])
-        
-        return pMovesCorrected
-
-
-    #def editMovementListBasedOnThreat(threatPosition):
+            
 
     def getAllAvailableMoves(self,color):
         
@@ -85,6 +49,7 @@ class Board:
         kingPosition = (0,0)
         
         for i in range(len(pieces)):
+            
             piece = getPiece(self.grille,pieces[i])
 
             if piece == PION_NOIR or piece == PION_BLANC :
@@ -103,54 +68,40 @@ class Board:
                 kingPosition = pieces[i]
         
         # Si le roi est directement menacé par une pièce on retourne uniquement les mouvement permettant de le protéger
-        if len(kingSurroundings) > 0 : 
-            #if set():
-            #print(pMoves)
-            threatPosition = kingSurroundings[len(kingPosition)-1]
-            threatenedDirection = []
+        protectionList = self.getKingProtectionList(kingSurroundings)     
 
-            if(self.compareCoordinatesStraightToKing(threatPosition,kingPosition)):
-                threatenedDirection = self.straightPathsFromPiece(threatPosition,HEIGHT,WIDTH)
-            else:
-                threatenedDirection = self.diagonalPathsFromPiece(threatPosition,HEIGHT)
-                #pMovesCorrected = 
-
-            if len(threatenedDirection) > 0:
-                threatenedDirection = [threatenedDirection[0]+threatenedDirection[1][1:]]+[threatenedDirection[2]+threatenedDirection[3][1:]]
-                print(threatenedDirection)
+        if len(kingSurroundings) > 0 :
+            kingSurroundingsFlattened = [kingSurroundings[i][1][j] for i in range(len(kingSurroundings)) for j in range(len(kingSurroundings[i][1]))]
+            return [pMoves[i] for i in range(len(pMoves)) if pMoves[i][1] in kingSurroundingsFlattened and not(pMoves[i][0] in protectionList) or pMoves[i][0] == kingPosition ]
             
-            #return [pMoves[i] for i in range(len(pMoves)) if pMoves[i][1] in kingSurroundings or (pMoves[i][0] == kingPosition and not)]
-        
-        """ pMovesCorrected = self.removePerilingMoves(pMoves,kingPosition)
-
-        if len(pMovesCorrected) > 0:
-            return pMovesCorrected"""
-            
-        return []
+        return [pMoves[i] for i in range(len(pMoves)) if not(pMoves[i][0] in protectionList)]
 
     def getPieceCoordinatesInBetweenPath(self,path):
-
-        p = [path[i] for i in range(len(path)) if getPiece(self.grille,path[i]) > 0]
-
-        if len(p) == 1:
-            return p
-        return []
+        return [path[i] for i in range(len(path)) if getPiece(self.grille,path[i]) != 0]
 
 
-    def getPiecesInBetween(self,coord,path):
-        
-        pieces = []
+    def getKingProtectionList(self,kingSurroundings):
+        protectList = []
+        threatenedPathsToRemove = []
 
-        for i in range(len(path)):
+        for i in range(len(kingSurroundings)):
 
-            """ On vérifie bien que la dernière pièce dans la direction choisi est une pièce ennemie 
-            ayant la capacité de mettre en danger le roi, 
-            On vérifie aussi qu'entre ses deux pièces il n'existe pas une pièce allié """
-            pieceBetweenPath = self.getPieceCoordinatesInBetweenPath(path[i][1:len(path[i]) - 2])
-            if len(pieceBetweenPath) == 1:
-                pieces += pieceBetweenPath[0]
+            if(kingSurroundings[i][0] == "STRAIGHT" or kingSurroundings[i][0] == "DIAGONAL"):
 
-        return pieces
+                length = len(kingSurroundings[i][1]) - 1
+                pieces = self.getPieceCoordinatesInBetweenPath(kingSurroundings[i][1][:length])
+
+                if len(pieces) > 0:
+                    threatenedPathsToRemove.append(i)
+                if len(pieces) == 1:
+                    protectList += pieces
+
+        for j in range(len(threatenedPathsToRemove)):
+            kingSurroundings.pop(threatenedPathsToRemove[j])
+
+        return protectList
+            
+
 
 
 
@@ -161,36 +112,30 @@ class Board:
         straight = self.straightPathsFromPiece(coord,HEIGHT,WIDTH)
         diagonals = self.diagonalPathsFromPiece(coord,WIDTH)
 
-        allyPieces = {PION_BLANC,CAVALIER_BLANC,FOU_BLANC,TOUR_BLANC,DAME_BLANCHE} if self.grille[coord[0]][coord[1]] > 0 else {PION_NOIR,CAVALIER_NOIR,FOU_NOIR,TOUR_NOIR,DAME_NOIRE}
         straightLineEnemies = {TOUR_BLANC,DAME_BLANCHE} if self.grille[coord[0]][coord[1]] < 0 else {TOUR_NOIR,DAME_NOIRE}
         diagonalLineEnemies = {FOU_BLANC,DAME_BLANCHE} if self.grille[coord[0]][coord[1]] < 0 else {FOU_NOIR,DAME_NOIRE}
         knightEnemy = CAVALIER_BLANC if self.grille[coord[0]][coord[1]] < 0 else CAVALIER_NOIR
-
-        """ On sait que le roi ne peut être mis en danger que d'une direction
-        On tente toute les directions pour savoir laquelle crée un chemin jusqu'à une menace"""
 
         for i in range(len(straight)):
 
             """ On vérifie bien que la dernière pièce dans la direction choisi est une pièce ennemie 
             ayant la capacité de mettre en danger le roi, 
             On vérifie aussi qu'entre ses deux pièces il n'existe pas une pièce allié """
-            straightList = straight[i][1:len(straight[i]) - 1]            
-            straightSet = set([getPiece(self.grille,straightList[j]) for j in range(len(straightList)) if getPiece(self.grille,straightList[j]) > 0])
 
-            if getPiece(self.grille,straight[i][len(straight[i]) - 1]) in straightLineEnemies and straightSet.isdisjoint(allyPieces):
-                dangerousCoordinates += straight[i][1:]
+            if getPiece(self.grille,straight[i][len(straight[i]) - 1]) in straightLineEnemies:
+                dangerousCoordinates.append(("STRAIGHT",straight[i][1:]))
         
 
         for i in range(len(diagonals)):
             
-            diagonalList = diagonals[i][1:len(diagonals[i]) - 1]            
-            diagonalSet = set([getPiece(self.grille,diagonalList[j]) for j in range(len(diagonalList)) if getPiece(self.grille,diagonalList[j]) > 0])
-            if getPiece(self.grille,diagonals[i][len(diagonals[i]) - 1]) in diagonalLineEnemies and diagonalSet.isdisjoint(allyPieces):
-                dangerousCoordinates += diagonals[i][1:]
+            if getPiece(self.grille,diagonals[i][len(diagonals[i]) - 1]) in diagonalLineEnemies:
+                dangerousCoordinates.append(("DIAGONAL",diagonals[i][1:]))
 
         knights = self.knight_movement(coord)
         threateningKnights = [knights[i][1] for i in range(len(knights)) if self.grille[knights[i][1][0]][knights[i][1][1]] == knightEnemy]
-        dangerousCoordinates += threateningKnights
+        
+        if(len(threateningKnights)>0):
+            dangerousCoordinates.append(("L",threateningKnights))
 
         return dangerousCoordinates
 
@@ -204,7 +149,6 @@ class Board:
         for i in range(1,height):
 
             if(areCoordinatesBounded(y+i,x) and add1):
-                #if checkCaseEmpty(self.grille,(y+i,x)):
                 if checkCanEat(self.grille,coord,(y+i,x)) :
                     add1 = False
                 possible_movements[0].append((y+i,x))
@@ -279,7 +223,7 @@ class Board:
             move_value = -1
             special_position = HEIGHT - 2
 
-        if(areCoordinatesBounded(coord[0] + move_value,coord[1] )):
+        if(areCoordinatesBounded(coord[0] + move_value,coord[1] ) and checkCaseEmpty(self.grille,(coord[0] + move_value,coord[1]))):
             movement_list.append((coord,(coord[0] + move_value,coord[1])))
 
             if(coord[0] == special_position) :
@@ -292,15 +236,15 @@ class Board:
     def pawn_ThreatenedCases(self,coord,color):
         
         move_value = 1 if color < 0 else -1
-        movement_list = []
+        threatenedCases = []
 
         pMovements = [(coord[0]+move_value,coord[1]+move_value),(coord[0]+move_value,coord[1]-move_value)]
 
         for i in range(0,len(pMovements)):
             if(areCoordinatesBounded(pMovements[i][0],pMovements[i][1])):
-                movement_list.append((coord,pMovements[i]))
+                threatenedCases.append(pMovements[i])
         
-        return movement_list
+        return threatenedCases
 
     def pawn_eatPieceMovements(self,coord,color):
 
@@ -308,11 +252,10 @@ class Board:
         movement_list = []
 
         for i in range(0,len(threatenedCases)):
-            if(checkCaseHasEdible(self.grille,coord,threatenedCases[i][1])):
-                movement_list.append(coord,threatenedCases[i])
+            if(checkCaseHasEdible(self.grille,coord,threatenedCases[i])):
+                movement_list.append((coord,threatenedCases[i]))
 
-        return movement_list
-    
+        return movement_list 
 
 
     def knight_movement(self,coord):
@@ -343,50 +286,7 @@ class Board:
                 pMovements.append((coord,diagonalPaths[i][j]))
         
         return pMovements
-        #return [(coord,path[i]) for path in diagonalPaths for i in range(1,len(path))]
-    
-        """movement_list = []
-
-
-        y = coord[0] 
-        x = coord[1] 
-
-        add_dir1 = True
-        add_dir2 = True
-        add_dir3 = True
-        add_dir4 = True
-
-        for i in range(1,MAX):
         
-            if(areCoordinatesBounded(y+i,x+i) and add_dir1):
-
-                if(checkCanEat(self.grille,coord,(y+i,x+i)) or checkCaseEmpty(self.grille,(y+i,x+i))) : 
-                    movement_list.append(coord,(y+i,x+i))
-                else:
-                    add_dir1 = False
-
-            if(areCoordinatesBounded(y-i,x-i) and add_dir2):
-                
-                if(checkCanEat(self.grille,coord,(y-i,x-i)) or checkCaseEmpty(self.grille,(y-i,x-i))) : 
-                    movement_list.append(coord,(y-i,x-i))
-                else:
-                    add_dir2 = False
-            
-            if(areCoordinatesBounded(y+i,x-i) and add_dir3):
-
-                if(checkCanEat(self.grille,coord,(y+i,x-i)) or checkCaseEmpty(self.grille,(y+i,x-i))) : 
-                    movement_list.append(coord,(y+i,x-i))
-                else:
-                    add_dir3 = False
-
-            if(areCoordinatesBounded(y-i,x+i) and add_dir4):
-                
-                if(checkCanEat(self.grille,coord,(y-i,x+i)) or checkCaseEmpty(self.grille,(y-i,x+i))) :
-                    movement_list.append(coord,(y-i,x+i))
-                else:
-                    add_dir4 = False
-
-        return movement_list"""
 
     
     def rook_movement(self,coord,width,height):
@@ -403,88 +303,70 @@ class Board:
 
         return pMovements
 
-        #return [(coord,path[i]) for path in straightPaths for i in range(1,len(path))]
-        """y = coord[0]
-        x = coord[1]
-
-        add1 = True
-        add2 = True
-
-        for i in range(1,height):
-
-            if(areCoordinatesBounded(y+i,x) and add1):
-                if(checkCanEat(self.grille,coord,(y+i,x)) or checkCaseEmpty(self.grille,(y+i,x))):
-                    possible_movements.append(coord,(y+i,x))
-                else : add1 = False
-
-            if(areCoordinatesBounded(y-i,x) and add2):
-                if(checkCanEat(self.grille,coord,(y-i,x)) or checkCaseEmpty(self.grille,(y-i,x))):
-                    possible_movements.append(coord,(y-i,x))
-                else : add2 = False
-        
-        add1 = True
-        add2 = True
-
-        for j in range(1,width):
-
-            if(areCoordinatesBounded(y,x+j) and add1):
-                if(checkCanEat(self.grille,coord,(y,x+j)) or checkCaseEmpty(self.grille,(y,x+j))):
-                    possible_movements.append(coord,(y,x+j))
-                else : add1 = False
-
-            if(areCoordinatesBounded(y,x-j) and add2):
-                if(checkCanEat(self.grille,coord,(y,x-j)) or checkCaseEmpty(self.grille,(y,x-j))):
-                    possible_movements.append(coord,(y,x-j))
-                else : add2 = False
-
-        return possible_movements"""
-
 
     def queen_movement(self,coord):
         return self.rook_movement(coord,WIDTH,HEIGHT) + self.bishop_movement(coord,WIDTH)
-
-    def isPieceProtected():
-        pass
-
-    def king_movement(self,coord):
-
-        possible_positions = self.rook_movement(coord,2,2) + self.bishop_movement(coord,2)
-        opponent_movements = []
     
-        king = getPiece(self.grille,coord)
-        self.grille[coord[0]][coord[1]] = 0
+    def getThreatenedCases(self,board,color):
 
-        FOU_ADVERSE = FOU_NOIR if king == ROI_BLANC else FOU_BLANC
-        TOUR_ADVERSE = TOUR_NOIR if king == ROI_BLANC else TOUR_BLANC
-        CAVALIER_ADVERSE = CAVALIER_NOIR if king == ROI_BLANC else CAVALIER_BLANC
-        DAME_ADVERSE = DAME_NOIRE if king == ROI_BLANC else DAME_BLANCHE
-        PION_ADVERSE = PION_NOIR if king == ROI_BLANC else PION_BLANC
+        threatenedCoordinates = []
 
-
+        FOU_ADVERSE = FOU_NOIR if color > 0 else FOU_BLANC
+        TOUR_ADVERSE = TOUR_NOIR if color > 0 else TOUR_BLANC
+        CAVALIER_ADVERSE = CAVALIER_NOIR if color > 0 else CAVALIER_BLANC
+        DAME_ADVERSE = DAME_NOIRE if color > 0 else DAME_BLANCHE
+        PION_ADVERSE = PION_NOIR if color > 0 else PION_BLANC
 
         opponent_pieces = getPiecesCoordinates(self.grille,FOU_ADVERSE) + getPiecesCoordinates(self.grille,TOUR_ADVERSE) + getPiecesCoordinates(self.grille,DAME_ADVERSE) + getPiecesCoordinates(self.grille,CAVALIER_ADVERSE)
         opponent_pieces += getPiecesCoordinates(self.grille,PION_ADVERSE)
 
         for i in range(0,len(opponent_pieces)):
 
-            piece = getPiece(self.grille,opponent_pieces[i])
+            piece = getPiece(board,opponent_pieces[i])
 
             if(piece == FOU_ADVERSE):
-                opponent_movements += self.bishop_movement(opponent_pieces[i],WIDTH)
+                threatenedCoordinates += self.bishop_movement(opponent_pieces[i],WIDTH)
             elif(piece == TOUR_ADVERSE):
-                opponent_movements += self.rook_movement(opponent_pieces[i],WIDTH,HEIGHT)
+                threatenedCoordinates += self.rook_movement(opponent_pieces[i],WIDTH,HEIGHT)
             elif(piece == CAVALIER_ADVERSE):
-                opponent_movements += self.knight_movement(opponent_pieces[i])
+                threatenedCoordinates += self.knight_movement(opponent_pieces[i])
             elif(piece == DAME_ADVERSE):
-                opponent_movements += self.queen_movement(opponent_pieces[i])
+                threatenedCoordinates += self.queen_movement(opponent_pieces[i])
             elif(piece == PION_ADVERSE):
-                opponent_movements += self.pawn_ThreatenedCases(opponent_pieces[i],-PION_ADVERSE)
+                threatenedCoordinates += self.pawn_ThreatenedCases(opponent_pieces[i],-PION_ADVERSE)
+
+        return threatenedCoordinates
         
 
+
+    def king_movement(self,coord):
+
+        possible_positions = self.rook_movement(coord,2,2) + self.bishop_movement(coord,2)
+        king = getPiece(self.grille,coord)
+
+        piecesToRemove = [(coord,king)]
+
+        """ We need to know whether or not the adjacents pieces to our king are protected, in order
+        to do that we remove them from the board and check if their position are in the threatened position list """
+
+        for i in range(len(possible_positions)):
+            if not(checkCaseEmpty(self.grille,possible_positions[i][1])):
+                piecesToRemove.append((possible_positions[i][1],getPiece(self.grille,possible_positions[i][1])))
+        
+        for j in range(len(piecesToRemove)):
+            emptyCase(self.grille,piecesToRemove[j][0])
+
+
+        opponent_movements = self.getThreatenedCases(self.grille,king)
+
+        
+        for z in range(len(piecesToRemove)):
+            addPieceToCase(self.grille,piecesToRemove[z][0],piecesToRemove[z][1])
+
+        opponent_movements += self.getThreatenedCases(self.grille,king)
+        
         opponent_movements_pos = [opponent_movements[i][1] for i in range(0,len(opponent_movements))]
         positions = [possible_positions[i] for i in range(0,len(possible_positions)) if not(possible_positions[i][1] in opponent_movements_pos)]
-        self.grille[coord[0]][coord[1]] = king
-
 
         return positions
 
