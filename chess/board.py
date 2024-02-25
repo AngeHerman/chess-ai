@@ -275,7 +275,7 @@ class Board:
 
             if(areCoordinatesBounded(new_y,new_x)):
                 if(checkCaseEmpty(self.grille,(new_y,new_x)) or checkCanEat(self.grille,coord,(new_y,new_x))):
-                    movements.append((coord,(new_y,new_x)))
+                    movement_list.append((coord,(new_y,new_x)))
 
         return movement_list
 
@@ -358,11 +358,15 @@ class Board:
             if not(checkCaseEmpty(self.grille,possible_positions[i][1])):
                 piecesToRemove.append((possible_positions[i][1],getPiece(self.grille,possible_positions[i][1])))
         
-        for j in range(len(piecesToRemove)):
+        emptyCase(self.grille,piecesToRemove[0][0])
+        opponent_movements = self.getThreatenedCases(self.grille,king)
+
+
+        for j in range(1,len(piecesToRemove)):
             emptyCase(self.grille,piecesToRemove[j][0])
 
 
-        opponent_movements = self.getThreatenedCases(self.grille,king)
+        opponent_movements += self.getThreatenedCases(self.grille,king)
 
         
         for z in range(len(piecesToRemove)):
