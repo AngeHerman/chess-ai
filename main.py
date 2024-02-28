@@ -2,6 +2,7 @@ from chess.board import *
 from chess.utils import *
 from api.lichess import *
 from tests.test_board import *
+from ai.monte_carlo import *
 import threading
 import time
 import os
@@ -49,12 +50,15 @@ def play_against_player():
 if __name__ == "__main__":
     # play_against_ai()
     #play_against_player()
-    """plateau = Board()
+    plateau = Board()
     plateau.print_Board()
-    print(get_coord("f4"))"""
+    #print(plateau.getAllMovesBasedOnTurn())
+    print(mcts(plateau,30))
+    # plateau.print_Board()
+    # print(get_coord("f4"))
 
     #test_knightMovement((4,4))
     #test_bishopMovement((4,4))
     #test_rookMovement((4,4))
     #test_kingMovement(())
-    test_kingMovement((4,4))
+    #test_kingMovement((4,4))

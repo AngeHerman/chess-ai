@@ -13,7 +13,7 @@ class Board:
             [PION_NOIR] * 8,
             [TOUR_NOIR, CAVALIER_NOIR, FOU_NOIR, DAME_NOIRE, ROI_NOIR, FOU_NOIR, CAVALIER_NOIR, TOUR_NOIR]
         ]
-        self.turn = 0
+        self.turn = 1
         self.pMoves = []
         self.isGameEnded = False
 
@@ -24,10 +24,10 @@ class Board:
     def play_move(self, coup):
 
         if coup in self.pMoves:
-
             piece = getPiece(self.grille,coup[0])
             emptyCase(self.grille,coup[0])
             addPieceToCase(self.grille,coup[1],piece)
+            self.turn += 1
             return True
         
         return False
@@ -40,7 +40,6 @@ class Board:
        # pass  
     def getAllMovesBasedOnTurn(self):
 
-        self.turn += 1
         color = BLANC if self.turn%2 == 1 else NOIR
         self.pMoves = self.getAllAvailableMoves(color)            
 
