@@ -25,7 +25,10 @@ headers = {
 class Lichess:
     def __init__(self):
         self.moves = ""
-        self.game_started = False
+        self.game_against_player_started = False
+        self.game_against_ai_started = False
+        self.game_id = None
+        self.color = None
     
     def stream_events(self):
         url = BASE_URL+"/api/stream/event"
@@ -39,7 +42,7 @@ class Lichess:
 
     def stream_board_state(self,is_my_turn):
         
-        url = f"{BASE_URL}/api/bot/game/stream/{GAME_ID}"
+        url = f"{BASE_URL}/api/bot/game/stream/{self.game_id}"
         with requests.get(url, headers=headers, stream=True) as response:
             for line in response.iter_lines():
                 if line:
@@ -71,7 +74,7 @@ class Lichess:
             return False
 
     def make_move(self,move,is_my_turn):
-        url = f"{BASE_URL}/api/bot/game/{GAME_ID}/move/{move}"
+        url = f"{BASE_URL}/api/bot/game/{self.game_id}/move/{move}"
         response = requests.post(url, data='', headers=headers)
         if response.status_code == CODE_MOVE_SUCCES:
             is_my_turn.clear()
@@ -103,20 +106,30 @@ class Lichess:
         moves_splited = string_moves.split()
         len_moves = len(moves_splited)
         print("-------------------------------------------------------------------Longueur est "+str(len(moves_splited)))
-        if(len_moves %2 == 0):
-            is_my_turn.clear()
-            print("pas mon tour")
-        else:
-            is_my_turn.set()
-            print("mon tour ")
+        if(self.color == "black"):
+            if (len_moves %2 == 0):
+                is_my_turn.clear()
+                print("pas mon tour")
+            else:
+                is_my_turn.set()
+                print("mon tour ")
+        if(self.color == "white"):
+            if (len_moves %2 == 1):
+                is_my_turn.clear()
+                print("pas mon tour")
+            else:
+                is_my_turn.set()
+                print("mon tour ")
         # all_moves[0] = string_moves
         self.moves = string_moves
 
     def handle_challenge_accepted(self,response_json):
-        global GAME_ID
-        GAME_ID = response_json[0].get("id")
-        print("Challenge ID:", GAME_ID)
-        #print(response_json)
+        #global GAME_ID
+        if self.game_id is None:
+            self.color = COLOR
+            self.game_id = response_json[0].get("id")
+            print("Challenge ID:", self.game_id)
+            #print(response_json)
         
     def handle_event(self,event):
         nombre_d_elements = len(event)
@@ -139,7 +152,7 @@ class Lichess:
 
     def handle_game_start(self,event):
         print("game start")
-        self.game_started = True
+        
 
     def handle_game_finish(self,event):
         print("game finish")
@@ -161,15 +174,18 @@ class Lichess:
         print(f"Color: {color}")
         print(f"Final color: {final_color}")
         print(f"Speed: {speed}")
-        self.accept_challenge(challenge_id)
+        self.color = final_color
+        if self.game_id is None:
+            self.accept_challenge(challenge_id)
     
     def accept_challenge(self,challenge_id):
         url = f"{BASE_URL}/api/challenge/{challenge_id}/accept"
         response = requests.post(url, headers=headers)
         if response.status_code == CODE_CHALLENGE_ACCEPTED_SUCCES:
             print("challenge request successful")
-            global GAME_ID
-            GAME_ID = challenge_id
+            #global GAME_ID
+            self.game_id = challenge_id
+            self.game_against_player_started = True
         else:
             print("Failed to accept challenge request")
             print(response)

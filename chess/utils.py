@@ -1,11 +1,32 @@
 
 from chess.constants import *
 
-def get_coord(case):
+def cell_to_chess_notation(row, col):
     # Retourne les vrais coordonnées à partir d'une string de type e4.
-    #Cette foonction n'utilise pas vraiment le plateau du coup peut-etre on devra la déplacer dans une classe statique
-    colonne, ligne = ord(case[0]) - ord('a'), int(case[1]) - 1
-    return ligne, colonne
+    lettre = chr(ord('h') - col)
+    nombre = str(row+1)
+    return lettre + nombre
+
+def move_to_chess_notation(move):
+    return cell_to_chess_notation(move[0][0],move[0][1])+cell_to_chess_notation(move[1][0],move[1][1])
+
+def chess_notation_to_cell(coord):
+    lettre = coord[0]
+    nombre = int(coord[1])
+    col = ord('h') - ord(lettre)
+    row = nombre - 1
+    return row, col
+
+def chess_notation_to_move(notation):
+    start_coord = chess_notation_to_cell(notation[:2])
+    end_coord = chess_notation_to_cell(notation[2:])
+    return start_coord, end_coord
+
+def moves_en_trop(my_moves, all_moves):
+    set_my_moves = set(my_moves)
+    set_all_moves = set(all_moves)
+    mouvements_en_trop = set_all_moves - set_my_moves
+    return list(mouvements_en_trop)
 
 def isValueBounded(val,bound):
     return val <= bound and val >= 0

@@ -27,7 +27,12 @@ def select(node):
 def expand(node):
     # TODO
     # Ajouter booleen myturn au plateau et gameover ainsi que win
-    node.state.getAllMovesBasedOnTurn()
+    try:
+        node.state.getAllMovesBasedOnTurn()
+        random.shuffle(node.state.pMoves)
+    except IndexError as e:
+        print("Petite Erreur")
+        pass
     for move in node.state.pMoves:
         new_state = copy.deepcopy(node.state)
         new_state.play_move(move)
@@ -38,8 +43,11 @@ def simulate(node):
     print("*")
     # while not state.isGameEnded:
     for _ in range(10):
-        #TODO
-        state.getAllMovesBasedOnTurn()
+        try:
+            state.getAllMovesBasedOnTurn()
+        except IndexError as e:
+            print("Petite Erreur")
+        pass
         if (len(state.pMoves) > 0):
             # print("Liste des mouvements possibles :", state.pMoves)
             random_move = random.choice(state.pMoves)
@@ -60,7 +68,7 @@ def mcts(state, iterations):
         expand(selected_node)
         reward = simulate(selected_node)
         backpropagate(selected_node, reward)
-    # Une fois que les itérations sont terminées, choisir la meilleure action
+    # Ici on prends sommets plus visité mais ce serait peut etre bien de prens le plus rewardé
     best_action = max(root.children, key=lambda action: root.children[action].visits)
     return best_action
 
