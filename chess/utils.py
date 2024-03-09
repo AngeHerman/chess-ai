@@ -22,11 +22,10 @@ def chess_notation_to_move(notation):
     end_coord = chess_notation_to_cell(notation[2:])
     return start_coord, end_coord
 
-def moves_en_trop(my_moves, all_moves):
-    set_my_moves = set(my_moves)
-    set_all_moves = set(all_moves)
-    mouvements_en_trop = set_all_moves - set_my_moves
-    return list(mouvements_en_trop)
+def elements_en_trop(my_elts, all_elts):
+    i = len(my_elts)
+    elts_en_trop = all_elts[i:]
+    return elts_en_trop
 
 def isValueBounded(val,bound):
     return val <= bound and val >= 0

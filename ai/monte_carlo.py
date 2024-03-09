@@ -40,13 +40,14 @@ def expand(node):
 
 def simulate(node):
     state = node.state
-    print("*")
+    # print("*")
     # while not state.isGameEnded:
-    for _ in range(10):
+    for _ in range(50):
         try:
             state.getAllMovesBasedOnTurn()
         except IndexError as e:
             print("Petite Erreur")
+            print(e)
         pass
         if (len(state.pMoves) > 0):
             # print("Liste des mouvements possibles :", state.pMoves)

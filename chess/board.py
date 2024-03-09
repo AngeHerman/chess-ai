@@ -4,14 +4,14 @@ from chess.utils import *
 class Board:
     def __init__(self):
         self.grille = [
-            [TOUR_BLANC, CAVALIER_BLANC, FOU_BLANC, DAME_BLANCHE, ROI_BLANC, FOU_BLANC, CAVALIER_BLANC, TOUR_BLANC],
+            [TOUR_BLANC, CAVALIER_BLANC, FOU_BLANC, ROI_BLANC, DAME_BLANCHE, FOU_BLANC, CAVALIER_BLANC, TOUR_BLANC],
             [PION_BLANC] * 8,
             [0] * 8,
             [0] * 8,
             [0] * 8,
             [0] * 8,
             [PION_NOIR] * 8,
-            [TOUR_NOIR, CAVALIER_NOIR, FOU_NOIR, DAME_NOIRE, ROI_NOIR, FOU_NOIR, CAVALIER_NOIR, TOUR_NOIR]
+            [TOUR_NOIR, CAVALIER_NOIR, FOU_NOIR, ROI_NOIR, DAME_NOIRE, FOU_NOIR, CAVALIER_NOIR, TOUR_NOIR]
         ]
         self.turn = 1
         self.pMoves = []
@@ -31,6 +31,13 @@ class Board:
             return True
         
         return False
+    
+    def force_play_move(self, coup):
+        piece = getPiece(self.grille,coup[0])
+        emptyCase(self.grille,coup[0])
+        addPieceToCase(self.grille,coup[1],piece)
+        self.turn += 1
+        return True
 
     
 
@@ -230,7 +237,7 @@ class Board:
         if(areCoordinatesBounded(coord[0] + move_value,coord[1] ) and checkCaseEmpty(self.grille,(coord[0] + move_value,coord[1]))):
             movement_list.append((coord,(coord[0] + move_value,coord[1])))
 
-            if(coord[0] == special_position) :
+            if(coord[0] == special_position and checkCaseEmpty(self.grille,(coord[0] + move_value*2,coord[1]))) :
                 movement_list.append((coord,(coord[0]+ move_value * 2,coord[1])))
         
         movement_list += self.pawn_eatPieceMovements(coord,-move_value)        

@@ -24,7 +24,7 @@ headers = {
 
 class Lichess:
     def __init__(self):
-        self.moves = ""
+        self.moves = []
         self.game_against_player_started = False
         self.game_against_ai_started = False
         self.game_id = None
@@ -81,7 +81,7 @@ class Lichess:
             print("Move successful")
             return True
         else:
-            print("Failed to make move")
+            print("Failed to make move "+str(move))
             return False
 
     def process_ndjson_response(self,response):
@@ -121,7 +121,10 @@ class Lichess:
                 is_my_turn.set()
                 print("mon tour ")
         # all_moves[0] = string_moves
-        self.moves = string_moves
+        self.moves = moves_splited
+        print("Moves splited")
+        print(self.color)
+        print(moves_splited)
 
     def handle_challenge_accepted(self,response_json):
         #global GAME_ID
