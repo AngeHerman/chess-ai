@@ -31,6 +31,27 @@ class Board:
             return True
         
         return False
+    
+    def endGame(self):
+
+        moveBlanc = self.getAllAvailableMoves(BLANC)
+        moveNoir = self.getAllAvailableMoves(NOIR)
+
+        gagnant = 0
+        ''' à vérifier les conditions pour exéquo '''
+        if len(moveBlanc) == 0 :
+            gagnant = NOIR
+            self.isGameEnded = True
+        elif len(moveNoir) == 0:
+            gagnant = BLANC
+            self.isGameEnded = True
+        
+        return gagnant
+
+    
+    
+
+
 
     
 
@@ -100,6 +121,7 @@ class Board:
                     threatenedPathsToRemove.append(i)
                 if len(pieces) == 1:
                     protectList += pieces
+    
 
         for j in range(len(threatenedPathsToRemove)):
             kingSurroundings.pop(threatenedPathsToRemove[j])
