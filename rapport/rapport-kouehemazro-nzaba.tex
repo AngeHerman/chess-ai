@@ -68,22 +68,23 @@ package {\tt ai} est celui qui contient les fichiers en rapport avec notre IA ba
 de récupération er d'envoie de données etc. Enfin le package {\tt chess} contient tout ce qui est en rapport avec
 notre representaion du jeu d'echecs, les fonctions pour avoir tous les coups possibles etc ...
 
-\paragraph{Représentation des données.} Nous avons representé le plateau de jeu comme un tableau d'entier
-pour que ca prenne le moins de place que possible dans la mémoire vu que notre algorythme de recherche
-passera par des milliers de plateau de jeu. Nous comptons aussi introduire plus tard fichier pour
-stocker les mouvements de debut de game comme celui qui permet de liberer le fou ou la reine.
+\paragraph{Représentation des données.} Nous avons representé le plateau de jeu comme un tableau d'entier pour que ca prenne le moins de place que possible dans la mémoire vu que notre algorythme de recherche passera par des milliers de plateau de jeu. Nous comptons aussi introduire plus tard fichier pour stocker les mouvements de debut de game comme celui qui permet de liberer le fou ou la reine.
 
-\paragraph{Technologies sur lesquelles notre code s'appuie.} Notre IA se base sur l'algorythme de recherche
-arborescente Monte Carlo et nous utilisons aussi l'api de lichess.org pour la partie graphique.
+\paragraph{Technologies sur lesquelles notre code s'appuie.} Notre IA se base sur l'algorythme de recherche arborescente Monte Carlo et nous utilisons aussi l'api de lichess.org pour la partie graphique.
 
 \section{Jalons}
 \paragraph{Tâches à realiser pour conclure le projet.} 
-\begin{enumerate}
-  \item Regler les bugs dans les mouvements des pièces
-  \item Permettre à un utilisateur lambda de jouer contre notre IA
-\end{enumerate}
+
 
 \paragraph{Organisation temporelle des tâches.}
+\begin{enumerate}
+  \item Regler les bugs dans les mouvements des pièces
+  \item Changer la conception en rajoutant des objets pieces
+  \item Faire un bon calcul de l'etat pour un bon choix des coups
+  \item Permettre à un utilisateur lambda de jouer contre notre IA
+  \item Simualtionde  plusieurs parties contre les ia de lichess pour sortir les pourcentages de victoires
+\end{enumerate}
+
 \begin{figure}[h]
   \label{fig:geant}
   \hrulefill
@@ -93,11 +94,10 @@ arborescente Monte Carlo et nous utilisons aussi l'api de lichess.org pour la pa
   \caption{A picture of the GEANT network.}
   \hrulefill
 \end{figure}
-
-
-
 \paragraph{Tâches déja terminées.}
+
 \begin{enumerate}
+
   \item Partie de l'api qui permet à notre IA de jouer contre celles de lichess
   \item Implémentation de l'algorythme de recherche arborescente Monte Carlo
   \item Implémentaion des mouvements d'échecs sauf celui du roi ( Encore quelques bugs)
