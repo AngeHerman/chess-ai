@@ -4,14 +4,14 @@ from chess.piece import *
 
 
 class Rook(Piece):
-    def __init__(self,color):
-        pass
+    def __init__(self, color):
+        super().__init__(color, TOUR)
 
     def print(self):
         if (self.color == BLANC):
-            print(TOUR_BLANC)
+            print(TOUR_BLANC,end="")
         else:
-            print(TOUR_NOIR)
+            print(TOUR_NOIR,end="")
 
     def rook_movement(self,tab,width,height):
 

@@ -15,31 +15,40 @@ class Board2:
     def __init__(self):
         self.grille = [
             [Rook(BLANC), Knight(BLANC), Bishop(BLANC), Queen(BLANC),  King(BLANC), Bishop(BLANC),Knight(BLANC) , Rook(BLANC)],
-            [Pawn(BLANC)]* 8,
+            [Pawn(BLANC),Pawn(BLANC),Pawn(BLANC),Pawn(BLANC),Pawn(BLANC),Pawn(BLANC),Pawn(BLANC),Pawn(BLANC)],
             [None] * 8,
             [None] * 8,
             [None] * 8,
             [None] * 8,
-            [Pawn(NOIR)] * 8,
-            [Rook(NOIR),CAVALIER_NOIR, Bishop(NOIR),  Queen(NOIR), King(NOIR), Bishop(NOIR), Knight(NOIR), Rook(NOIR)]
+            [Pawn(NOIR),Pawn(NOIR),Pawn(NOIR),Pawn(NOIR),Pawn(NOIR),Pawn(NOIR),Pawn(NOIR),Pawn(NOIR)],
+            [Rook(NOIR),Knight(NOIR), Bishop(NOIR),  Queen(NOIR), King(NOIR), Bishop(NOIR), Knight(NOIR), Rook(NOIR)]
         ]
+        self.initializeCoordinates()
         self.turn = 0
         self.pMoves = []
         self.isGameEnded = False
 
     def print_Board(self):
-        for ligne in self.grille:
-            for colonne in self.grille[ligne]:
-                if(self.grille[ligne][colonne] != None):
+        for ligne in range(0,len(self.grille)):
+            print("[",end="")
+            for colonne in range(0,len(self.grille[ligne])):
+                if(isinstance(self.grille[ligne][colonne],Piece)):
                     self.grille[ligne][colonne].print()
+                    if colonne < len(self.grille[ligne]) - 1:
+                        print(", ",end="")
                 else:
-                    print(0)
+                    print(0,end="")
+                    if colonne <len(self.grille[ligne]) - 1:
+                        print(", ",end="")
+
+            print("]")
 
     def initializeCoordinates(self):
-        for y in self.grille:
-            for x in self.grille[y]:
-                if(self.grille[y][x] != None):
-                    self.grille[y][x].coordinates((y,x))
+        for y in range(0,len(self.grille)):
+            for x in range(0,len(self.grille[y])):
+                if(isinstance(self.grille[y][x],Piece)):
+                    self.grille[y][x].setCoordinates((y,x))
+
             
     def play_move(self, coup):
 
@@ -82,13 +91,13 @@ class Board2:
     def getAllAvailableMoves(self,color):
         
         pMoves = []
-        pieces = getAllPiecesCoordinatesFromColor(self.grille,color)
+        pieces = getAllPiecesFromColor(self.grille,color)
         kingSurroundings = []
         kingPosition = (0,0)
         
         for i in range(len(pieces)):
             
-            pMoves.append(pieceMovement(pieces[i]))
+            pMoves += pieceMovement(pieces[i],self.grille)
 
             if pieces[i].name == "ROI":
                 kingSurroundings = self.getKingSurrondings(pieces[i])
@@ -100,8 +109,8 @@ class Board2:
         if len(kingSurroundings) > 0 :
             kingSurroundingsFlattened = [kingSurroundings[i][1][j] for i in range(len(kingSurroundings)) for j in range(len(kingSurroundings[i][1]))]
             return [pMoves[i] for i in range(len(pMoves)) if pMoves[i][1] in kingSurroundingsFlattened and not(pMoves[i][0] in protectionList) or pMoves[i][0] == kingPosition ]
-            
-        return [pMoves[i] for i in range(len(pMoves)) if not(pMoves[i][0] in protectionList)]
+        
+        return pMoves
         
     def getPieceCoordinatesInBetweenPath(self,path):
         return [path[i] for i in range(len(path)) if getPiece(self.grille,path[i]) != 0]

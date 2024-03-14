@@ -3,14 +3,14 @@ from chess.utils import *
 from chess.piece import *
 
 class Knight(Piece):
-    def __init__(self,color):
-        pass
+    def __init__(self, color):
+        super().__init__(color, CAVALIER)
 
     def print(self):
         if (self.color == BLANC):
-            print(CAVALIER_BLANC)
+            print(CAVALIER_BLANC,end="")
         else:
-            print(CAVALIER_NOIR)
+            print(CAVALIER_NOIR,end="")
 
     def knight_movement(self,tab):
 

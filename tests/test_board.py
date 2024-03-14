@@ -1,9 +1,9 @@
-from chess.board import *
+from chess.board2 import *
 from chess.utils import *
 
 
 def test_knightMovement(coord):
-    plateau = Board()
+    plateau = Board2()
     addPieceToCase(plateau.grille,coord,CAVALIER_NOIR)
 
     movements = [(coord[0] + 2,coord[1] + 1),(coord[0]+2,coord[1]-1),(coord[0]-2,1),(coord[0]-2,coord[1]-1),(coord[0]+1,coord[1] + 2),(coord[0]+1,coord[1]-2),(coord[0]-1,coord[1]+2),(coord[0]-1,coord[1]-2)]
@@ -20,7 +20,7 @@ def test_knightMovement(coord):
 
 
 def test_bishopMovement(coord):
-    plateau = Board()
+    plateau = Board2()
     addPieceToCase(plateau.grille,coord,FOU_NOIR)
 
     movements = [(coord[0] + 1, coord [1] + 1),(coord[0] - 1, coord [1] - 1),(coord[0]- 1, coord [1] + 1),(coord[0] + 1, coord [1] - 1)]
@@ -39,7 +39,7 @@ def test_bishopMovement(coord):
 
 
 def test_rookMovement(coord):
-    plateau = Board()
+    plateau = Board2()
     addPieceToCase(plateau.grille,coord,TOUR_NOIR)
 
     movements = [(coord[0] + 1, coord [1]),(coord[0] - 1, coord [1]),(coord[0], coord [1] + 1),(coord[0], coord [1] - 1)]
@@ -63,7 +63,7 @@ def test_queenMovement(coord):
 """D'autres tests sont à rajoutés pour le roi ..."""
 def test_kingMovement(coord):
     
-    plateau = Board()
+    plateau = Board2()
 
     """Test des mouvements du roi lorsque pièce est protégé"""
     queenCoordinates = (coord[0]-1,coord[1])
@@ -77,6 +77,12 @@ def test_kingMovement(coord):
 
     assert(not queenCoordinates in movementList)
 
+def test_allMovementsAvailable():
+
+    plateau = Board2()
+
+    print(plateau.getAllAvailableMoves(NOIR))
+    plateau.print_Board()
 
 
 

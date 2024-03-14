@@ -17,15 +17,17 @@ def isValueBounded(val,bound):
 def areCoordinatesBounded(x,y):
     return isValueBounded(x,WIDTH - 1) and isValueBounded(y,HEIGHT-1)
 
-def checkCaseEmpty(board,coord):
-    return board[coord[0]][coord[1]] == None
+
 
 def checkCanEat(board,coord,coord2):
 
     piece = getPiece(board,coord)
     targetPiece = getPiece(board,coord2)
 
-    return (piece > 0 and targetPiece < 0) or (piece < 0 and targetPiece > 0)
+    if piece == None or targetPiece == None:
+        return False
+
+    return (piece.color != targetPiece.color)
 
 def emptyCase(board,coord):
     board[coord[0]][coord[1]] = None
@@ -70,52 +72,57 @@ def getPiece(tab,coord):
 
     if(areCoordinatesBounded(coord[0],coord[1])):
         return tab[coord[0]][coord[1]]
-    return 0
+    return None
 
-def getAllPieces(piece,color):        
-    return [getPiece(i,j) for i in range (0, WIDTH) for j in range(0,HEIGHT) if checkPieceColor((i,j),color) and checkPieceName((i,j),piece)]
+def getAllPieces(tab,color):        
+    return [getPiece(tab,(i,j)) for i in range (0, WIDTH) for j in range(0,HEIGHT) if checkPieceColor(tab,(i,j),color) and checkPieceName(tab,(i,j),piece)]
 
-def getAllPiecesFromColor(color):
-    return [getPiece(i,j) for i in range (0, WIDTH) for j in range(0,HEIGHT) if checkPieceColor((i,j),color) ]
+def getAllPiecesFromColor(tab,color):
+    return [getPiece(tab,(i,j)) for i in range (0, WIDTH) for j in range(0,HEIGHT) if checkPieceColor(tab,(i,j),color) ]
 
-def checkPieceColor(coord,color):
+def checkPieceColor(tab,coord,color):
+    if checkCaseEmpty(tab,coord): return False
+    return getPiece(tab,coord).color == color
+
+def checkPieceName(tab,coord,name):
     if checkCaseEmpty(coord): return False
-    return getPiece(coord).color == color
+    return getPiece(tab,coord).name == name
 
-def checkPieceName(self,coord,name):
-    if checkCaseEmpty(coord): return False
-    return getPiece(coord).name == name
-
-def checkCaseEmpty(self,coord):
-    return getPiece(coord) == None
+def checkCaseEmpty(tab,coord):
+    return getPiece(tab,coord) == None
 
 def getAdvesaryColor(color):    
     adversaryColor = BLANC if color == NOIR else NOIR
     return adversaryColor
 
 
-def pieceMovement(piece):
-    if piece.name == "BISHOP":
-        return piece.bishop_movement()
-    elif piece.name == "ROOK":
-        return piece.rook_movement()
-    elif piece.name == "KNIGHT":
-        return piece.knight_movement()
-    elif piece.name == "QUEEN":
-        return piece.queen_movement()
-    elif piece.name == "KING":
-        return piece.king_movement() 
+def pieceMovement(piece,tab):
+    if piece.name == FOU:
+        return piece.bishop_movement(tab,WIDTH)
+    elif piece.name == TOUR:
+        return piece.rook_movement(tab,WIDTH,HEIGHT)
+    elif piece.name == CAVALIER:
+        return piece.knight_movement(tab)
+    elif piece.name == DAME:
+        return piece.queen_movement(tab)
+    elif piece.name == PION:
+        return piece.pawn_movement(tab) 
+    elif piece.name == ROI:
+        return piece.king_movement(tab) 
     return []
 
 
-def getThreatenedCases(color):
+def getThreatenedCases(tab,color):
 
     adversaryColor = getAdvesaryColor(color)
-    allPieces = getAllPiecesFromColor(adversaryColor)
+    allPieces = getAllPiecesFromColor(tab,adversaryColor)
     threatenedCoordinates = []
 
     for i in range(0,len(allPieces)):
-        threatenedCoordinates.append(pieceMovement(allPieces[i]))
+        if allPieces[i].name == PION:
+            threatenedCoordinates += allPieces[i].pawn_ThreatenedCases()
+        elif allPieces[i].name != ROI:
+            threatenedCoordinates += (pieceMovement(allPieces[i],tab))
 
     return threatenedCoordinates
 

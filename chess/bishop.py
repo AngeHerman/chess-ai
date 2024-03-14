@@ -4,11 +4,19 @@ from chess.piece import *
 
 class Bishop(Piece):
 
+    def __init__(self, color):
+        super().__init__(color, FOU)
+
     def print(self):
         if (self.color == BLANC):
-            print(FOU_BLANC)
+            print(FOU_BLANC,end="")
         else:
-            print(FOU_NOIR)
+            print(FOU_NOIR,end="")
+
+    def __str__(self) -> str:
+
+        representation = FOU_BLANC if self.color == BLANC else FOU_NOIR
+        return representation
 
 
     def bishop_movement(self,tab,MAX):

@@ -3,15 +3,19 @@ from chess.utils import *
 from chess.piece import *
 
 class Pawn(Piece):
-    def __init__(self,color,direction):
-        self.color = color
-        self.direction = direction
 
+    def __init__(self, color):
+        super().__init__(color, PION)
+        self.direction = -1 if color == NOIR else 1
+    def __str__(self) -> str:
+
+        representation = PION_BLANC if self.color == BLANC else PION_NOIR
+        return str(representation)
     def print(self):
         if (self.color == BLANC):
-            print(PION_BLANC)
+            print(PION_BLANC,end="")
         else:
-            print(PION_NOIR)
+            print(PION_NOIR,end="")
 
 
     def pawn_movement(self,grille):
@@ -27,7 +31,7 @@ class Pawn(Piece):
             if(self.coordinates[0] == special_position) and  checkCaseEmpty(grille,(self.coordinates[0] + self.direction * 2,self.coordinates[1])):
                 movement_list.append((self.coordinates,(self.coordinates[0]+ self.direction * 2,self.coordinates[1])))
         
-        movement_list += self.pawn_eatPieceMovements()        
+        movement_list += self.pawn_eatPieceMovements(grille)        
         return movement_list
                 
 

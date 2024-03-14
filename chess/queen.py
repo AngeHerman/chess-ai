@@ -3,14 +3,14 @@ from chess.utils import *
 from chess.piece import *
 
 class Queen(Piece):
-    def __init__(self,color):
-        pass
+    def __init__(self, color):
+        super().__init__(color, DAME)
 
     def print(self):
         if (self.color == BLANC):
-            print(DAME_BLANCHE)
+            print(DAME_BLANCHE,end="")
         else:
-            print(DAME_NOIRE)
+            print(DAME_NOIRE,end="")
 
     def queen_movement(self,tab):
         

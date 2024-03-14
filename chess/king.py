@@ -5,15 +5,15 @@ from chess.piece import *
 
 class King(Piece):
     def __init__(self,color):
+        super().__init__(color,ROI)
         self.isThreatened = False
         self.moves = []
-        pass
 
     def print(self):
         if (self.color == BLANC):
-            print(ROI_BLANC)
+            print(ROI_BLANC,end="")
         else:
-            print(ROI_NOIR)
+            print(ROI_NOIR,end="")
         
 
 
@@ -37,19 +37,19 @@ class King(Piece):
             if not(checkCaseEmpty(tab,possible_positions[i][1])):
                 piecesToRemove.append(getPiece(tab,possible_positions[i][1]))
         
-        emptyCase(tab,piecesToRemove[0])
-        opponent_movements = getThreatenedCases(self.color)
+        emptyCase(tab,piecesToRemove[0].coordinates)
+        opponent_movements = getThreatenedCases(tab,self.color)
 
         for j in range(1,len(piecesToRemove)):
-            emptyCase(tab,piecesToRemove[j])
+            emptyCase(tab,piecesToRemove[j].coordinates)
 
 
-        opponent_movements += getThreatenedCases(self.color)
+        opponent_movements += getThreatenedCases(tab,self.color)
 
         for z in range(len(piecesToRemove)):
-            addPieceToCase(tab,piecesToRemove[z][0],piecesToRemove[z][1])
+            addPieceToCase(tab,piecesToRemove[z].coordinates,piecesToRemove[z])
 
-        opponent_movements += self.getThreatenedCases(self.color)
+        opponent_movements += getThreatenedCases(tab,self.color)
         
         opponent_movements_pos = [opponent_movements[i][1] for i in range(0,len(opponent_movements))]
         positions = [possible_positions[i] for i in range(0,len(possible_positions)) if not(possible_positions[i][1] in opponent_movements_pos)]
