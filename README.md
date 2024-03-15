@@ -2,44 +2,40 @@
 
 ## Problèmes
 
-Implémenter le jeu d'Echec ainsi qu'un IA se basant sur l'IA d'echecs mondialement connu Stockfish.
+Implémenter le jeu d'Echec ainsi qu'un IA sur l'algorithme de Monte Carlo.
 Premièrement on implémentera, une version du jeu d'echec, ensuite
-on implémentera une IA qui se base sur l'algorithme de d'élagage alpha beta avec une fonction d'évaluation qu'on complétera au fil du temps.
-On évite d'utiliser un algorithme brute force pour l'implémentation
-du joueur IA, afin d'éviter de parcourir des sommets inutiles ce qui augmente
-la complexité de l'algorithme.
-Avec l'algorithme d'élagage, on évite d'explorer des sommets inutiles, de ce
-fait la complexité de celui-ci est meilleur.
+on implémentera une IA qui se base sur l'algorithme de Monte Carlo avec une fonction de calcul de récompense 
+qu'on complétera au fil du temps.
+L'algorithme étant basé sur le hasard, il est nécessaire pour nous de trouver des moyens pour rendre
+notre IA intelligente.
 
 ## Objectifs
 
 - Principaux : 
-Mettre en place une version textuel du jeu d'Echec.
-Analyser les facteurs rentrant en jeu pour la fonction d'évaluation
-de sommets de l'arbre de recherche de meilleur coup afin d'ensuite
-Implémenter l'algorithme d'élagage Alpha-Beta de notre IA.
+Mettre en place une implémentation du jeu d'Echec.
+Analyser les facteurs rentrant en jeu pour la partie simulation de l'algorithme
+de Monte Carlo
+Implémenter l'algorithme de Monte Carlo.
+Mettre en place la communication entre l'API Lichess et notre implémentation
 
 - Intermédiaire : 
-Implémenter des niveaux de difficultés pour l'IA, qui sera basé sur 
-l'amélioration de la fonction d'évaluation
-Ajouter une version graphique du jeu d'Echec
+Identifier des stratégies permettant d'améliorer l'efficacité de l'IA
 
 - Supplémentaires :  
-Ameliorer l'IA en rajoutant d'autres facteurs dans la fonction d'évaluation
-Implémenter l'annulation du dernier coup
+Mettre en place la possibilité qu'un utilisateur d'affronter l'IA
 
 
 ## Testabilité
 - Vérifier la fin du jeu.
-- Tester l'amelioration des fonctions d'évaluation en faisant jouer les IA les unes contre les autres.
-- Tester la liaison entre le backend et le plateau en frontend.
+- Tester l'algorithme en faisant jouer les IA les unes contre les autres.
 
 
 ## Originalité
-Implémenter le jeu d'Echec ainsi qu'un IA se basant sur l'algorythme de Monte Carlo
+Implémenter le jeu d'Echec ainsi qu'un IA se basant sur l'algorithme de Monte Carlo, basé sur le hasard
 
 ## Collage API
-On utilise l'api de lichess.org pour la partie graphique
+On utilise uniquement l'API de Lichess.org, comme convenu avec les professeurs, cela nous permet de ne pas
+avoir à implémenter la partie graphique de notre implémentation du jeu d'échec.
 
 ## Calendrier/ Jalons
 
@@ -56,7 +52,7 @@ On utilise l'api de lichess.org pour la partie graphique
 
 ## Les IA d'échecs trouvé
 - Deep blue : première victoire d'un ordinateur contre un humain en mai 1997. Il a battu le champion du monde Garry Kasparov lors d’un match en six parties.
-C'est l'alogrythme bếte dont on avais parlé la dernière fois. IBM a créer un ordi special avec un super chip de 32 microprocesseur pour que l'IA puisse
+C'est l'algorithme bếte dont on avais parlé la dernière fois. IBM a créer un ordi special avec un super chip de 32 microprocesseur pour que l'IA puisse
 parcourir a fond tout l'arbre de recherche et prendre les meilleures coups, ça a une complexité énorme et n'est pas du tout intélligent.
 - Stockfish: Il fait une recherche des meilleurs coups dans le graphe mais avec de l'élagage alpha beta pour supprimer des noeuds fils inutiles à explorer.il a aussi une fonction
 d'évaluation de sommets. Une mauvaise fonction d'évalutaion peut être la différence entre une IA qui cherche à perdre ou à gagner. La fonction d'evalution
