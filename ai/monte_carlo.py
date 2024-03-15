@@ -12,7 +12,7 @@ class Node:
         self.parent = parent
 
 def select(node):
-    exploration_constant = 1.0  # Costante d'explration just pour definir a quel point explorationest important
+    exploration_constant = 1.0  # Constante d'explration just pour definir a quel point l'exploration est plus important que exploitation
     best_score = float('-inf')  # Init du meilleur score à moins infin
     selected_child = None
     for action, child_node in node.children.items():
