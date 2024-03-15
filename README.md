@@ -36,10 +36,10 @@ Implémenter l'annulation du dernier coup
 
 
 ## Originalité
-Implémenter le jeu d'Echec ainsi qu'un IA se basant sur l'IA d'echecs mondialement connu Stockfish
+Implémenter le jeu d'Echec ainsi qu'un IA se basant sur l'algorythme de Monte Carlo
 
 ## Collage API
-On utilise aucune API
+On utilise l'api de lichess.org pour la partie graphique
 
 ## Calendrier/ Jalons
 
