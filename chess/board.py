@@ -32,14 +32,13 @@ class Board:
         
         return False
     
-<<<<<<< HEAD
     def force_play_move(self, coup):
         piece = getPiece(self.grille,coup[0])
         emptyCase(self.grille,coup[0])
         addPieceToCase(self.grille,coup[1],piece)
         self.turn += 1
         return True
-=======
+    
     def endGame(self):
 
         moveBlanc = self.getAllAvailableMoves(BLANC)
@@ -55,14 +54,6 @@ class Board:
             self.isGameEnded = True
         
         return gagnant
-
-    
-    
-
-
->>>>>>> eric
-
-    
 
     def moves(self, coord_depart):
         pass
