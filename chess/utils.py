@@ -1,19 +1,18 @@
 
 from chess.constants import *
 
-<<<<<<< HEAD
-def cell_to_chess_notation(row, col):
-=======
 
-"""
-Tout réadapter pour objet, ex vérif des empty et vider les cases 
-"""
-def get_coord(case):
->>>>>>> eric
+
+def cell_to_chess_notation(row, col):
     # Retourne les vrais coordonnées à partir d'une string de type e4.
     lettre = chr(ord('h') - col)
     nombre = str(row+1)
     return lettre + nombre
+
+def get_coord(case):
+    """
+    Tout réadapter pour objet, ex vérif des empty et vider les cases 
+    """
 
 def move_to_chess_notation(move):
     return cell_to_chess_notation(move[0][0],move[0][1])+cell_to_chess_notation(move[1][0],move[1][1])
