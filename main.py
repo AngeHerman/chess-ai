@@ -1,4 +1,4 @@
-from chess.board import *
+from chess.board2 import *
 from chess.utils import *
 from api.lichess import *
 from tests.test_board import *
@@ -102,6 +102,9 @@ def test():
     # plateau.turn += 1
     # plateau.getAllMovesBasedOnTurn()
     # print(plateau.pMoves)
+    print(get_coord("f4"))
+    #Bishop(NOIR)
+
     #test_knightMovement((4,4))
     #test_bishopMovement((4,4))
     #test_rookMovement((4,4))
@@ -114,3 +117,4 @@ if __name__ == "__main__":
     #test()
     
     
+    #test_allMovementsAvailable()

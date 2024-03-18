@@ -12,6 +12,15 @@ FOU_NOIR = -4
 DAME_NOIRE = -5
 ROI_NOIR = -6
 
+
+PION = "Pion"
+CAVALIER = "Cavalier"
+FOU = "Fou"
+TOUR = "Tour"
+DAME = "Dame"
+ROI = "Roi"
+
+
 HEIGHT = 8
 WIDTH = 8
 
