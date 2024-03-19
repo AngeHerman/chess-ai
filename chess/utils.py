@@ -50,6 +50,8 @@ def emptyCase(board,coord):
 
 def addPieceToCase(board,coord,piece):
     board[coord[0]][coord[1]] = piece
+    piece.setCoordinates(coord)
+
     
     
 

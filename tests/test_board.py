@@ -1,5 +1,6 @@
 from chess.board2 import *
 from chess.utils import *
+from chess.king import *
 
 
 def test_knightMovement(coord):
@@ -82,6 +83,21 @@ def test_allMovementsAvailable():
     plateau = Board2()
 
     print(plateau.getAllAvailableMoves(NOIR))
+    plateau.print_Board()
+
+
+
+def test_specificSituation():
+    
+    plateau = Board2()
+    plateau.force_play_move(((7,1),(5,2)))
+    plateau.force_play_move(((6,4),(5,4)))
+    plateau.force_play_move(((1,3),(3,3)))
+    plateau.force_play_move(((1,4),(3,4)))
+    plateau.force_play_move(((0,6),(2,5)))
+    
+    print(plateau.grille[7][3].king_movement(plateau.grille))
+   
     plateau.print_Board()
 
 
