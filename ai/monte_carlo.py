@@ -1,4 +1,4 @@
-from chess.board import *
+from chess.board2 import *
 import random
 import math
 import copy
@@ -62,7 +62,10 @@ def backpropagate(node, reward):
         node = node.parent
 
 def mcts(state, iterations):
-    root = Node(copy.deepcopy( state))
+    print("pppppppppppppppppppppppppppppppppppppppppppppppppppppp")
+    copie = copy.deepcopy(state)
+    copie.print_Board()
+    root = Node(copie)
     expand(root)
     for _ in range(iterations):
         selected_node = select(root)

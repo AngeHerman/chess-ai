@@ -8,7 +8,7 @@ import threading
 import time
 import os
 
-ITERATION_RECHERCHER_COUP = 400
+ITERATION_RECHERCHER_COUP = 50
 NOMBRE_ERREUR_AVANT_ARRET_JEU = 1
 ITERATION_BOUCLE_PRINCIPALE = 100
 def play_against_ai():
@@ -48,6 +48,10 @@ def play_against_ai():
                 plateau.print_Board()
                 print("Le move non trouvé est "+m)
                 print(chess_notation_to_move(m))
+                print("pMves ")
+                print(plateau.pMoves)
+                
+                os._exit(1)
         print("tour est "+ str(plateau.turn))
         best_move = mcts(plateau, iterations=ITERATION_RECHERCHER_COUP)
         if not api.make_move( move_to_chess_notation( best_move),is_my_turn):

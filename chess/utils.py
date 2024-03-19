@@ -108,7 +108,7 @@ def checkPieceColor(tab,coord,color):
     return getPiece(tab,coord).color == color
 
 def checkPieceName(tab,coord,name):
-    if checkCaseEmpty(coord): return False
+    if checkCaseEmpty(tab,coord): return False
     return getPiece(tab,coord).name == name
 
 def checkCaseEmpty(tab,coord):
