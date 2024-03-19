@@ -1,8 +1,6 @@
 
 from chess.constants import *
 
-
-
 def cell_to_chess_notation(row, col):
     # Retourne les vrais coordonnées à partir d'une string de type e4.
     lettre = chr(ord('h') - col)
@@ -57,6 +55,8 @@ def emptyCase(board,coord):
 
 def addPieceToCase(board,coord,piece):
     board[coord[0]][coord[1]] = piece
+    piece.setCoordinates(coord)
+
     
     
 

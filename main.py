@@ -1,7 +1,8 @@
 from chess.board2 import *
 from chess.utils import *
-from api.lichess import *
 from tests.test_board import *
+
+from api.lichess import *
 from ai.monte_carlo import *
 import threading
 import time
@@ -102,19 +103,17 @@ def test():
     # plateau.turn += 1
     # plateau.getAllMovesBasedOnTurn()
     # print(plateau.pMoves)
-    print(get_coord("f4"))
-    #Bishop(NOIR)
-
     #test_knightMovement((4,4))
     #test_bishopMovement((4,4))
     #test_rookMovement((4,4))
     #test_kingMovement(())
     #test_kingMovement((4,4))
-    
+    #test_allMovementsAvailable()
+
 if __name__ == "__main__":
-    play_against_ai()
+    test_specificSituation()
+    #play_against_ai()
     #play_against_player()
     #test()
     
     
-    #test_allMovementsAvailable()

@@ -14,14 +14,14 @@ from chess.king import *
 class Board2:
     def __init__(self):
         self.grille = [
-            [Rook(BLANC), Knight(BLANC), Bishop(BLANC), Queen(BLANC),  King(BLANC), Bishop(BLANC),Knight(BLANC) , Rook(BLANC)],
+            [Rook(BLANC), Knight(BLANC), Bishop(BLANC),  King(BLANC), Queen(BLANC), Bishop(BLANC),Knight(BLANC) , Rook(BLANC)],
             [Pawn(BLANC),Pawn(BLANC),Pawn(BLANC),Pawn(BLANC),Pawn(BLANC),Pawn(BLANC),Pawn(BLANC),Pawn(BLANC)],
             [None] * 8,
             [None] * 8,
             [None] * 8,
             [None] * 8,
             [Pawn(NOIR),Pawn(NOIR),Pawn(NOIR),Pawn(NOIR),Pawn(NOIR),Pawn(NOIR),Pawn(NOIR),Pawn(NOIR)],
-            [Rook(NOIR),Knight(NOIR), Bishop(NOIR),  Queen(NOIR), King(NOIR), Bishop(NOIR), Knight(NOIR), Rook(NOIR)]
+            [Rook(NOIR),Knight(NOIR), Bishop(NOIR),  King(NOIR), Queen(NOIR), Bishop(NOIR), Knight(NOIR), Rook(NOIR)]
         ]
         self.initializeCoordinates()
         self.turn = 0
@@ -49,7 +49,15 @@ class Board2:
                 if(isinstance(self.grille[y][x],Piece)):
                     self.grille[y][x].setCoordinates((y,x))
 
-            
+    
+    def force_play_move(self, coup):
+        piece = getPiece(self.grille,coup[0])
+        emptyCase(self.grille,coup[0])
+        addPieceToCase(self.grille,coup[1],piece)
+        self.turn += 1
+        return True
+
+
     def play_move(self, coup):
 
         if coup in self.pMoves:
@@ -57,7 +65,6 @@ class Board2:
             piece = getPiece(self.grille,coup[0])
             emptyCase(self.grille,coup[0])
             addPieceToCase(self.grille,coup[1],piece)
-            piece.setCoordinates(coup[1])
             return True
         
         return False
