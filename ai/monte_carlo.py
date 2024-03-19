@@ -62,7 +62,7 @@ def backpropagate(node, reward):
         node = node.parent
 
 def mcts(state, iterations):
-    root = Node(state)
+    root = Node(copy.deepcopy( state))
     expand(root)
     for _ in range(iterations):
         selected_node = select(root)

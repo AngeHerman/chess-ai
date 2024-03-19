@@ -13,7 +13,7 @@ NOMBRE_ERREUR_AVANT_ARRET_JEU = 1
 ITERATION_BOUCLE_PRINCIPALE = 100
 def play_against_ai():
     is_my_turn = threading.Event()
-    plateau = Board()
+    plateau = Board2()
     plateau.print_Board()
     current_moves = []
     api = Lichess()
@@ -29,6 +29,7 @@ def play_against_ai():
     for c in range (ITERATION_BOUCLE_PRINCIPALE):
         print(is_my_turn.is_set())
         is_my_turn.wait()
+        print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
         print("Current moves avant")
         print(current_moves)
         moves_en_trop = elements_en_trop(current_moves, api.moves)
@@ -38,11 +39,12 @@ def play_against_ai():
         print("moves en trop")
         print(moves_en_trop)
         print(type(moves_en_trop))
+        print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
         print("tour est "+ str(plateau.turn))
         for m in moves_en_trop:
             print("le move envoyé est "+m)
             plateau.getAllMovesBasedOnTurn()
-            if not plateau.force_play_move(chess_notation_to_move(m)) :
+            if not plateau.play_move(chess_notation_to_move(m)) :
                 plateau.print_Board()
                 print("Le move non trouvé est "+m)
                 print(chess_notation_to_move(m))
@@ -53,9 +55,7 @@ def play_against_ai():
             # print(move_to_chess_notation( best_move))
             erreur += 1
             plateau.print_Board()
-            cr = getPiecesCoordinates(plateau.grille,ROI_NOIR)
-            print(cr[0])
-            print(plateau.king_movement(cr[0]))
+            print(best_move)
             print("*************************************")
         if erreur == NOMBRE_ERREUR_AVANT_ARRET_JEU :
             os._exit(1)
@@ -111,8 +111,8 @@ def test():
     #test_allMovementsAvailable()
 
 if __name__ == "__main__":
-    test_specificSituation()
-    #play_against_ai()
+    # test_specificSituation()
+    play_against_ai()
     #play_against_player()
     #test()
     
