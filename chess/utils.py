@@ -122,16 +122,22 @@ def getAdvesaryColor(color):
 def pieceMovement(piece,tab):
     if piece.name == FOU:
         return piece.bishop_movement(tab,WIDTH)
+        #pass
     elif piece.name == TOUR:
         return piece.rook_movement(tab,WIDTH,HEIGHT)
+        #pass
     elif piece.name == CAVALIER:
         return piece.knight_movement(tab)
     elif piece.name == DAME:
         return piece.queen_movement(tab)
+        
     elif piece.name == PION:
-        return piece.pawn_movement(tab) 
+        return piece.pawn_movement(tab)
+        #pass
     elif piece.name == ROI:
         return piece.king_movement(tab) 
+        #pass
+        
     return []
 
 
@@ -143,7 +149,7 @@ def getThreatenedCases(tab,color):
 
     for i in range(0,len(allPieces)):
         if allPieces[i].name == PION:
-            threatenedCoordinates += allPieces[i].pawn_ThreatenedCases()
+            threatenedCoordinates += allPieces[i].pawn_eatPieceMovements(tab)
         elif allPieces[i].name != ROI:
             threatenedCoordinates += (pieceMovement(allPieces[i],tab))
 

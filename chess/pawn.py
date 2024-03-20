@@ -7,8 +7,8 @@ class Pawn(Piece):
     def __init__(self, color):
         super().__init__(color, PION)
         self.direction = -1 if color == NOIR else 1
+        
     def __str__(self) -> str:
-
         representation = PION_BLANC if self.color == BLANC else PION_NOIR
         return str(representation)
     def print(self):

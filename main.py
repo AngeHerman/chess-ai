@@ -2,11 +2,13 @@ from chess.board2 import *
 from chess.utils import *
 from tests.test_board import *
 
+
 from api.lichess import *
 from ai.monte_carlo import *
 import threading
 import time
 import os
+import pickle
 
 ITERATION_RECHERCHER_COUP = 50
 NOMBRE_ERREUR_AVANT_ARRET_JEU = 1
@@ -51,6 +53,9 @@ def play_against_ai():
                 print("pMves ")
                 print(plateau.pMoves)
                 
+                #Serialize object
+                log_Error(plateau,best_move)
+                
                 os._exit(1)
         print("tour est "+ str(plateau.turn))
         best_move = mcts(plateau, iterations=ITERATION_RECHERCHER_COUP)
@@ -59,13 +64,28 @@ def play_against_ai():
             # print(move_to_chess_notation( best_move))
             erreur += 1
             plateau.print_Board()
+            
+            #Serialize object
+            log_Error(plateau,best_move)
+
             print(best_move)
             print("*************************************")
         if erreur == NOMBRE_ERREUR_AVANT_ARRET_JEU :
             os._exit(1)
     stream_events_thread.join()
     stream_board_thread.join()
-    
+
+def log_Error(plateau,errorMove):
+    f = open("dump","w+b")
+    logFile = open("log.txt","w+")
+
+    pickle.dump(plateau,f)
+    logFile.write(f"{plateau.pMoves} \n {errorMove}")
+
+    f.close()
+    logFile.close()
+
+
 def play_against_player():
     api = Lichess()
     stream_events_thread = threading.Thread(target=api.stream_events)
@@ -115,7 +135,8 @@ def test():
     #test_allMovementsAvailable()
 
 if __name__ == "__main__":
-    # test_specificSituation()
+    #test_dumpFile()
+    #test_specificSituation()
     play_against_ai()
     #play_against_player()
     #test()

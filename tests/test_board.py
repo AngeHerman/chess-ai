@@ -1,6 +1,7 @@
 from chess.board2 import *
 from chess.utils import *
 from chess.king import *
+import pickle
 
 
 def test_knightMovement(coord):
@@ -96,15 +97,26 @@ def test_specificSituation():
     plateau.force_play_move(((1,4),(3,4)))
     plateau.force_play_move(((0,6),(2,5)))
     
-    print(plateau.grille[7][3].king_movement(plateau.grille))"""
+    print(plateau.grille[7][3].king_movement(plateau.grille))
     emptyCase(plateau.grille,(7,1))
     plateau.force_play_move(((0,4),(3,5)))
     plateau.force_play_move(((7,6),(4,5)))
-    plateau.force_play_move(((7,3),(6,5)))
+    plateau.force_play_move(((7,3),(6,5)))"""
 
+    plateau.force_play_move(((7,3),(6,3)))
+    plateau.force_play_move(((1,3),(4,3)))
    
     plateau.print_Board()
+
     print(plateau.getAllAvailableMoves(NOIR))
 
 
+def test_dumpFile():
+    plateau = Board2()
 
+    f = open("dump","r+b")
+    pla = pickle.load(f)
+    f.close()
+
+    print(pla.getAllAvailableMoves(NOIR))
+    pla.print_Board()

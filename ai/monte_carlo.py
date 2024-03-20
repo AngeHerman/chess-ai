@@ -62,7 +62,6 @@ def backpropagate(node, reward):
         node = node.parent
 
 def mcts(state, iterations):
-    print("pppppppppppppppppppppppppppppppppppppppppppppppppppppp")
     copie = copy.deepcopy(state)
     copie.print_Board()
     root = Node(copie)

@@ -38,23 +38,25 @@ class King(Piece):
                 piecesToRemove.append(getPiece(tab,possible_positions[i][1]))
         
         emptyCase(tab,piecesToRemove[0].coordinates)
-        opponent_movements = getThreatenedCases(tab,self.color)
+        opponent_movements = set()
+        opponent_movements.update(getThreatenedCases(tab,self.color))
 
         for j in range(1,len(piecesToRemove)):
             emptyCase(tab,piecesToRemove[j].coordinates)
 
 
-        opponent_movements += getThreatenedCases(tab,self.color)
+        opponent_movements.update(getThreatenedCases(tab,self.color))
 
         for z in range(len(piecesToRemove)):
             addPieceToCase(tab,piecesToRemove[z].coordinates,piecesToRemove[z])
 
-        opponent_movements += getThreatenedCases(tab,self.color)
-        
-        opponent_movements_pos = [opponent_movements[i][1] for i in range(0,len(opponent_movements))]
+        opponent_movements.update(getThreatenedCases(tab,self.color))
+    
+        opponent_movements_pos = [i[1] for i in (opponent_movements)]
         positions = [possible_positions[i] for i in range(0,len(possible_positions)) if not(possible_positions[i][1] in opponent_movements_pos)]
 
         return positions
 
 
 
+        

@@ -6,6 +6,7 @@ class Piece:
         self.color = color
         self.name = name
         self.coordinates = None
+        self.moveCount = 0
         
         
     def get_movement(self,board):

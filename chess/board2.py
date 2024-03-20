@@ -63,6 +63,7 @@ class Board2:
         if coup in self.pMoves:
 
             piece = getPiece(self.grille,coup[0])
+            piece.moveCount += 1
             emptyCase(self.grille,coup[0])
             addPieceToCase(self.grille,coup[1],piece)
             self.turn += 1
@@ -109,10 +110,9 @@ class Board2:
             if pieces[i].name == "Roi":
                 kingSurroundings = self.getKingSurrondings(pieces[i])
                 kingPosition = pieces[i].coordinates
-        
+                
         # Si le roi est directement menacé par une pièce on retourne uniquement les mouvement permettant de le protéger
         protectionList = self.getKingProtectionList(kingSurroundings)    
-
         if len(kingSurroundings) > 0 :
             kingSurroundingsFlattened = [kingSurroundings[i][1][j] for i in range(len(kingSurroundings)) for j in range(len(kingSurroundings[i][1]))]
             temp = [pMoves[i] for i in range(len(pMoves)) if pMoves[i][1] in kingSurroundingsFlattened and not(pMoves[i][0] in protectionList) or pMoves[i][0] == kingPosition ]
@@ -142,7 +142,10 @@ class Board2:
                     protectList += pieces
 
 
-        kingSurroundings = [kingSurroundings[i] for i in range(len(kingSurroundings)) if i not in threatenedPathsToRemove]
+        kingSurroundings2 = [kingSurroundings[i] for i in range(len(kingSurroundings)) if i in threatenedPathsToRemove]
+        
+        for i in range(len(kingSurroundings2)):
+            kingSurroundings.remove(kingSurroundings2[i])
 
         return protectList
             
@@ -164,7 +167,7 @@ class Board2:
             On vérifie aussi qu'entre ses deux pièces il n'existe pas une pièce allié """
             retrievePiece = getPiece(self.grille,straight[i][len(straight[i]) - 1])
             if retrievePiece != None:
-                if retrievePiece.name in straightLineEnemies:
+                if (retrievePiece.name in straightLineEnemies) and retrievePiece.color != piece.color :
                     dangerousCoordinates.append(("STRAIGHT",straight[i][1:]))
         
 
@@ -172,7 +175,7 @@ class Board2:
 
             retrievePiece = getPiece(self.grille,diagonals[i][len(diagonals[i]) - 1]) 
             if retrievePiece != None:
-                if retrievePiece.name in diagonalLineEnemies:
+                if retrievePiece.name  in diagonalLineEnemies and retrievePiece.color != piece.color :
                     dangerousCoordinates.append(("DIAGONAL",diagonals[i][1:]))
 
         simulated_Knight = Knight(piece.color)
@@ -185,3 +188,33 @@ class Board2:
             dangerousCoordinates.append(("L",threateningKnights))
 
         return dangerousCoordinates
+    
+    
+    def check_Roque(self,kingCoordinates):
+
+        kingPiece = getPiece(self.grille,kingCoordinates)
+
+        if(kingPiece.moveCount > 0):
+            return
+
+        straight = straightPathsFromPiece(kingPiece,self.grille,HEIGHT,WIDTH)
+        threatenedPositions = getThreatenedCases(self.grille,kingPiece)
+        
+        for i in range(len(straight)):
+
+            coordinates = straight[i][len(straight[i]) - 1]
+            if checkPieceColor(self.grille,coordinates,kingPiece.color) and checkPieceName(self.grille,coordinates,"Tour"):
+                piece = getPiece(self.grille,coordinates)
+
+                if piece.moveCount == 0:
+
+                    direction = -1 if piece.coordinates[1] > kingCoordinates[1] else 1
+                    kingNewCoordinates = (kingCoordinates[0],kingCoordinates[1]+direction*2)
+                    rookNewCoordinates = (kingNewCoordinates[0],kingNewCoordinates[1]-direction)
+                    specialMovement = [("Castling",(piece.coordinates,rookNewCoordinates),(kingCoordinates,kingNewCoordinates))]
+
+                
+
+
+        
+
