@@ -109,7 +109,6 @@ class Board2:
 
             if pieces[i].name == ROI:
                 kingSurroundings = self.getKingSurrondings(pieces[i])
-                print(f"kingSurroundings {kingSurroundings}")
                 kingPosition = pieces[i].coordinates
                 
         # Si le roi est directement menacé par une pièce on retourne uniquement les mouvement permettant de le protéger
@@ -119,7 +118,6 @@ class Board2:
         if len(kingSurroundings) > 0 :
             kingSurroundingsFlattened = [kingSurroundings[i][1][j] for i in range(len(kingSurroundings)) for j in range(len(kingSurroundings[i][1]))]
             temp = [pMoves[i] for i in range(len(pMoves)) if pMoves[i][1] in kingSurroundingsFlattened and not(pMoves[i][0] in protectionList) or pMoves[i][0] == kingPosition ]
-
             return temp
 
         return [pMoves[i] for i in range(len(pMoves)) if not(pMoves[i][0] in protectionList)]
@@ -159,9 +157,9 @@ class Board2:
         straight = straightPathsFromPiece(piece,self.grille,HEIGHT,WIDTH)
         diagonals = diagonalPathsFromPiece(piece,self.grille,WIDTH)
 
-        straightLineEnemies = {"Tour","Dame"} 
+        straightLineEnemies = {TOUR,DAME} 
         diagonalLineEnemies = {FOU,DAME}
-        knightEnemy = "Cavalier"
+        knightEnemy = CAVALIER
 
         for i in range(len(straight)):
 
@@ -217,6 +215,22 @@ class Board2:
                     kingNewCoordinates = (kingCoordinates[0],kingCoordinates[1]+direction*2)
                     rookNewCoordinates = (kingNewCoordinates[0],kingNewCoordinates[1]-direction)
                     specialMovement = [("Castling",(piece.coordinates,rookNewCoordinates),(kingCoordinates,kingNewCoordinates))]
+    
+    def promotePiece(self,piece,newPieceName,coord):
+
+        newPiece = None
+        
+        if(newPieceName == DAME):
+            newPiece = Queen(piece.color)
+        elif(newPieceName == CAVALIER):
+            newPiece = Knight(piece.color)
+        elif(newPieceName == FOU):
+            newPiece = Bishop(piece.color)
+        elif(newPieceName == TOUR):
+            newPiece = Rook(piece.color)
+
+        emptyCase(self.grille,piece.coordinates)
+        addPieceToCase(self.grille,coord,newPiece)
 
                 
 
