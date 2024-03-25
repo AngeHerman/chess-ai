@@ -112,19 +112,20 @@ class Board2:
             
             pMoves += pieceMovement(pieces[i],self.grille)
 
-            if pieces[i].name == "Roi":
+            if pieces[i].name == ROI:
                 kingSurroundings = self.getKingSurrondings(pieces[i])
                 kingPosition = pieces[i].coordinates
                 
         # Si le roi est directement menacé par une pièce on retourne uniquement les mouvement permettant de le protéger
+
         protectionList = self.getKingProtectionList(kingSurroundings)    
+
         if len(kingSurroundings) > 0 :
             kingSurroundingsFlattened = [kingSurroundings[i][1][j] for i in range(len(kingSurroundings)) for j in range(len(kingSurroundings[i][1]))]
             temp = [pMoves[i] for i in range(len(pMoves)) if pMoves[i][1] in kingSurroundingsFlattened and not(pMoves[i][0] in protectionList) or pMoves[i][0] == kingPosition ]
-
             return temp
 
-        return pMoves
+        return [pMoves[i] for i in range(len(pMoves)) if not(pMoves[i][0] in protectionList)]
         
     def getPieceCoordinatesInBetweenPath(self,path):
         return [path[i] for i in range(len(path)) if getPiece(self.grille,path[i]) != None]
@@ -161,9 +162,9 @@ class Board2:
         straight = straightPathsFromPiece(piece,self.grille,HEIGHT,WIDTH)
         diagonals = diagonalPathsFromPiece(piece,self.grille,WIDTH)
 
-        straightLineEnemies = {"Tour","Dame"} 
-        diagonalLineEnemies = {"Fou","Dame"}
-        knightEnemy = "Cavalier"
+        straightLineEnemies = {TOUR,DAME} 
+        diagonalLineEnemies = {FOU,DAME}
+        knightEnemy = CAVALIER
 
         for i in range(len(straight)):
 
@@ -181,6 +182,8 @@ class Board2:
             retrievePiece = getPiece(self.grille,diagonals[i][len(diagonals[i]) - 1]) 
             if retrievePiece != None:
                 if retrievePiece.name  in diagonalLineEnemies and retrievePiece.color != piece.color :
+                    dangerousCoordinates.append(("DIAGONAL",diagonals[i][1:]))
+                if retrievePiece.name == PION and retrievePiece.color != piece.color and len(diagonals[i]) == 2:
                     dangerousCoordinates.append(("DIAGONAL",diagonals[i][1:]))
 
         simulated_Knight = Knight(piece.color)
@@ -217,6 +220,22 @@ class Board2:
                     kingNewCoordinates = (kingCoordinates[0],kingCoordinates[1]+direction*2)
                     rookNewCoordinates = (kingNewCoordinates[0],kingNewCoordinates[1]-direction)
                     specialMovement = [("Castling",(piece.coordinates,rookNewCoordinates),(kingCoordinates,kingNewCoordinates))]
+    
+    def promotePiece(self,piece,newPieceName,coord):
+
+        newPiece = None
+        
+        if(newPieceName == DAME):
+            newPiece = Queen(piece.color)
+        elif(newPieceName == CAVALIER):
+            newPiece = Knight(piece.color)
+        elif(newPieceName == FOU):
+            newPiece = Bishop(piece.color)
+        elif(newPieceName == TOUR):
+            newPiece = Rook(piece.color)
+
+        emptyCase(self.grille,piece.coordinates)
+        addPieceToCase(self.grille,coord,newPiece)
 
                 
 
