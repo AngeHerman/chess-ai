@@ -225,3 +225,9 @@ def diagonalPathsFromPiece(piece,tab,MAX):
             paths[3].append((y-i,x+i))
         
     return paths
+
+
+def color_to_int(color):
+    if color == "black":
+        return NOIR
+    return BLANC

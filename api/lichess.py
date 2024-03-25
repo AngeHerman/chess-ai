@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 import os
 
 
-STREAM_SLEEP_TIME = 1
+STREAM_SLEEP_TIME = 0
 GAME_ID = None
 CODE_CHALLENGE_SUCCES = 201
 CODE_CHALLENGE_ACCEPTED_SUCCES = 200
@@ -29,6 +29,8 @@ class Lichess:
         self.game_against_ai_started = False
         self.game_id = None
         self.color = None
+        self.winner = None
+        self.is_finished = False
     
     def stream_events(self):
         url = BASE_URL+"/api/stream/event"
@@ -136,8 +138,8 @@ class Lichess:
         
     def handle_event(self,event):
         nombre_d_elements = len(event)
-        print("Event:--")
-        print(event)
+        # print("Event:--")
+        # print(event)
         for event_item in event:
             event_type = event_item.get('type')
             if event_type == "gameStart":
@@ -159,6 +161,14 @@ class Lichess:
 
     def handle_game_finish(self,event):
         print("game finish")
+        game = event.get('game')
+        # If our current game is finished
+        if( self.game_id is not None and self.game_id == game.get("gameId")):
+            self.is_finished = True
+            self.winner = game.get("winner")
+        
+        
+        
 
     def handle_challenge(self,event):
         challenge_info = event.get('challenge')

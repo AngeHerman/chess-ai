@@ -61,12 +61,12 @@ class Board2:
     def play_move(self, coup):
 
         if coup in self.pMoves:
-
             piece = getPiece(self.grille,coup[0])
             piece.moveCount += 1
             emptyCase(self.grille,coup[0])
             addPieceToCase(self.grille,coup[1],piece)
             self.turn += 1
+            gagnant = self.endGame()
             return True
         
         return False
@@ -81,9 +81,14 @@ class Board2:
         if len(moveBlanc) == 0 :
             gagnant = NOIR
             self.isGameEnded = True
+            print("Fin du jeu Noir tour ",end=str(self.turn))
         elif len(moveNoir) == 0:
             gagnant = BLANC
             self.isGameEnded = True
+            print("Fin du jeu Blanc tour ",end=str(self.turn))
+        # if(self.turn < 200):
+        #     print("Continue jeu tour ",end=str(self.turn))
+
         
         return gagnant
 

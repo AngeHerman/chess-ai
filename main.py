@@ -28,7 +28,8 @@ def play_against_ai():
     stream_board_thread.start()
     time.sleep(2)
     erreur = 0
-    for c in range (ITERATION_BOUCLE_PRINCIPALE):
+    while not api.is_finished:
+    # for c in range (ITERATION_BOUCLE_PRINCIPALE):
         print(is_my_turn.is_set())
         is_my_turn.wait()
         print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
@@ -58,7 +59,7 @@ def play_against_ai():
                 
                 os._exit(1)
         print("tour est "+ str(plateau.turn))
-        best_move = mcts(plateau, iterations=ITERATION_RECHERCHER_COUP)
+        best_move = mcts(plateau,ITERATION_RECHERCHER_COUP,color_to_int(api.color))
         if not api.make_move( move_to_chess_notation( best_move),is_my_turn):
             # print("Le move est pas passé avec l api :")
             # print(move_to_chess_notation( best_move))

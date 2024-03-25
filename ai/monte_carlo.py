@@ -38,11 +38,16 @@ def expand(node):
         new_state.play_move(move)
         node.children[move] = Node(new_state)
 
-def simulate(node):
-    state = node.state
+def simulate(node, my_color):
+    # state = node.state
+    print("Avant deep copy")
+    state = copy.deepcopy(node.state)
+    print("Apres deep copy")
+    
     # print("*")
-    # while not state.isGameEnded:
-    for _ in range(50):
+    while not state.isGameEnded:
+        # print("Continue dans IA ",end=str(state.turn))
+    # for _ in range(50):
         try:
             state.getAllMovesBasedOnTurn()
         except IndexError as e:
@@ -51,9 +56,10 @@ def simulate(node):
         pass
         if (len(state.pMoves) > 0):
             # print("Liste des mouvements possibles :", state.pMoves)
+            random.shuffle(node.state.pMoves)
             random_move = random.choice(state.pMoves)
             state.play_move(random_move)
-    return calculate_reward(state)
+    return calculate_reward(state, my_color)
 
 def backpropagate(node, reward):
     while node is not None:
@@ -61,25 +67,31 @@ def backpropagate(node, reward):
         node.reward += reward
         node = node.parent
 
-def mcts(state, iterations):
+def mcts(state, iterations, my_color):
     copie = copy.deepcopy(state)
     copie.print_Board()
     root = Node(copie)
     expand(root)
+    print("4444444444444444444444444444444444444444444444444444444444444444444444444444444444444")
     for _ in range(iterations):
         selected_node = select(root)
         expand(selected_node)
-        reward = simulate(selected_node)
+        reward = simulate(selected_node, my_color)
         backpropagate(selected_node, reward)
     # Ici on prends sommets plus visité mais ce serait peut etre bien de prens le plus rewardé
     best_action = max(root.children, key=lambda action: root.children[action].visits)
+    print("4444444444444444444444444444444444444444444444444444444444444444444444444444444444444")
     return best_action
 
 
-def calculate_reward(state):
+def calculate_reward(state, my_color):
     #on est censé renvoyer 1 quand on gagne, - 1 quand on perds et 0 en cas de match nulle,il 
     # pourrais y avoir une vrai fonction d'evaluation aussi par rapport au nombre de piece 
     # qu'il nous reste etc...
-    return 1
+    if state.endGame() == my_color:
+        print("Gagné")
+        return 1
+    print("Perdu")
+    return 0
 
 
