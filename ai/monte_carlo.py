@@ -40,9 +40,9 @@ def expand(node):
 
 def simulate(node, my_color):
     # state = node.state
-    print("Avant deep copy")
+    # print("Avant deep copy")
     state = copy.deepcopy(node.state)
-    print("Apres deep copy")
+    # print("Apres deep copy")
     
     # print("*")
     while not state.isGameEnded:
@@ -72,7 +72,6 @@ def mcts(state, iterations, my_color):
     copie.print_Board()
     root = Node(copie)
     expand(root)
-    print("4444444444444444444444444444444444444444444444444444444444444444444444444444444444444")
     for _ in range(iterations):
         selected_node = select(root)
         expand(selected_node)
@@ -80,8 +79,14 @@ def mcts(state, iterations, my_color):
         backpropagate(selected_node, reward)
     # Ici on prends sommets plus visité mais ce serait peut etre bien de prens le plus rewardé
     best_action = max(root.children, key=lambda action: root.children[action].visits)
-    print("4444444444444444444444444444444444444444444444444444444444444444444444444444444444444")
     return best_action
+
+def mcts_rapide(state, iterations, my_color):
+    copie = copy.deepcopy(state)
+    copie.getAllMovesBasedOnTurn()
+    random.shuffle(copie.pMoves)
+    random_move = random.choice(copie.pMoves)
+    return random_move
 
 
 def calculate_reward(state, my_color):
@@ -89,9 +94,9 @@ def calculate_reward(state, my_color):
     # pourrais y avoir une vrai fonction d'evaluation aussi par rapport au nombre de piece 
     # qu'il nous reste etc...
     if state.endGame() == my_color:
-        print("Gagné")
+        # print("Gagné")
         return 1
-    print("Perdu")
+    # print("Perdu")
     return 0
 
 

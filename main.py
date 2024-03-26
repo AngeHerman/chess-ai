@@ -5,10 +5,12 @@ from tests.test_board import *
 
 from api.lichess import *
 from ai.monte_carlo import *
+from ai.more import *
 import threading
 import time
 import os
 import pickle
+import random
 
 ITERATION_RECHERCHER_COUP = 50
 NOMBRE_ERREUR_AVANT_ARRET_JEU = 1
@@ -45,7 +47,7 @@ def play_against_ai():
         print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
         print("tour est "+ str(plateau.turn))
         for m in moves_en_trop:
-            print("le move envoyé est "+m)
+            # print("le move envoyé est "+m)
             plateau.getAllMovesBasedOnTurn()
             if not plateau.play_move(chess_notation_to_move(m)) :
                 plateau.print_Board()
@@ -58,8 +60,16 @@ def play_against_ai():
                 log_Error(plateau,best_move)
                 
                 os._exit(1)
-        print("tour est "+ str(plateau.turn))
-        best_move = mcts(plateau,ITERATION_RECHERCHER_COUP,color_to_int(api.color))
+            # print("tour est "+ str(plateau.turn))
+        best_move = next_move(plateau.turn,current_moves,api.color)
+        if best_move is None:
+            best_move = mcts(plateau,ITERATION_RECHERCHER_COUP,color_to_int(api.color))
+        else:
+            # print("best move Avant  :")
+            # print(best_move)
+            best_move = chess_notation_to_move(best_move)
+            print("best move :")
+            print(best_move)
         if not api.make_move( move_to_chess_notation( best_move),is_my_turn):
             # print("Le move est pas passé avec l api :")
             # print(move_to_chess_notation( best_move))
@@ -135,6 +145,7 @@ def test():
     #test_kingMovement((4,4))
     #test_allMovementsAvailable()
 
+    
 if __name__ == "__main__":
     #test_dumpFile()
     #test_specificSituation()

@@ -81,11 +81,11 @@ class Board2:
         if len(moveBlanc) == 0 :
             gagnant = NOIR
             self.isGameEnded = True
-            print("Fin du jeu Noir tour ",end=str(self.turn))
+            # print("Fin du jeu Noir tour ",end=str(self.turn))
         elif len(moveNoir) == 0:
             gagnant = BLANC
             self.isGameEnded = True
-            print("Fin du jeu Blanc tour ",end=str(self.turn))
+            # print("Fin du jeu Blanc tour ",end=str(self.turn))
         # if(self.turn < 200):
         #     print("Continue jeu tour ",end=str(self.turn))
 

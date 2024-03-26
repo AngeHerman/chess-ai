@@ -14,7 +14,8 @@ BASE_URL = "https://lichess.org"
 LEVEL_IA = 1
 CLOCK_LIMIT = 10800
 CLOCK_INCREMENT = 5
-COLOR = "black"
+# COLOR = "black"
+COLOR = "white"
 GAME_TYPE = "standard"
 load_dotenv()
 token = os.getenv("TOKEN")
@@ -92,22 +93,22 @@ class Lichess:
         return response_json
 
     def handle_board_state(self,state,is_my_turn):
-        print("State:--")
-        print(state)
-        print("-------")
+        # print("State:--")
+        # print(state)
+        # print("-------")
         string_moves = ""
         if state[0].get('state'):
-            print(state[0].get('state'))
-            print("-------")
+            # print(state[0].get('state'))
+            # print("-------")
             #print(state[0].get('state').get('moves'))
             string_moves = state[0].get('state').get('moves')
         else:
             #print(state[0].get('moves'))
             string_moves = state[0].get('moves')
-        print(string_moves)
+        # print(string_moves)
         moves_splited = string_moves.split()
         len_moves = len(moves_splited)
-        print("-------------------------------------------------------------------Longueur est "+str(len(moves_splited)))
+        # print("-------------------------------------------------------------------Longueur est "+str(len(moves_splited)))
         if(self.color == "black"):
             if (len_moves %2 == 0):
                 is_my_turn.clear()
@@ -124,9 +125,9 @@ class Lichess:
                 print("mon tour ")
         # all_moves[0] = string_moves
         self.moves = moves_splited
-        print("Moves splited")
+        # print("Moves splited")
         print(self.color)
-        print(moves_splited)
+        # print(moves_splited)
 
     def handle_challenge_accepted(self,response_json):
         #global GAME_ID
