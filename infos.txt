@@ -17,7 +17,3 @@ curl -X POST -d "level=1&clock.limit=10800&clock.increment=5&color=random&varian
 https://curlconverter.com/python/
 https://requests.readthedocs.io/en/latest/user/quickstart/
 
-
-- API OK?
-- Pour les coups répétitifs, supprimer les branches ou choisir une profondeur maximale de 100 par exemple ?
-- Utilisation autorisées de données de debut de game ? comme mettre un pion en e4 pour préparer la sortie du fou

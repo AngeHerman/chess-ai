@@ -3,6 +3,8 @@ import ndjson
 import time
 from dotenv import load_dotenv
 import os
+import webbrowser
+
 
 
 STREAM_SLEEP_TIME = 0
@@ -28,10 +30,11 @@ class Lichess:
         self.moves = []
         self.game_against_player_started = False
         self.game_against_ai_started = False
+        self.game_started = False
         self.game_id = None
         self.color = None
         self.winner = None
-        self.is_finished = False
+        self.is_game_finished = False
     
     def stream_events(self):
         url = BASE_URL+"/api/stream/event"
@@ -135,6 +138,7 @@ class Lichess:
             self.color = COLOR
             self.game_id = response_json[0].get("id")
             print("Challenge ID:", self.game_id)
+            self.game_started = True
             #print(response_json)
         
     def handle_event(self,event):
@@ -165,7 +169,7 @@ class Lichess:
         game = event.get('game')
         # If our current game is finished
         if( self.game_id is not None and self.game_id == game.get("gameId")):
-            self.is_finished = True
+            self.is_game_finished = True
             self.winner = game.get("winner")
         
         
@@ -200,6 +204,7 @@ class Lichess:
             #global GAME_ID
             self.game_id = challenge_id
             self.game_against_player_started = True
+            self.game_started = True
         else:
             print("Failed to accept challenge request")
             print(response)
@@ -209,3 +214,8 @@ class Lichess:
 
     def handle_challenge_declined(self,event):
         print("Challenge declined")
+        
+
+def open_game_in_browser(game_id):
+    url = f"{BASE_URL}/{game_id}"
+    webbrowser.open(url)

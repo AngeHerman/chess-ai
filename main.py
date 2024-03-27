@@ -12,9 +12,11 @@ import os
 import pickle
 import random
 
+QUICK_SLEEP_TIME = 0
 ITERATION_RECHERCHER_COUP = 50
 NOMBRE_ERREUR_AVANT_ARRET_JEU = 1
 ITERATION_BOUCLE_PRINCIPALE = 100
+
 def play_against_ai():
     is_my_turn = threading.Event()
     plateau = Board2()
@@ -30,7 +32,10 @@ def play_against_ai():
     stream_board_thread.start()
     time.sleep(2)
     erreur = 0
-    while not api.is_finished:
+    while not api.game_started:
+        time.sleep(QUICK_SLEEP_TIME)
+    open_game_in_browser(api.game_id)
+    while not api.is_game_finished:
     # for c in range (ITERATION_BOUCLE_PRINCIPALE):
         print(is_my_turn.is_set())
         is_my_turn.wait()
