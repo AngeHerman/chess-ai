@@ -12,17 +12,24 @@ class Node:
         self.parent = parent
 
 def select(node):
-    exploration_constant = 1.0  # Constante d'explration just pour definir a quel point l'exploration est plus important que exploitation
-    best_score = float('-inf')  # Init du meilleur score à moins infin
+    exploration_constant = math.sqrt(2)
+    best_score = float('-inf')  
     selected_child = None
     for action, child_node in node.children.items():
-        exploitation_score = child_node.reward / (child_node.visits)  # Terme d'exploitation. le 1e-5 cest pour eviter 0/0
-        exploration_score = exploration_constant * math.sqrt( (math.log(child_node.visits)) / (child_node.visits))  # Terme d'exploration
-        score = exploitation_score + exploration_score  # Score total UCB1
+        if child_node.visits == 1:
+            exploitation_score = 2  # Si le nœud enfant n'a pas été visité, considérer l'exploitation comme 2 et ca permet de toujours selectionné les sommets pas encore visité
+        else:
+            exploitation_score = child_node.reward / child_node.visits  
+        exploration_score = exploration_constant * math.sqrt(math.log(child_node.visits) / child_node.visits)  
+        score = exploitation_score + exploration_score
+        
+        # print(f"Action: {action}, Exploitation Score: {exploitation_score}, Exploration Score: {exploration_score}, Total Score: {score}")
+        
         if score > best_score:
             best_score = score
             selected_child = child_node
     return selected_child
+
 
 def expand(node):
     # TODO
@@ -78,6 +85,9 @@ def mcts(state, iterations, my_color):
         reward = simulate(selected_node, my_color)
         backpropagate(selected_node, reward)
     # Ici on prends sommets plus visité mais ce serait peut etre bien de prens le plus rewardé
+    # print("*********   CHILD NODE   **********")
+    # for action, child_node in root.children.items():
+    #     print(str(action)+"  "+str(child_node.visits)+"  "+str(child_node.reward))
     best_action = max(root.children, key=lambda action: root.children[action].visits)
     return best_action
 
