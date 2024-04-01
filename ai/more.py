@@ -3,7 +3,7 @@ import random
 from chess.constants import *
 from chess.utils import *
 
-
+SCORE_POINT_FOR_KING_PROTECTION = 1
 def random_between_a_and_min_bc(a, b, c):
     min_bc = min(b, c)
     return random.randint(a, min_bc)
@@ -48,20 +48,20 @@ def next_move(turn,current_moves,color):
             break
     return next_mv
 
-def bonus_kings_protection(board, row_index, col_index, piece, scores_pieces):
+def bonus_kings_protection(board, row_index, col_index, king_color):
     score_bonus = 0
     for dy in range(-1, 2):
         for dx in range(-1, 2):
             if dy == 0 and dx == 0:
-                continue  # Ignore la case du roi lui-même
+                continue  # Skip la king case
             new_row_index = row_index + dy
             new_col_index = col_index + dx
             if areCoordinatesBounded(new_row_index, new_col_index):
-                adjacent_piece = board.grille[new_row_index][new_col_index]
-                if adjacent_piece is not None and adjacent_piece.color == piece.color:
-                    if piece.color == BLANC:
-                        score_bonus += 10
-                    else : score_bonus += -10
+                adjacent_piece = board[new_row_index][new_col_index]
+                if adjacent_piece is not None and adjacent_piece.color == king_color:
+                    if king_color == BLANC:
+                        score_bonus += SCORE_POINT_FOR_KING_PROTECTION
+                    else : score_bonus += (-SCORE_POINT_FOR_KING_PROTECTION)
     return score_bonus
 
 def board_score(board):
@@ -75,10 +75,10 @@ def board_score(board):
     }
     #####
     score_total = 0
-    for row_index, row in enumerate(board.grille):
+    for row_index, row in enumerate(board):
         for col_index, piece in enumerate(row):
             if piece is not None:
                 score_total += scores_pieces[piece.name][piece.color]
                 if piece.name == ROI:
-                    score_total += bonus_kings_protection(board, row_index, col_index, piece, scores_pieces)
+                    score_total += bonus_kings_protection(board, row_index, col_index, piece.color)
     return score_total

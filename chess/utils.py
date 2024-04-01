@@ -7,11 +7,6 @@ def cell_to_chess_notation(row, col):
     nombre = str(row+1)
     return lettre + nombre
 
-def get_coord(case):
-    """
-    Tout réadapter pour objet, ex vérif des empty et vider les cases 
-    """
-
 def move_to_chess_notation(move):
     return cell_to_chess_notation(move[0][0],move[0][1])+cell_to_chess_notation(move[1][0],move[1][1])
 
@@ -26,6 +21,21 @@ def chess_notation_to_move(notation):
     start_coord = chess_notation_to_cell(notation[:2])
     end_coord = chess_notation_to_cell(notation[2:])
     return start_coord, end_coord
+
+def chess_notation_to_move_bis(notation):
+    start_coord = chess_notation_to_cell(notation[:2])
+    end_coord = chess_notation_to_cell(notation[2:4])    
+    # Check promotion
+    promotion = ''
+    if len(notation) == 5:
+        promotion = notation[4]
+    return start_coord, end_coord, promotion
+
+def move_to_chess_notation(move):
+    start_coord = cell_to_chess_notation(move[0][0], move[0][1])
+    end_coord = cell_to_chess_notation(move[1][0], move[1][1])
+    promotion = move[2] if len(move) > 2 else ''
+    return start_coord + end_coord + promotion
 
 def elements_en_trop(my_elts, all_elts):
     i = len(my_elts)
