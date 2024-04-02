@@ -8,6 +8,8 @@ import copy
 # The max depth to checki if a move where we sacrificed a piece paid out etc ...
 MAX_DEPTH_TO_CHECK_BAD_MOVE = 4
 INACCEPTABLE_SCORE_DIFFERENCE = 5
+MAX_SIMULATE_MOVE_FOR_DRAW = 200
+
 class Node:
     def __init__(self, state,parent = None):
         self.state = state  # Le plateau
@@ -27,7 +29,7 @@ def select(node):
             exploitation_score = 2  # Si le nœud enfant n'a pas été visité, considérer l'exploitation comme 2 et ca permet de toujours selectionné les sommets pas encore visité
         else:
             exploitation_score = child_node.reward / child_node.visits  
-        exploration_score = exploration_constant * math.sqrt(math.log(child_node.visits) / child_node.visits)  
+        exploration_score = exploration_constant * math.sqrt(math.log(node.visits) / child_node.visits)  
         score = exploitation_score + exploration_score
         
         # print(f"Action: {action}, Exploitation Score: {exploitation_score}, Exploration Score: {exploration_score}, Total Score: {score}")
@@ -65,11 +67,13 @@ def simulate(node, my_color):
     i = 0
     while not state.isGameEnded:
         if i == MAX_DEPTH_TO_CHECK_BAD_MOVE :
-            print("Avant score ")
+            # print("Avant score ")
             score = board_score(state.grille)
-            print("Après score "+str(score))
+            # print("Après score "+str(score))
         # print("Continue dans IA ",end=str(state.turn))
     # for _ in range(50):
+        if i == MAX_SIMULATE_MOVE_FOR_DRAW:
+            return 0,score
         try:
             state.getAllMovesBasedOnTurn()
         except IndexError as e:
@@ -86,11 +90,27 @@ def simulate(node, my_color):
 
 def calculate_reward_with_future_score(old_reward,future_score,actual_score,my_color):
     difference = future_score - actual_score
-    new_reward = 0
+    new_reward = old_reward
     if my_color == BLANC:
-        new_reward = min(old_reward + difference,0)
+        # The white want posittive score
+        # if difference <= -INACCEPTABLE_SCORE_DIFFERENCE:
+        #     new_reward = max(old_reward + difference,0)
+        
+        # if difference > INACCEPTABLE_SCORE_DIFFERENCE:
+        #     new_reward += 1
+        if difference <= -INACCEPTABLE_SCORE_DIFFERENCE:
+            new_reward -= 1
     else:
-        new_reward = min(old_reward - difference,0)
+        # The black want a negative score
+        # if difference >= INACCEPTABLE_SCORE_DIFFERENCE:
+        #     new_reward = max(old_reward - difference,0)
+        # if difference < INACCEPTABLE_SCORE_DIFFERENCE:
+        #     new_reward += 1
+        if difference >= INACCEPTABLE_SCORE_DIFFERENCE:
+            new_reward -= 1
+    if new_reward < 0:
+        new_reward = 0
+    
     return new_reward
     
 def backpropagate(node, reward,future_score,my_color):
@@ -103,7 +123,7 @@ def backpropagate(node, reward,future_score,my_color):
 
 def mcts(state, iterations, my_color):
     copie = copy.deepcopy(state)
-    copie.print_Board()
+    # copie.print_Board()
     root = Node(copie)
     expand(root)
     root.state_score = board_score(root.state.grille)
@@ -117,10 +137,9 @@ def mcts(state, iterations, my_color):
         reward,future_score = simulate(selected_node, my_color)
         backpropagate(selected_node, reward,future_score,my_color)
     # Ici on prends sommets plus visité mais ce serait peut etre bien de prens le plus rewardé
-    print("*********   CHILD NODE   **********")
-    for action, child_node in root.children.items():
-        print(str(action)+"  "+str(child_node.visits)+"  "+str(child_node.reward))
-    # print_tree(root)
+    # print("*********   CHILD NODE   **********")
+    # for action, child_node in root.children.items():
+    #     print(str(action)+"  "+str(child_node.visits)+"  "+str(child_node.reward))
     best_action = max(root.children, key=lambda action: root.children[action].visits)
     return best_action
 

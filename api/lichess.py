@@ -115,21 +115,21 @@ class Lichess:
         if(self.color == "black"):
             if (len_moves %2 == 0):
                 is_my_turn.clear()
-                print("pas mon tour")
+                # print("pas mon tour")
             else:
                 is_my_turn.set()
-                print("mon tour ")
+                # print("mon tour ")
         if(self.color == "white"):
             if (len_moves %2 == 1):
                 is_my_turn.clear()
-                print("pas mon tour")
+                # print("pas mon tour")
             else:
                 is_my_turn.set()
-                print("mon tour ")
+                # print("mon tour ")
         # all_moves[0] = string_moves
         self.moves = moves_splited
         # print("Moves splited")
-        print(self.color)
+        # print(self.color)
         # print(moves_splited)
 
     def handle_challenge_accepted(self,response_json):
