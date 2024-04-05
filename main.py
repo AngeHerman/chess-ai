@@ -5,6 +5,7 @@ from tests.test_board import *
 
 from api.lichess import *
 from ai.monte_carlo import *
+from ai.alpha_beta import *
 from ai.more import *
 import threading
 import time
@@ -39,17 +40,17 @@ def play_against_ai():
     # for c in range (ITERATION_BOUCLE_PRINCIPALE):
         print(is_my_turn.is_set())
         is_my_turn.wait()
-        # print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        # print("Current moves avant")
-        # print(current_moves)
+        print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+        print("Current moves avant")
+        print(current_moves)
         moves_en_trop = elements_en_trop(current_moves, api.moves)
         current_moves.extend(moves_en_trop)
-        # print("Current moves après")
-        # print(current_moves)
-        # print("moves en trop")
-        # print(moves_en_trop)
-        # print(type(moves_en_trop))
-        # print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+        print("Current moves après")
+        print(current_moves)
+        print("moves en trop")
+        print(moves_en_trop)
+        print(type(moves_en_trop))
+        print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
         print("tour est "+ str(plateau.turn))
         for m in moves_en_trop:
             # print("le move envoyé est "+m)
@@ -59,7 +60,8 @@ def play_against_ai():
                 print("Le move non trouvé est "+m)
                 print(chess_notation_to_move(m))
                 print("pMves ")
-                print(plateau.pMoves)
+                # print(plateau.pMoves)
+                print([move_to_chess_notation(move) for move in plateau.pMoves])
                 
                 #Serialize object
                 log_Error(plateau,best_move)
@@ -68,7 +70,8 @@ def play_against_ai():
             # print("tour est "+ str(plateau.turn))
         best_move = next_move(plateau.turn,current_moves,api.color)
         if best_move is None:
-            best_move = mcts(plateau,ITERATION_RECHERCHER_COUP,color_to_int(api.color))
+            # best_move = mcts(plateau,ITERATION_RECHERCHER_COUP,color_to_int(api.color))
+            best_move = alpha_beta_search(plateau, api.color)
         else:
             # print("best move Avant  :")
             # print(best_move)

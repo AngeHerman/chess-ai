@@ -65,6 +65,7 @@ def bonus_kings_protection(board, row_index, col_index, king_color):
     return score_bonus
 
 def board_score(board):
+    # print("Debut Evaluation")
     scores_pieces = {
         PION: {BLANC: PION_BLANC, NOIR: PION_NOIR},
         CAVALIER: {BLANC: CAVALIER_BLANC, NOIR: CAVALIER_NOIR},
@@ -81,4 +82,6 @@ def board_score(board):
                 score_total += scores_pieces[piece.name][piece.color]
                 if piece.name == ROI:
                     score_total += bonus_kings_protection(board, row_index, col_index, piece.color)
+    # print("Fin Evaluation")
+    
     return score_total

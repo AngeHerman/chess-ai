@@ -52,9 +52,11 @@ class Board2:
     
     def force_play_move(self, coup):
         piece = getPiece(self.grille,coup[0])
+        piece.moveCount += 1
         emptyCase(self.grille,coup[0])
         addPieceToCase(self.grille,coup[1],piece)
         self.turn += 1
+        gagnant = self.endGame()
         return True
 
 
