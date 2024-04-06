@@ -192,13 +192,15 @@ class Board2:
 
         return dangerousCoordinates
     
+    def checkPromotion(self):
+        pass
     
-    def check_Roque(self,kingCoordinates):
+    def checkRoque(self,kingCoordinates):
 
         kingPiece = getPiece(self.grille,kingCoordinates)
-
+        specialMovement = []
         if(kingPiece.moveCount > 0):
-            return
+            return specialMovement
 
         straight = straightPathsFromPiece(kingPiece,self.grille,HEIGHT,WIDTH)
         threatenedPositions = getThreatenedCases(self.grille,kingPiece)
@@ -215,7 +217,11 @@ class Board2:
                     kingNewCoordinates = (kingCoordinates[0],kingCoordinates[1]+direction*2)
                     rookNewCoordinates = (kingNewCoordinates[0],kingNewCoordinates[1]-direction)
                     specialMovement = [("Castling",(piece.coordinates,rookNewCoordinates),(kingCoordinates,kingNewCoordinates))]
+        
+        return specialMovement
     
+
+
     def promotePiece(self,piece,newPieceName,coord):
 
         newPiece = None
