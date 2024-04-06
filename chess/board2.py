@@ -26,6 +26,7 @@ class Board2:
         self.initializeCoordinates()
         self.turn = 1
         self.pMoves = []
+        self.spMoves = []
         self.isGameEnded = False
 
     def print_Board(self):
@@ -65,12 +66,22 @@ class Board2:
         if coup in self.pMoves:
             piece = getPiece(self.grille,coup[0])
             piece.moveCount += 1
-            emptyCase(self.grille,coup[0])
-            addPieceToCase(self.grille,coup[1],piece)
-            self.turn += 1
-            gagnant = self.endGame()
-            return True
-        
+
+            if self.checkRoque(piece,coup[1]):
+                self.doRoque(piece,coup[1])
+                gagnant = self.endGame()
+                return True
+            if len(coup) == 2:
+                emptyCase(self.grille,coup[0])
+                addPieceToCase(self.grille,coup[1],piece)
+                self.turn += 1
+                gagnant = self.endGame()
+                return True
+            elif len(coup) > 2:
+                self.promotePiece(piece,coup[-1],coup[1])
+                gagnant = self.endGame()
+                return True
+
         return False
     
     def endGame(self):
@@ -117,7 +128,10 @@ class Board2:
             if pieces[i].name == ROI:
                 kingSurroundings = self.getKingSurrondings(pieces[i])
                 kingPosition = pieces[i].coordinates
-                
+                if pieces[i].moveCount == 0:
+                    pMoves += self.checkRoqueAvailability(kingPosition)
+
+
         # Si le roi est directement menacé par une pièce on retourne uniquement les mouvement permettant de le protéger
 
         protectionList = self.getKingProtectionList(kingSurroundings)    
@@ -198,12 +212,36 @@ class Board2:
             dangerousCoordinates.append(("L",threateningKnights))
 
         return dangerousCoordinates
-    
-    def checkPromotion(self):
-        pass
-    
-    def checkRoque(self,kingCoordinates):
 
+    def checkRoque(self,piece,coord2):
+
+        if piece.name == ROI:
+            if abs(coord2[1] - piece.coordinates[1]) >= 2:
+                return True
+        return False
+
+    def doRoque(self,kingPiece,coup):
+
+        rookPieceCoordinates = (coup[0],WIDTH - 1 if coup[1] > kingPiece.coordinates[1] else 0)
+        rookPiece = getPiece(self.grille,rookPieceCoordinates)
+        direction = 1 if rookPiece.coordinates[1] > kingPiece.coordinates[1] else -1
+        
+        kingNewCoordinates = (kingPiece.coordinates[0],kingPiece.coordinates[1]+direction*2)
+        rookNewCoordinates = (kingNewCoordinates[0],kingNewCoordinates[1]-direction)
+
+        emptyCase(self.grille,rookPiece.coordinates)
+        emptyCase(self.grille,kingPiece.coordinates)
+        addPieceToCase(self.grille,kingNewCoordinates,kingPiece)
+        addPieceToCase(self.grille,rookNewCoordinates,rookPiece)
+
+        kingPiece.moveCount += 1
+        rookPiece.moveCount += 1
+
+        self.turn += 1
+
+
+
+    def checkRoqueAvailability(self,kingCoordinates):
         kingPiece = getPiece(self.grille,kingCoordinates)
         specialMovement = []
         if(kingPiece.moveCount > 0):
@@ -215,15 +253,18 @@ class Board2:
         for i in range(len(straight)):
 
             coordinates = straight[i][len(straight[i]) - 1]
+            piecesInBetweenPath = self.getPieceCoordinatesInBetweenPath(straight[i])
+            if len(piecesInBetweenPath) > 2:
+                continue
             if checkPieceColor(self.grille,coordinates,kingPiece.color) and checkPieceName(self.grille,coordinates,"Tour"):
                 piece = getPiece(self.grille,coordinates)
 
                 if piece.moveCount == 0:
 
-                    direction = -1 if piece.coordinates[1] > kingCoordinates[1] else 1
+                    direction = -1 if piece.coordinates[1] < kingCoordinates[1] else 1
                     kingNewCoordinates = (kingCoordinates[0],kingCoordinates[1]+direction*2)
                     rookNewCoordinates = (kingNewCoordinates[0],kingNewCoordinates[1]-direction)
-                    specialMovement = [("Castling",(piece.coordinates,rookNewCoordinates),(kingCoordinates,kingNewCoordinates))]
+                    specialMovement.append((kingCoordinates,kingNewCoordinates))
         
         return specialMovement
     
@@ -233,17 +274,19 @@ class Board2:
 
         newPiece = None
         
-        if(newPieceName == DAME):
+        if(newPieceName == "q"):
             newPiece = Queen(piece.color)
-        elif(newPieceName == CAVALIER):
+        elif(newPieceName == "n"):
             newPiece = Knight(piece.color)
-        elif(newPieceName == FOU):
+        elif(newPieceName == "b"):
             newPiece = Bishop(piece.color)
-        elif(newPieceName == TOUR):
+        elif(newPieceName == "r"):
             newPiece = Rook(piece.color)
 
         emptyCase(self.grille,piece.coordinates)
         addPieceToCase(self.grille,coord,newPiece)
+        self.turn += 1
+
 
                 
 

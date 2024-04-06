@@ -24,7 +24,7 @@ def max_value(board, depth, alpha, beta):
 
     for move in board.pMoves:
         copied_board = copy.deepcopy(board)
-        copied_board.force_play_move(move)
+        copied_board.play_move(move)
         current_value = min_value(copied_board, depth - 1, alpha, beta)
         if current_value > value:
             value = current_value
@@ -50,7 +50,7 @@ def min_value(board, depth, alpha, beta):
 
     for move in board.pMoves:
         copied_board = copy.deepcopy(board)
-        copied_board.force_play_move(move)
+        copied_board.play_move(move)
         current_value = max_value(copied_board, depth - 1, alpha, beta)
         if current_value < value:
             value = current_value

@@ -7,8 +7,8 @@ def cell_to_chess_notation(row, col):
     nombre = str(row+1)
     return lettre + nombre
 
-def move_to_chess_notation(move):
-    return cell_to_chess_notation(move[0][0],move[0][1])+cell_to_chess_notation(move[1][0],move[1][1])
+# def move_to_chess_notation(move):
+#     return cell_to_chess_notation(move[0][0],move[0][1])+cell_to_chess_notation(move[1][0],move[1][1])
 
 def chess_notation_to_cell(coord):
     lettre = coord[0]
@@ -17,15 +17,17 @@ def chess_notation_to_cell(coord):
     row = nombre - 1
     return row, col
 
-def chess_notation_to_move(notation):
-    start_coord = chess_notation_to_cell(notation[:2])
-    end_coord = chess_notation_to_cell(notation[2:])
-    return start_coord, end_coord
+# def chess_notation_to_move(notation):
+#     start_coord = chess_notation_to_cell(notation[:2])
+#     end_coord = chess_notation_to_cell(notation[2:])
+#     return start_coord, end_coord
 
-def chess_notation_to_move_bis(notation):
+def chess_notation_to_move(notation):
     start_coord = chess_notation_to_cell(notation[:2])
     end_coord = chess_notation_to_cell(notation[2:4])    
     # Check promotion
+    if len(notation) == 4:
+        return start_coord, end_coord
     promotion = ''
     if len(notation) == 5:
         promotion = notation[4]
@@ -138,9 +140,11 @@ def pieceMovement(piece,tab):
         #pass
     elif piece.name == CAVALIER:
         return piece.knight_movement(tab)
+        #pass
+
     elif piece.name == DAME:
         return piece.queen_movement(tab)
-        
+        #pass
     elif piece.name == PION:
         return piece.pawn_movement(tab)
         #pass
@@ -159,7 +163,7 @@ def getThreatenedCases(tab,color):
 
     for i in range(0,len(allPieces)):
         if allPieces[i].name == PION:
-            threatenedCoordinates += allPieces[i].pawn_eatPieceMovements(tab)
+            threatenedCoordinates += (allPieces[i].pawn_ThreatenedCasesBis())
         elif allPieces[i].name != ROI:
             threatenedCoordinates += (pieceMovement(allPieces[i],tab))
 
