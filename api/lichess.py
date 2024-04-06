@@ -3,9 +3,11 @@ import ndjson
 import time
 from dotenv import load_dotenv
 import os
+import webbrowser
 
 
-STREAM_SLEEP_TIME = 1
+
+STREAM_SLEEP_TIME = 0
 GAME_ID = None
 CODE_CHALLENGE_SUCCES = 201
 CODE_CHALLENGE_ACCEPTED_SUCCES = 200
@@ -14,7 +16,8 @@ BASE_URL = "https://lichess.org"
 LEVEL_IA = 1
 CLOCK_LIMIT = 10800
 CLOCK_INCREMENT = 5
-COLOR = "black"
+# COLOR = "black"
+COLOR = "white"
 GAME_TYPE = "standard"
 load_dotenv()
 token = os.getenv("TOKEN")
@@ -27,8 +30,11 @@ class Lichess:
         self.moves = []
         self.game_against_player_started = False
         self.game_against_ai_started = False
+        self.game_started = False
         self.game_id = None
         self.color = None
+        self.winner = None
+        self.is_game_finished = False
     
     def stream_events(self):
         url = BASE_URL+"/api/stream/event"
@@ -90,41 +96,41 @@ class Lichess:
         return response_json
 
     def handle_board_state(self,state,is_my_turn):
-        print("State:--")
-        print(state)
-        print("-------")
+        # print("State:--")
+        # print(state)
+        # print("-------")
         string_moves = ""
         if state[0].get('state'):
-            print(state[0].get('state'))
-            print("-------")
+            # print(state[0].get('state'))
+            # print("-------")
             #print(state[0].get('state').get('moves'))
             string_moves = state[0].get('state').get('moves')
         else:
             #print(state[0].get('moves'))
             string_moves = state[0].get('moves')
-        print(string_moves)
+        # print(string_moves)
         moves_splited = string_moves.split()
         len_moves = len(moves_splited)
-        print("-------------------------------------------------------------------Longueur est "+str(len(moves_splited)))
+        # print("-------------------------------------------------------------------Longueur est "+str(len(moves_splited)))
         if(self.color == "black"):
             if (len_moves %2 == 0):
                 is_my_turn.clear()
-                print("pas mon tour")
+                # print("pas mon tour")
             else:
                 is_my_turn.set()
-                print("mon tour ")
+                # print("mon tour ")
         if(self.color == "white"):
             if (len_moves %2 == 1):
                 is_my_turn.clear()
-                print("pas mon tour")
+                # print("pas mon tour")
             else:
                 is_my_turn.set()
-                print("mon tour ")
+                # print("mon tour ")
         # all_moves[0] = string_moves
         self.moves = moves_splited
-        print("Moves splited")
-        print(self.color)
-        print(moves_splited)
+        # print("Moves splited")
+        # print(self.color)
+        # print(moves_splited)
 
     def handle_challenge_accepted(self,response_json):
         #global GAME_ID
@@ -132,12 +138,13 @@ class Lichess:
             self.color = COLOR
             self.game_id = response_json[0].get("id")
             print("Challenge ID:", self.game_id)
+            self.game_started = True
             #print(response_json)
         
     def handle_event(self,event):
         nombre_d_elements = len(event)
-        print("Event:--")
-        print(event)
+        # print("Event:--")
+        # print(event)
         for event_item in event:
             event_type = event_item.get('type')
             if event_type == "gameStart":
@@ -159,6 +166,14 @@ class Lichess:
 
     def handle_game_finish(self,event):
         print("game finish")
+        game = event.get('game')
+        # If our current game is finished
+        if( self.game_id is not None and self.game_id == game.get("gameId")):
+            self.is_game_finished = True
+            self.winner = game.get("winner")
+        
+        
+        
 
     def handle_challenge(self,event):
         challenge_info = event.get('challenge')
@@ -189,6 +204,7 @@ class Lichess:
             #global GAME_ID
             self.game_id = challenge_id
             self.game_against_player_started = True
+            self.game_started = True
         else:
             print("Failed to accept challenge request")
             print(response)
@@ -198,3 +214,8 @@ class Lichess:
 
     def handle_challenge_declined(self,event):
         print("Challenge declined")
+        
+
+def open_game_in_browser(game_id):
+    url = f"{BASE_URL}/{game_id}"
+    webbrowser.open(url)

@@ -5,18 +5,23 @@ from tests.test_board import *
 
 from api.lichess import *
 from ai.monte_carlo import *
+from ai.alpha_beta import *
+from ai.more import *
 import threading
 import time
 import os
 import pickle
+import random
 
+QUICK_SLEEP_TIME = 0
 ITERATION_RECHERCHER_COUP = 50
 NOMBRE_ERREUR_AVANT_ARRET_JEU = 1
 ITERATION_BOUCLE_PRINCIPALE = 100
+
 def play_against_ai():
     is_my_turn = threading.Event()
     plateau = Board2()
-    plateau.print_Board()
+    # plateau.print_Board()
     current_moves = []
     api = Lichess()
     stream_events_thread = threading.Thread(target=api.stream_events)
@@ -28,37 +33,51 @@ def play_against_ai():
     stream_board_thread.start()
     time.sleep(2)
     erreur = 0
-    for c in range (ITERATION_BOUCLE_PRINCIPALE):
+    while not api.game_started:
+        time.sleep(QUICK_SLEEP_TIME)
+    open_game_in_browser(api.game_id)
+    while not api.is_game_finished:
+    # for c in range (ITERATION_BOUCLE_PRINCIPALE):
         print(is_my_turn.is_set())
         is_my_turn.wait()
         print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        print("Current moves avant")
-        print(current_moves)
-        moves_en_trop = elements_en_trop(current_moves, api.moves)
-        current_moves.extend(moves_en_trop)
-        print("Current moves après")
-        print(current_moves)
-        print("moves en trop")
-        print(moves_en_trop)
-        print(type(moves_en_trop))
+        # print("Current moves avant")
+        # print(current_moves)
+        # moves_en_trop = elements_en_trop(current_moves, api.moves)
+        # current_moves.extend(moves_en_trop)
+        # print("Current moves après")
+        # print(current_moves)
+        # print("moves en trop")
+        # print(moves_en_trop)
+        # print(type(moves_en_trop))
         print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
         print("tour est "+ str(plateau.turn))
         for m in moves_en_trop:
-            print("le move envoyé est "+m)
+            # print("le move envoyé est "+m)
             plateau.getAllMovesBasedOnTurn()
             if not plateau.play_move(chess_notation_to_move(m)) :
                 plateau.print_Board()
                 print("Le move non trouvé est "+m)
                 print(chess_notation_to_move(m))
                 print("pMves ")
-                print(plateau.pMoves)
+                # print(plateau.pMoves)
+                print([move_to_chess_notation(move) for move in plateau.pMoves])
                 
                 #Serialize object
                 log_Error(plateau,best_move)
                 
                 os._exit(1)
-        print("tour est "+ str(plateau.turn))
-        best_move = mcts(plateau, iterations=ITERATION_RECHERCHER_COUP)
+            # print("tour est "+ str(plateau.turn))
+        best_move = next_move(plateau.turn,current_moves,api.color)
+        if best_move is None:
+            # best_move = mcts(plateau,ITERATION_RECHERCHER_COUP,color_to_int(api.color))
+            best_move = alpha_beta_search(plateau, api.color)
+        else:
+            # print("best move Avant  :")
+            # print(best_move)
+            best_move = chess_notation_to_move(best_move)
+            # print("best move :")
+            # print(best_move)
         if not api.make_move( move_to_chess_notation( best_move),is_my_turn):
             # print("Le move est pas passé avec l api :")
             # print(move_to_chess_notation( best_move))
@@ -134,6 +153,7 @@ def test():
     #test_kingMovement((4,4))
     #test_allMovementsAvailable()
 
+    
 if __name__ == "__main__":
     #test_dumpFile()
     #test_specificSituation()
