@@ -163,8 +163,11 @@ def test():
 if __name__ == "__main__":
     #test_dumpFile()
     #test_specificSituation()
-    play_against_ai()
+    # play_against_ai()
     #play_against_player()
     #test()
+    # test_petit_roque()
+    # test_grand_roque()
+    test_promotion()
     
     

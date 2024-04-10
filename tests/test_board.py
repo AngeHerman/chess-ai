@@ -120,3 +120,59 @@ def test_dumpFile():
 
     print(pla.getAllAvailableMoves(NOIR))
     pla.print_Board()
+
+def test_petit_roque():
+    print("###### TEST PETIT ROQUE ######")
+    plateau = Board2()
+    moves = ["e2e4", "e7e5", "g1f3", "b8c6", "d2d3", "g8f6", "c1e3", "f8e7", "b1c3", "d7d6", "f1e2", "e8g8", "e1g1"]
+
+    plateau.print_Board()
+    for m in moves:
+        print(m)
+        plateau.getAllMovesBasedOnTurn()
+        ans = plateau.play_move(chess_notation_to_move(m))
+        if ans :
+            print("TRUE")
+        else:
+            print("FALSE")
+        plateau.print_Board()
+
+def test_grand_roque():
+    print("###### TEST GRAND ROQUE ######")
+    plateau = Board2()
+    moves = ["e2e4", "e7e5", "g1f3", "b8c6", "d2d3", "g8f6", "c1e3", "f8e7", "b1c3", "d7d6", "f1e2", "c8e6","d1d2","d8d7","e1c1","e8c8"]
+
+
+
+    plateau.print_Board()
+    for m in moves:
+        print(m)
+        plateau.getAllMovesBasedOnTurn()
+        ans = plateau.play_move(chess_notation_to_move(m))
+        if ans :
+            print("TRUE")
+        else:
+            print("FALSE")
+        plateau.print_Board()
+    
+    
+    
+def test_promotion():
+    print("###### TEST PROMOTION ######")
+    plateau = Board2()
+    moves = ["e2e4", "d7d5", "e4d5", "d8d6", "d2d4", "c7c5", "d4c5", "b7b6", "c5b6", "a7a5", "b6b7", "b8a6", "b7b8q"]
+    
+    # moves_prom_prise = ["e2e4", "d7d5", "e4d5", "d8d6", "d2d4", "c7c5", "d4c5", "b7b6", "c5b6", "a7a5", "b6b7", "a5a4", "b7a8q"]
+
+    print(chess_notation_to_move("b7b8q"))
+    print(len(chess_notation_to_move("b7b8q"))) 
+    plateau.print_Board()
+    for m in moves:
+        print(m)
+        plateau.getAllMovesBasedOnTurn()
+        ans = plateau.play_move(chess_notation_to_move(m))
+        if ans :
+            print("TRUE")
+        else:
+            print("FALSE")
+        plateau.print_Board()
