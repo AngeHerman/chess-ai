@@ -43,16 +43,14 @@ class King(Piece):
 
         for j in range(1,len(piecesToRemove)):
             emptyCase(tab,piecesToRemove[j].coordinates)
+            opponent_movements.update(getThreatenedCases(tab,self.color))
+            addPieceToCase(tab,piecesToRemove[j].coordinates,piecesToRemove[j])
 
-
-        opponent_movements.update(getThreatenedCases(tab,self.color))
-
-        for z in range(len(piecesToRemove)):
-            addPieceToCase(tab,piecesToRemove[z].coordinates,piecesToRemove[z])
-
+        addPieceToCase(tab,piecesToRemove[0].coordinates,piecesToRemove[0])
         opponent_movements.update(getThreatenedCases(tab,self.color))
         # TODO : Understand y u decided to recreate opponent movements with i[1]
         opponent_movements_pos = [i[1] for i in (opponent_movements)]
+        #print(opponent_movements)
         positions = [possible_positions[i] for i in range(0,len(possible_positions)) if not(possible_positions[i][1] in opponent_movements_pos)]
 
         return positions

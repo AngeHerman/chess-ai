@@ -284,6 +284,7 @@ class Board2:
             newPiece = Rook(piece.color)
 
         emptyCase(self.grille,piece.coordinates)
+        emptyCase(self.grille,coord)
         addPieceToCase(self.grille,coord,newPiece)
         self.turn += 1
 
