@@ -4,6 +4,22 @@ from chess.constants import *
 from chess.utils import *
 
 SCORE_POINT_FOR_KING_PROTECTION = 1
+SCORE_POINT_FOR_MID_CONTROL = 2
+
+PION_BLANC_POINT = 1
+TOUR_BLANC_POINT = 50
+CAVALIER_BLANC_POINT = 37
+FOU_BLANC_POINT = 50
+DAME_BLANCHE_POINT = 70
+ROI_BLANC_POINT = 100
+
+PION_NOIR_POINT = -1
+TOUR_NOIR_POINT = -50
+CAVALIER_NOIR_POINT = -37
+FOU_NOIR_POINT= -50
+DAME_NOIRE_POINT = -70
+ROI_NOIR_POINT = -100
+
 def random_between_a_and_min_bc(a, b, c):
     min_bc = min(b, c)
     return random.randint(a, min_bc)
@@ -48,6 +64,16 @@ def next_move(turn,current_moves,color):
             break
     return next_mv
 
+def bonus_center_control(row_index, color):
+    center_rows = [3, 4]
+    score_bonus = 0
+    if row_index in center_rows:
+        if color == BLANC:
+            score_bonus += SCORE_POINT_FOR_MID_CONTROL
+        else:
+            score_bonus -= SCORE_POINT_FOR_MID_CONTROL
+    return score_bonus
+
 def bonus_kings_protection(board, row_index, col_index, king_color):
     score_bonus = 0
     for dy in range(-1, 2):
@@ -67,12 +93,12 @@ def bonus_kings_protection(board, row_index, col_index, king_color):
 def board_score(board):
     # print("Debut Evaluation")
     scores_pieces = {
-        PION: {BLANC: PION_BLANC, NOIR: PION_NOIR},
-        CAVALIER: {BLANC: CAVALIER_BLANC, NOIR: CAVALIER_NOIR},
-        FOU: {BLANC: FOU_BLANC, NOIR: FOU_NOIR},
-        TOUR: {BLANC: TOUR_BLANC, NOIR: TOUR_NOIR},
-        DAME: {BLANC: DAME_BLANCHE, NOIR: DAME_NOIRE},
-        ROI: {BLANC: 100, NOIR: -100}
+        PION: {BLANC: PION_BLANC_POINT, NOIR: PION_NOIR_POINT},
+        CAVALIER: {BLANC: CAVALIER_BLANC_POINT, NOIR: CAVALIER_NOIR_POINT},
+        FOU: {BLANC: FOU_BLANC_POINT, NOIR: FOU_NOIR_POINT},
+        TOUR: {BLANC: TOUR_BLANC_POINT, NOIR: TOUR_NOIR_POINT},
+        DAME: {BLANC: DAME_BLANCHE_POINT, NOIR: DAME_NOIRE_POINT},
+        ROI: {BLANC: ROI_BLANC_POINT, NOIR: ROI_NOIR_POINT }
     }
     #####
     score_total = 0
@@ -82,6 +108,7 @@ def board_score(board):
                 score_total += scores_pieces[piece.name][piece.color]
                 if piece.name == ROI:
                     score_total += bonus_kings_protection(board, row_index, col_index, piece.color)
+                score_total += bonus_center_control(row_index,piece.color)
     # print("Fin Evaluation")
     
     return score_total

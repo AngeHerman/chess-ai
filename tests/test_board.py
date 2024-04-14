@@ -175,4 +175,5 @@ def test_promotion():
             print("TRUE")
         else:
             print("FALSE")
+            print(plateau.pMoves)
         plateau.print_Board()
