@@ -1,6 +1,7 @@
 from chess.board2 import *
 from chess.utils import *
 from tests.test_board import *
+from tests.test_more import *
 
 
 from api.lichess import *
@@ -76,8 +77,8 @@ def play_against_ai():
             # print("tour est "+ str(plateau.turn))
         best_move = next_move(plateau.turn,current_moves,api.color)
         if best_move is None:
-            best_move = mcts_rapide(plateau,ITERATION_RECHERCHER_COUP,color_to_int(api.color))
-            # best_move = alpha_beta_search(plateau, api.color)
+            # best_move = mcts_rapide(plateau,ITERATION_RECHERCHER_COUP,color_to_int(api.color))
+            best_move = alpha_beta_search(plateau, api.color)
         else:
             # print("best move Avant  :")
             # print(best_move)
@@ -163,8 +164,17 @@ def test():
 if __name__ == "__main__":
     #test_dumpFile()
     #test_specificSituation()
-    play_against_ai()
+    # play_against_ai()
     #play_against_player()
     #test()
+    # test_petit_roque()
+    # test_grand_roque()
+    # test_promotion()
+    # test_board_score_0_point()
+    # test_board_score_favoring_black()
+    # test_board_score_favoring_white()
+    # test_board_score_mid_control_nothing_mid()
+    test_board_score_mid_control_pawn_in_mid()
+    
     
     
