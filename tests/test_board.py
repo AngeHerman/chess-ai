@@ -1,6 +1,7 @@
 from chess.board2 import *
 from chess.utils import *
 from chess.king import *
+from ai.alpha_beta import *
 import pickle
 
 
@@ -177,3 +178,42 @@ def test_promotion():
             print("FALSE")
             print(plateau.pMoves)
         plateau.print_Board()
+def test_endGame():
+    plateau = Board2()
+    plateau.grille = [[ Rook(NOIR), None, None , King(BLANC), None ,None , None , None],
+        [Rook(NOIR), None, None, None, None,None,None,None],
+        [None] * 8,
+        [None] * 8,
+        [None] * 8,
+        [None] * 8,
+        [Pawn(NOIR),None,Pawn(NOIR),Pawn(NOIR),None,Pawn(NOIR),None,Pawn(NOIR)],
+        [None,Knight(NOIR), None,  King(NOIR), Queen(NOIR), None, Knight(NOIR), None]]
+    plateau.initializeCoordinates()
+    print(f"Fin : {plateau.endGame()}")
+
+
+def test_ia():
+    print("###### TEST IA ######")
+    plateau = Board2()
+    plateau.grille = [
+        [Rook(BLANC), Knight(BLANC), Bishop(BLANC),  None, Queen(BLANC), Bishop(BLANC),Knight(BLANC) , Rook(BLANC)],
+        [None] * 8,
+        [None] * 8,
+        [None] * 8,
+        [None] * 8,
+        [None,King(BLANC),None,None,None,None,None,None],
+        [Pawn(NOIR),None,Pawn(NOIR),Pawn(NOIR),None,Pawn(NOIR),None,Pawn(NOIR)],
+        [Rook(NOIR),Knight(NOIR), None,  King(NOIR), Queen(NOIR), None, Knight(NOIR), None]
+    ]
+    plateau.initializeCoordinates()
+    plateau.getAllMovesBasedOnTurn()
+    plateau.turn += 1
+    plateau.print_Board()
+    move = alpha_beta_search(plateau,NOIR)
+    print(f"Move : {move}")
+    print(f"Fin : {plateau.isGameEnded}")
+    plateau.play_move(move)
+    plateau.print_Board()
+    print(f"Fin : {plateau.isGameEnded}")
+
+
