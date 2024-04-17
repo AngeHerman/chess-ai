@@ -62,7 +62,7 @@ class Board2:
 
 
     def play_move(self, coup):
-
+        #print(coup)
         if coup in self.pMoves:
             piece = getPiece(self.grille,coup[0])
             piece.moveCount += 1
@@ -288,6 +288,15 @@ class Board2:
         addPieceToCase(self.grille,coord,newPiece)
         self.turn += 1
 
+    def checkPieceThreatened(self,color,pieceName):
+        adversaryColor = getAdvesaryColor(color)
+        threatenedList = getThreatenedCases(self.grille,adversaryColor)
+
+        for i in range(len(threatenedList)):
+            if checkPieceName(self.grille,threatenedList[i],pieceName):
+                return True
+
+        return False        
 
                 
 
