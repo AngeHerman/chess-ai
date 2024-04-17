@@ -1,10 +1,10 @@
 from ai.opening import *
-import random
 from chess.constants import *
 from chess.utils import *
 
 SCORE_POINT_FOR_KING_PROTECTION = 1
 SCORE_POINT_FOR_MID_CONTROL = 2
+THREAT_MULTIPLICATOR = 1/3
 
 PION_BLANC_POINT = 1
 TOUR_BLANC_POINT = 50
@@ -20,49 +20,15 @@ FOU_NOIR_POINT= -50
 DAME_NOIRE_POINT = -70
 ROI_NOIR_POINT = -100
 
-def random_between_a_and_min_bc(a, b, c):
-    min_bc = min(b, c)
-    return random.randint(a, min_bc)
+scores_pieces = {
+    PION: {BLANC: PION_BLANC_POINT, NOIR: PION_NOIR_POINT},
+    CAVALIER: {BLANC: CAVALIER_BLANC_POINT, NOIR: CAVALIER_NOIR_POINT},
+    FOU: {BLANC: FOU_BLANC_POINT, NOIR: FOU_NOIR_POINT},
+    TOUR: {BLANC: TOUR_BLANC_POINT, NOIR: TOUR_NOIR_POINT},
+    DAME: {BLANC: DAME_BLANCHE_POINT, NOIR: DAME_NOIRE_POINT},
+    ROI: {BLANC: ROI_BLANC_POINT, NOIR: ROI_NOIR_POINT }
+}
 
-def can_pick_a_move(turn, current_moves,color):
-    if turn == 1:
-        return True
-    else:
-        if(color == "white"):
-            return next_moves_exists_in_openings(current_moves,white_openings)
-        else: return next_moves_exists_in_openings(current_moves,black_openings)
-
-def next_moves_exists_in_openings(moves, openings):
-    for opening in openings:
-        if len(moves) >= len(opening):
-            continue
-        i = 0
-        while(i < len(moves)):
-            if moves[i] != opening[i]:
-                return False
-            i += 1
-    return True
-
-def next_move(turn,current_moves,color):
-    openings = white_openings
-    next_mv = None
-    if color == "black":
-        openings = black_openings
-    if turn == 1 and color == "white":
-        opn = openings[random_between_a_and_min_bc(0,len(white_openings),len(black_openings))]
-        return opn[0]
-    for opening in openings:
-        if len(current_moves) >= len(opening):
-            continue
-        i = 0
-        while(i < len(current_moves)):
-            if current_moves[i] != opening[i]:
-                break
-            i += 1
-        if i == len(current_moves):
-            next_mv = opening[i]
-            break
-    return next_mv
 
 def bonus_center_control(row_index, color):
     center_rows = [3, 4]
@@ -92,14 +58,7 @@ def bonus_kings_protection(board, row_index, col_index, king_color):
 
 def board_score(board):
     # print("Debut Evaluation")
-    scores_pieces = {
-        PION: {BLANC: PION_BLANC_POINT, NOIR: PION_NOIR_POINT},
-        CAVALIER: {BLANC: CAVALIER_BLANC_POINT, NOIR: CAVALIER_NOIR_POINT},
-        FOU: {BLANC: FOU_BLANC_POINT, NOIR: FOU_NOIR_POINT},
-        TOUR: {BLANC: TOUR_BLANC_POINT, NOIR: TOUR_NOIR_POINT},
-        DAME: {BLANC: DAME_BLANCHE_POINT, NOIR: DAME_NOIRE_POINT},
-        ROI: {BLANC: ROI_BLANC_POINT, NOIR: ROI_NOIR_POINT }
-    }
+    
     #####
     score_total = 0
     for row_index, row in enumerate(board):
@@ -112,3 +71,17 @@ def board_score(board):
     # print("Fin Evaluation")
     
     return score_total
+
+def threat_score(board):
+    return threat_score_by_color(board,BLANC)+threat_score_by_color(board,NOIR)
+
+def threat_score_by_color(board,color):
+    score_threat = 0
+    my_threatened_cases =  getThreatenedCases(board, color)
+    for case in my_threatened_cases:
+        piece = getPiece(board,case[1])
+        if piece is not None and piece.color == color:
+            score_threat += int(scores_pieces[piece.name][piece.color]*THREAT_MULTIPLICATOR)
+            
+    # The white want to maximise the score and the score for their threatened case needs to be negative cause its bad for them. The opposite for black.  
+    return -score_threat

@@ -8,6 +8,8 @@ from api.lichess import *
 from ai.monte_carlo import *
 from ai.alpha_beta import *
 from ai.more import *
+from ai.opening import *
+
 import threading
 import time
 import os
@@ -174,7 +176,8 @@ if __name__ == "__main__":
     # test_board_score_favoring_black()
     # test_board_score_favoring_white()
     # test_board_score_mid_control_nothing_mid()
-    test_board_score_mid_control_pawn_in_mid()
+    # test_board_score_mid_control_pawn_in_mid()
+    threat_score_by_color(Board2().grille,NOIR)
     
     
     
