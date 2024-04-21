@@ -64,4 +64,43 @@ def test_board_score_mid_control_pawn_in_mid():
     ]
     print(board_score(plateau.grille))
     assert(board_score(plateau.grille) == (PION_BLANC_POINT + SCORE_POINT_FOR_MID_CONTROL))
+
+
+def test_threat_score_white_threatened():
+    plateau = Board2()
+    plateau.grille = [
+        [King(BLANC),Pawn(BLANC), None, None, None, None, None, None],
+        [None] * 8,
+        [None] * 8,
+        [None] * 8,
+        [None,Pawn(BLANC), None, None, None, None, None, None],
+        [None] * 8,
+        [None] * 8,
+        [Rook(NOIR),Pawn(NOIR), None, None, None, None, None, None],
+
+    ]
+    plateau.initializeCoordinates()
+    print(f"Threat score white :{threat_score_by_color(plateau.grille,BLANC)}")
+    print(f"Threat score black :{threat_score_by_color(plateau.grille,NOIR)}")
+    print(f"Threat score :{threat_score(plateau.grille)}")
+    
+    
+    
+def test_threat_score_black_threatened():
+    plateau = Board2()
+    plateau.grille = [
+        [Rook(BLANC),Pawn(BLANC), None, None, None, None, None, None],
+        [None] * 8,
+        [None] * 8,
+        [None] * 8,
+        [None,Pawn(BLANC), None, None, None, None, None, None],
+        [None] * 8,
+        [None] * 8,
+        [Queen(NOIR),Pawn(BLANC), None, None, None, None, None, None],
+
+    ]
+    plateau.initializeCoordinates()
+    print(f"Threat score white :{threat_score_by_color(plateau.grille,BLANC)}")
+    print(f"Threat score black :{threat_score_by_color(plateau.grille,NOIR)}")
+    print(f"Threat score :{threat_score(plateau.grille)}")
     

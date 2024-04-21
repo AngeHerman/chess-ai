@@ -65,11 +65,11 @@ def board_score(board):
         for col_index, piece in enumerate(row):
             if piece is not None:
                 score_total += scores_pieces[piece.name][piece.color]
-                if piece.name == ROI:
-                    score_total += bonus_kings_protection(board, row_index, col_index, piece.color)
+                # if piece.name == ROI:
+                #     score_total += bonus_kings_protection(board, row_index, col_index, piece.color)
                 score_total += bonus_center_control(row_index,piece.color)
     # print("Fin Evaluation")
-    
+    score_total += threat_score(board) 
     return score_total
 
 def threat_score(board):

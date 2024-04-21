@@ -177,7 +177,10 @@ if __name__ == "__main__":
     # test_board_score_favoring_white()
     # test_board_score_mid_control_nothing_mid()
     # test_board_score_mid_control_pawn_in_mid()
-    threat_score_by_color(Board2().grille,NOIR)
+    # print(f"Score : {threat_score_by_color(Board2().grille,BLANC)}")
+    # test_ia()
+    # test_threat_score_white_threatened()
+    test_threat_score_black_threatened()
     
     
     
