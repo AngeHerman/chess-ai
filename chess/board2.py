@@ -71,13 +71,13 @@ class Board2:
                 self.doRoque(piece,coup[1])
                 gagnant = self.endGame()
                 return True
-            if len(coup) == 2:
+            if coup[-1] == "":
                 emptyCase(self.grille,coup[0])
                 addPieceToCase(self.grille,coup[1],piece)
                 self.turn += 1
                 gagnant = self.endGame()
                 return True
-            elif len(coup) > 2:
+            else:
                 self.promotePiece(piece,coup[-1],coup[1])
                 gagnant = self.endGame()
                 return True

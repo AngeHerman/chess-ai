@@ -20,16 +20,26 @@ class Pawn(Piece):
 
     def pawn_movement(self,grille):
         movement_list = []
+        promotion_position = 0
         special_position = HEIGHT - 2
 
         if self.color == BLANC :
             special_position = 1
+            promotion_position = HEIGHT - 1
 
-        if(areCoordinatesBounded(self.coordinates[0] + self.direction,self.coordinates[1] ) and checkCaseEmpty(grille,(self.coordinates[0] + self.direction,self.coordinates[1]))):
-            movement_list.append((self.coordinates,(self.coordinates[0] + self.direction,self.coordinates[1])))
+        newCoordinates = self.coordinates[0] + self.direction
+
+        if(areCoordinatesBounded(newCoordinates,self.coordinates[1] ) and checkCaseEmpty(grille,(newCoordinates,self.coordinates[1]))):
+            if(newCoordinates == promotion_position):
+                movement_list.append((self.coordinates,(newCoordinates,self.coordinates[1],"q")))
+                movement_list.append((self.coordinates,(newCoordinates,self.coordinates[1],"n")))
+                movement_list.append((self.coordinates,(newCoordinates,self.coordinates[1],"b")))
+                movement_list.append((self.coordinates,(newCoordinates,self.coordinates[1],"r")))
+            else:
+                movement_list.append((self.coordinates,(newCoordinates,self.coordinates[1],"")))
 
             if(self.coordinates[0] == special_position) and  checkCaseEmpty(grille,(self.coordinates[0] + self.direction * 2,self.coordinates[1])):
-                movement_list.append((self.coordinates,(self.coordinates[0]+ self.direction * 2,self.coordinates[1])))
+                movement_list.append((self.coordinates,(self.coordinates[0]+ self.direction * 2,self.coordinates[1],"")))
         
         movement_list += self.pawn_eatPieceMovements(grille)        
         return movement_list
@@ -41,8 +51,8 @@ class Pawn(Piece):
     
     def pawn_ThreatenedCasesBis(self):
         pMovements = [(self.coordinates[0]+self.direction,self.coordinates[1]+self.direction),(self.coordinates[0]+self.direction,self.coordinates[1]-self.direction)]
-        return [(self.coordinates,pMovements[i]) for i in range(0,len(pMovements)) if areCoordinatesBounded(pMovements[i][0],pMovements[i][1]) ]
+        return [(self.coordinates,pMovements[i],"") for i in range(0,len(pMovements)) if areCoordinatesBounded(pMovements[i][0],pMovements[i][1]) ]
     
     def pawn_eatPieceMovements(self,tab):
         threatenedCases = self.pawn_ThreatenedCases()
-        return [(self.coordinates,threatenedCases[i]) for i in range(0,len(threatenedCases)) if checkCaseHasEdible(tab,self.coordinates,threatenedCases[i])]
+        return [(self.coordinates,threatenedCases[i],"") for i in range(0,len(threatenedCases)) if checkCaseHasEdible(tab,self.coordinates,threatenedCases[i])]

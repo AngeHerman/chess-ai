@@ -26,7 +26,8 @@ class King(Piece):
             for j in range(1,len(differentPaths[i])):
                 if not(checkCaseEmpty(tab,differentPaths[i][j])) and not(checkCanEat(tab,self.coordinates,differentPaths[i][j])):
                     break
-                possible_positions.append((self.coordinates,differentPaths[i][j]))
+                position = (differentPaths[i][j][0],differentPaths[i][j][1],"")
+                possible_positions.append((self.coordinates,position))
             
         piecesToRemove = [self]
 
@@ -48,7 +49,7 @@ class King(Piece):
 
         addPieceToCase(tab,piecesToRemove[0].coordinates,piecesToRemove[0])
         opponent_movements.update(getThreatenedCases(tab,self.color))
-        # TODO : Understand y u decided to recreate opponent movements with i[1]
+
         opponent_movements_pos = [i[1] for i in (opponent_movements)]
         #print(opponent_movements)
         positions = [possible_positions[i] for i in range(0,len(possible_positions)) if not(possible_positions[i][1] in opponent_movements_pos)]
