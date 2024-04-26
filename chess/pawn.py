@@ -31,17 +31,18 @@ class Pawn(Piece):
 
         if(areCoordinatesBounded(newCoordinates,self.coordinates[1] ) and checkCaseEmpty(grille,(newCoordinates,self.coordinates[1]))):
             if(newCoordinates == promotion_position):
-                movement_list.append((self.coordinates,(newCoordinates,self.coordinates[1],"q")))
-                movement_list.append((self.coordinates,(newCoordinates,self.coordinates[1],"n")))
-                movement_list.append((self.coordinates,(newCoordinates,self.coordinates[1],"b")))
-                movement_list.append((self.coordinates,(newCoordinates,self.coordinates[1],"r")))
+                movement_list.append((self.coordinates,(newCoordinates,self.coordinates[1]),"q"))
+                movement_list.append((self.coordinates,(newCoordinates,self.coordinates[1]),"n"))
+                movement_list.append((self.coordinates,(newCoordinates,self.coordinates[1]),"b"))
+                movement_list.append((self.coordinates,(newCoordinates,self.coordinates[1]),"r"))
             else:
-                movement_list.append((self.coordinates,(newCoordinates,self.coordinates[1],"")))
+                movement_list.append((self.coordinates,(newCoordinates,self.coordinates[1]),""))
 
             if(self.coordinates[0] == special_position) and  checkCaseEmpty(grille,(self.coordinates[0] + self.direction * 2,self.coordinates[1])):
-                movement_list.append((self.coordinates,(self.coordinates[0]+ self.direction * 2,self.coordinates[1],"")))
+                movement_list.append((self.coordinates,(self.coordinates[0]+ self.direction * 2,self.coordinates[1]),""))
         
-        movement_list += self.pawn_eatPieceMovements(grille)        
+        movement_list += self.pawn_eatPieceMovements(grille)   
+        print(f"movement {movement_list}")     
         return movement_list
                 
 

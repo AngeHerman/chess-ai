@@ -165,6 +165,7 @@ if __name__ == "__main__":
     #test_dumpFile()
     #test_specificSituation()
     # play_against_ai()
+    test_dumpFile()
     #play_against_player()
     #test()
     # test_petit_roque()
@@ -174,7 +175,7 @@ if __name__ == "__main__":
     # test_board_score_favoring_black()
     # test_board_score_favoring_white()
     # test_board_score_mid_control_nothing_mid()
-    test_board_score_mid_control_pawn_in_mid()
+    #test_board_score_mid_control_pawn_in_mid()
     
     
     
