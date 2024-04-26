@@ -169,6 +169,21 @@ def getThreatenedCases(tab,color):
 
     return threatenedCoordinates
 
+"""Return the potentials moves of the opponent color. Potential moves because it doesn't check the fact that if the king is threathened, only the moves that can save him are taken"""
+def getThreatenedCasesWithKing(tab,color):
+
+    adversaryColor = getAdvesaryColor(color)
+    allPieces = getAllPiecesFromColor(tab,adversaryColor)
+    threatenedCoordinates = []
+
+    for i in range(0,len(allPieces)):
+        if allPieces[i].name == PION:
+            threatenedCoordinates += (allPieces[i].pawn_ThreatenedCasesBis())
+        else:
+            threatenedCoordinates += (pieceMovement(allPieces[i],tab))
+
+    return threatenedCoordinates
+
 
     
 def straightPathsFromPiece(piece,tab,height,width):

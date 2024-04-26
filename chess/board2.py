@@ -9,6 +9,8 @@ from chess.bishop import *
 from chess.queen import *
 from chess.king import *
 
+import copy
+
 
 
 class Board2:
@@ -133,15 +135,15 @@ class Board2:
 
 
         # Si le roi est directement menacé par une pièce on retourne uniquement les mouvement permettant de le protéger
-
-        protectionList = self.getKingProtectionList(kingSurroundings)    
+        kingSurroundingsFlattened = [kingSurroundings[i][1][j] for i in range(len(kingSurroundings)) for j in range(len(kingSurroundings[i][1]))]
+        protectionList = self.getKingProtectionList(kingSurroundings)  
 
         if len(kingSurroundings) > 0 :
             kingSurroundingsFlattened = [kingSurroundings[i][1][j] for i in range(len(kingSurroundings)) for j in range(len(kingSurroundings[i][1]))]
             temp = [pMoves[i] for i in range(len(pMoves)) if pMoves[i][1] in kingSurroundingsFlattened and not(pMoves[i][0] in protectionList) or pMoves[i][0] == kingPosition ]
             return temp
 
-        return [pMoves[i] for i in range(len(pMoves)) if not(pMoves[i][0] in protectionList)]
+        return [pMoves[i] for i in range(len(pMoves)) if not(pMoves[i][0] in protectionList) or pMoves[i][1] in kingSurroundingsFlattened]
         
     def getPieceCoordinatesInBetweenPath(self,path):
         return [path[i] for i in range(len(path)) if getPiece(self.grille,path[i]) != None]
