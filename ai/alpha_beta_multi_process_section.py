@@ -1,19 +1,21 @@
-from concurrent.futures import ThreadPoolExecutor
+from multiprocessing import Pool
 import math
 import copy
 from chess.board2 import *
 from ai.more import *
 
-MAX_DEPTH = 2
-NUM_THREADS = 6  # Nombre de threads à utiliser
+MAX_DEPTH = 3
+NUM_PROCESSES = 6
 
-def alpha_beta_search_mt_section(board, color):
+def alpha_beta_search_mprocess_section(board, color):
     if color == BLANC:
-        return max_value_multiThread(board, 0, -math.inf, math.inf, MAX_DEPTH)
+        return max_value_multi_process(board, 0, -math.inf, math.inf, MAX_DEPTH)
     else:
-        return min_value_multiThread(board, 0, -math.inf, math.inf, MAX_DEPTH)
+        return min_value_multi_process(board, 0, -math.inf, math.inf, MAX_DEPTH)
 
-def max_value_multiThread(board, depth, alpha, beta, max_depth):
+def max_value_multi_process(board, depth, alpha, beta, max_depth):
+    print("ON MAXIMISE")
+    
     if depth == max_depth or board.isGameEnded:
         return evaluate_board(board)
 
@@ -21,21 +23,23 @@ def max_value_multiThread(board, depth, alpha, beta, max_depth):
     best_move = None
     board.getAllMovesBasedOnTurn()
 
-    # Divise l'arbre de recherche en sections
-    sections = divide_tree(board.pMoves, NUM_THREADS)
+    sections = divide_tree(board.pMoves, NUM_PROCESSES)
+    # for section in sections:
+    #     print("SECTION")
+    #     print(len(section))
+    #     print(section)
 
-    with ThreadPoolExecutor(max_workers=NUM_THREADS) as executor:
-        futures = []
+    with Pool(processes=NUM_PROCESSES) as pool:
+        results = []
         for section in sections:
-            future = executor.submit(max_value_section, board, depth, alpha, beta, max_depth, section)
-            futures.append(future)
+            result = pool.apply_async(max_value_section, args=(board, depth + 1, alpha, beta, max_depth,section))
+            results.append(result)
 
-        # Récupère les résultats de chaque section
-        for future in futures:
-            result = future.result()
-            if result[0] > value:
-                value = result[0]
-                best_move = result[1]
+        for result in results:
+            current_value = result.get()
+            if current_value[0] > value:
+                value = current_value[0]
+                best_move = current_value[1]
             if value >= beta:
                 break
             alpha = max(alpha, value)
@@ -45,30 +49,30 @@ def max_value_multiThread(board, depth, alpha, beta, max_depth):
     else:
         return value
     
-def min_value_multiThread(board, depth, alpha, beta, max_depth):
+def min_value_multi_process(board, depth, alpha, beta, max_depth):
+    print("ON MINIMISE")
     if depth == max_depth or board.isGameEnded:
         return evaluate_board(board)
 
-    value = -math.inf
+    value = math.inf
     best_move = None
     board.getAllMovesBasedOnTurn()
 
-    # Divise l'arbre de recherche en sections
-    sections = divide_tree(board.pMoves, NUM_THREADS)
+    sections = divide_tree(board.pMoves, NUM_PROCESSES)
 
-    with ThreadPoolExecutor(max_workers=NUM_THREADS) as executor:
-        futures = []
+    with Pool(processes=NUM_PROCESSES) as pool:
+
+        results = []
         for section in sections:
-            future = executor.submit(min_value_section, board, depth, alpha, beta, max_depth, section)
-            futures.append(future)
+            result = pool.apply_async(min_value_section, args=(board, depth + 1, alpha, beta, max_depth,section))
+            results.append(result)
 
-        # Récupère les résultats de chaque section
-        for future in futures:
-            result = future.result()
-            if result[0] < value:
-                value = result[0]
-                best_move = result[1]
-            if value >= beta:
+        for result in results:
+            current_value = result.get()
+            if current_value[0] < value:
+                value = current_value[0]
+                best_move = current_value[1]
+            if value <= alpha:
                 break
             beta = min(beta, value)
 
@@ -94,7 +98,9 @@ def max_value_section(board, depth, alpha, beta, max_depth, section):
     return value, best_move
 
 def min_value_section(board, depth, alpha, beta, max_depth, section):
-    value = -math.inf
+    # print("Arrivé min value section")
+    
+    value = math.inf
     best_move = None
 
     for move in section:
@@ -141,7 +147,7 @@ def max_value(board, depth, alpha, beta,max_depth):
             #     print(f"Elagué avec value :{value}")
             # if best_move == ((2, 1), (1, 2)):
             #     print(f"Elagué avec value :{value}")
-            print("Elagué")
+            # print("Elagué")
             break
         alpha = max(alpha, value)
         # if depth == max_depth -1:
@@ -189,14 +195,11 @@ def min_value(board, depth, alpha, beta,max_depth):
     else:
         return value
 
-# Fonction pour diviser les mouvements en sections
 def divide_tree(moves, num_threads):
     num_moves = len(moves)
     section_size = math.ceil(num_moves / num_threads)
     sections = [moves[i:i+section_size] for i in range(0, num_moves, section_size)]
     return sections
-
-# Les autres fonctions restent les mêmes que dans l'implémentation de base de l'algorithme alpha-beta
 
 def evaluate_board(board):
     color = BLANC if board.turn%2 == 1 else NOIR

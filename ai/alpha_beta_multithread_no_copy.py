@@ -10,7 +10,7 @@ import copy
 MAX_DEPTH = 2
 NUM_THREADS = 6
 
-def alpha_beta_search_mt(board, color):
+def alpha_beta_multithread_no_copy(board, color):
     if color == BLANC:
         return max_value_multiThread(board, 0, -math.inf, math.inf, MAX_DEPTH)
     else:
@@ -59,8 +59,9 @@ def min_value_multiThread(board, depth, alpha, beta, max_depth):
     with ThreadPoolExecutor(max_workers=NUM_THREADS) as executor:
         futures = []
         for move in board.pMoves:
-            copied_board = copy.deepcopy(board)
-            copied_board.play_move(move)
+            copied_board = Board2()
+            play_all_moves(copied_board,board.moves_until_now)
+            copied_board.force_play_move(move)
             future = executor.submit(max_value, copied_board, depth + 1, alpha, beta, max_depth)
             futures.append((move, future))
 
@@ -94,8 +95,9 @@ def max_value(board, depth, alpha, beta,max_depth):
     board.getAllMovesBasedOnTurn()
 
     for move in board.pMoves:
-        copied_board = copy.deepcopy(board)
-        copied_board.play_move(move)
+        copied_board = Board2()
+        play_all_moves(copied_board,board.moves_until_now)
+        copied_board.force_play_move(move)
         current_value = min_value(copied_board, depth + 1, alpha, beta,max_depth)
         if current_value > value:
             value = current_value
@@ -128,8 +130,9 @@ def min_value(board, depth, alpha, beta,max_depth):
     board.getAllMovesBasedOnTurn()
 
     for move in board.pMoves:
-        copied_board = copy.deepcopy(board)
-        copied_board.play_move(move)
+        copied_board = Board2()
+        play_all_moves(copied_board,board.moves_until_now)
+        copied_board.force_play_move(move)
         current_value = max_value(copied_board, depth + 1, alpha, beta,max_depth)
         if current_value < value:
             value = current_value
@@ -148,3 +151,7 @@ def evaluate_board(board):
     color = BLANC if board.turn % 2 == 1 else NOIR
     move_of_current_player = board.getAllAvailableMoves(color)
     return board_score(board.grille, color, board.endGame(), move_of_current_player)
+
+def play_all_moves(board,moves):
+    for move in moves:
+        board.force_play_move(move)

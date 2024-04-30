@@ -1,22 +1,19 @@
-from concurrent.futures import ThreadPoolExecutor
 import math
 import copy
+from multiprocessing import Pool
 from chess.board2 import *
 from ai.more import *
 
-import math
-import copy
-
 MAX_DEPTH = 2
-NUM_THREADS = 6
+NUM_PROCESSES = 6
 
-def alpha_beta_search_mt(board, color):
+def alpha_beta_search_mp(board, color):
     if color == BLANC:
-        return max_value_multiThread(board, 0, -math.inf, math.inf, MAX_DEPTH)
+        return max_value_multiProcess(board, 0, -math.inf, math.inf, MAX_DEPTH)
     else:
-        return min_value_multiThread(board, 0, -math.inf, math.inf, MAX_DEPTH)
+        return min_value_multiProcess(board, 0, -math.inf, math.inf, MAX_DEPTH)
 
-def max_value_multiThread(board, depth, alpha, beta, max_depth):
+def max_value_multiProcess(board, depth, alpha, beta, max_depth):
     if depth == max_depth or board.isGameEnded:
         return evaluate_board(board)
 
@@ -24,22 +21,21 @@ def max_value_multiThread(board, depth, alpha, beta, max_depth):
     best_move = None
     board.getAllMovesBasedOnTurn()
 
-    with ThreadPoolExecutor(max_workers=NUM_THREADS) as executor:
-        futures = []
+    with Pool(processes=NUM_PROCESSES) as pool:
+        results = []
         for move in board.pMoves:
             copied_board = copy.deepcopy(board)
             copied_board.play_move(move)
-            future = executor.submit(min_value, copied_board, depth + 1, alpha, beta, max_depth)
-            futures.append((move, future))
+            result = pool.apply_async(min_value, args=(copied_board, depth + 1, alpha, beta, max_depth))
+            results.append((move, result))
 
-        for move, future in futures:
-            current_value = future.result()
-            # print(f"Resultat arrivé {move_to_chess_notation(move)}: {current_value}")
+        for move, result in results:
+            current_value = result.get()
             if current_value > value:
                 value = current_value
                 best_move = move
             if value >= beta:
-                print("Elagué")
+                # print("Elagué")
                 break
             alpha = max(alpha, value)
 
@@ -48,7 +44,7 @@ def max_value_multiThread(board, depth, alpha, beta, max_depth):
     else:
         return value
 
-def min_value_multiThread(board, depth, alpha, beta, max_depth):
+def min_value_multiProcess(board, depth, alpha, beta, max_depth):
     if depth == max_depth or board.isGameEnded:
         return evaluate_board(board)
 
@@ -56,16 +52,16 @@ def min_value_multiThread(board, depth, alpha, beta, max_depth):
     best_move = None
     board.getAllMovesBasedOnTurn()
 
-    with ThreadPoolExecutor(max_workers=NUM_THREADS) as executor:
-        futures = []
+    with Pool(processes=NUM_PROCESSES) as pool:
+        results = []
         for move in board.pMoves:
             copied_board = copy.deepcopy(board)
             copied_board.play_move(move)
-            future = executor.submit(max_value, copied_board, depth + 1, alpha, beta, max_depth)
-            futures.append((move, future))
+            result = pool.apply_async(max_value, args=(copied_board, depth + 1, alpha, beta, max_depth))
+            results.append((move, result))
 
-        for move, future in futures:
-            current_value = future.result()
+        for move, result in results:
+            current_value = result.get()
             if current_value < value:
                 value = current_value
                 best_move = move
@@ -77,7 +73,7 @@ def min_value_multiThread(board, depth, alpha, beta, max_depth):
         return best_move
     else:
         return value
-    
+
 def max_value(board, depth, alpha, beta,max_depth):
     # print("Arrivé dans max")
     if depth == max_depth or board.isGameEnded:

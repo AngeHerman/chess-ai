@@ -10,6 +10,7 @@ from ai.monte_carlo import *
 from ai.alpha_beta import *
 from ai.more import *
 from ai.opening import *
+from ai.alpha_beta_multi_process_section import *
 
 import threading
 import time
@@ -35,6 +36,7 @@ def play_against_ai():
     time.sleep(2)
     if not api.challenge_ai():
         os.exit(1)
+    
     stream_board_thread = threading.Thread(target=api.stream_board_state, args=(is_my_turn,))
     stream_board_thread.start()
     time.sleep(2)
@@ -86,8 +88,9 @@ def play_against_ai():
         best_move = next_move(plateau.turn,current_moves,api.color)
         if best_move is None:
             # best_move = mcts_rapide(plateau,ITERATION_RECHERCHER_COUP,color_to_int(api.color))
-            best_move = alpha_beta_search(plateau, color_to_int(api.color))
-            print(f"API COLOR est {color_to_int(api.color)}")
+            # best_move = alpha_beta_search(plateau, color_to_int(api.color))
+            best_move = alpha_beta_search_mprocess_section(plateau, color_to_int(api.color))
+            print(f"API COLOR est {color_to_int(api.color)} et move est {best_move}")
             # final_chess_move = alpha_beta_search(copied_board,color_to_int( api.color))
             
         else:
@@ -179,7 +182,7 @@ def test():
 if __name__ == "__main__":
     #test_dumpFile()
     #test_specificSituation()
-    # play_against_ai()
+    play_against_ai()
     #play_against_player()
     #test()
     # test_petit_roque()
@@ -208,6 +211,8 @@ if __name__ == "__main__":
     # test_situation10()
     # test_situation11()
     # test_situation12()
-    test_ia_spped()
+    # test_ia_spped()
+    # test_ia_speed2()
+    # test_mps()
     
     

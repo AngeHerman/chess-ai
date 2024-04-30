@@ -10,7 +10,7 @@ import copy
 MAX_DEPTH = 2
 NUM_THREADS = 6
 
-def alpha_beta_search_mt(board, color):
+def alpha_beta_multithread_no_copy_bad_version(board, color):
     if color == BLANC:
         return max_value_multiThread(board, 0, -math.inf, math.inf, MAX_DEPTH)
     else:
@@ -39,7 +39,6 @@ def max_value_multiThread(board, depth, alpha, beta, max_depth):
                 value = current_value
                 best_move = move
             if value >= beta:
-                print("Elagué")
                 break
             alpha = max(alpha, value)
 
@@ -94,22 +93,20 @@ def max_value(board, depth, alpha, beta,max_depth):
     board.getAllMovesBasedOnTurn()
 
     for move in board.pMoves:
-        copied_board = copy.deepcopy(board)
-        copied_board.play_move(move)
-        current_value = min_value(copied_board, depth + 1, alpha, beta,max_depth)
+        # copied_board = copy.deepcopy(board)
+        # copied_board.play_move(move)
+        current_value = min_value(board, depth + 1, alpha, beta,max_depth)
         if current_value > value:
             value = current_value
             best_move = move
-        if value >= beta:
-            break
+
+        # if value >= beta:
+        #     break
         alpha = max(alpha, value)
 
-
     if depth == 0:
-        # board.print_Board()
         return best_move
     else:
-        # print(f"Le best value est :{value}")
         return value
 
 def min_value(board, depth, alpha, beta,max_depth):
@@ -127,18 +124,17 @@ def min_value(board, depth, alpha, beta,max_depth):
     best_move = None
     board.getAllMovesBasedOnTurn()
 
+
     for move in board.pMoves:
-        copied_board = copy.deepcopy(board)
-        copied_board.play_move(move)
-        current_value = max_value(copied_board, depth + 1, alpha, beta,max_depth)
+        # copied_board = copy.deepcopy(board)
+        # copied_board.play_move(move)
+        current_value = max_value(board, depth + 1, alpha, beta,max_depth)
         if current_value < value:
             value = current_value
             best_move = move
-
-        if value <= alpha:
-            break
+        # if value <= alpha:
+        #     break
         beta = min(beta, value)
-
     if depth == 0:
         return best_move
     else:
@@ -146,5 +142,6 @@ def min_value(board, depth, alpha, beta,max_depth):
 
 def evaluate_board(board):
     color = BLANC if board.turn % 2 == 1 else NOIR
-    move_of_current_player = board.getAllAvailableMoves(color)
-    return board_score(board.grille, color, board.endGame(), move_of_current_player)
+    # move_of_current_player = board.getAllAvailableMoves(color)
+    # return board_score(board.grille, color, board.endGame(), move_of_current_player)
+    return board_score_without_threat(board.grille)

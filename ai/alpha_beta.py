@@ -50,7 +50,7 @@ def max_value(board, depth, alpha, beta,max_depth):
             #     print(f"Elagué avec value :{value}")
             # if best_move == ((2, 1), (1, 2)):
             #     print(f"Elagué avec value :{value}")
-            print("Elagué")
+            # print("Elagué")
             break
         alpha = max(alpha, value)
         # if depth == max_depth -1:
