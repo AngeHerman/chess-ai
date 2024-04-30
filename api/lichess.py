@@ -14,10 +14,10 @@ CODE_CHALLENGE_ACCEPTED_SUCCES = 200
 CODE_MOVE_SUCCES = 200
 BASE_URL = "https://lichess.org"
 LEVEL_IA = 1
-CLOCK_LIMIT = 10800
-CLOCK_INCREMENT = 5
-# COLOR = "black"
-COLOR = "white"
+CLOCK_LIMIT = 7200
+CLOCK_INCREMENT = 3
+COLOR = "black"
+# COLOR = "white"
 GAME_TYPE = "standard"
 load_dotenv()
 token = os.getenv("TOKEN")

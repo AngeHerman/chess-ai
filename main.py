@@ -2,12 +2,15 @@ from chess.board2 import *
 from chess.utils import *
 from tests.test_board import *
 from tests.test_more import *
+from tests.test_ia import *
 
 
 from api.lichess import *
 from ai.monte_carlo import *
 from ai.alpha_beta import *
 from ai.more import *
+from ai.opening import *
+
 import threading
 import time
 import os
@@ -15,6 +18,8 @@ import pickle
 import random
 
 QUICK_SLEEP_TIME = 0
+ONE_SEC_SLEEP_TIME = 1
+
 ITERATION_RECHERCHER_COUP = 50
 NOMBRE_ERREUR_AVANT_ARRET_JEU = 1
 ITERATION_BOUCLE_PRINCIPALE = 100
@@ -41,6 +46,8 @@ def play_against_ai():
     # for c in range (ITERATION_BOUCLE_PRINCIPALE):
         print(is_my_turn.is_set())
         is_my_turn.wait()
+        if api.is_game_finished:
+            break
         print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
         print("api.moves")
         print(api.moves)
@@ -75,14 +82,19 @@ def play_against_ai():
                 
                 os._exit(1)
             # print("tour est "+ str(plateau.turn))
+        # final_chess_move = None
         best_move = next_move(plateau.turn,current_moves,api.color)
         if best_move is None:
             # best_move = mcts_rapide(plateau,ITERATION_RECHERCHER_COUP,color_to_int(api.color))
-            best_move = alpha_beta_search(plateau, api.color)
+            best_move = alpha_beta_search(plateau, color_to_int(api.color))
+            print(f"API COLOR est {color_to_int(api.color)}")
+            # final_chess_move = alpha_beta_search(copied_board,color_to_int( api.color))
+            
         else:
             # print("best move Avant  :")
             # print(best_move)
             best_move = chess_notation_to_move(best_move)
+            # final_chess_move = chess_notation_to_move(best_move)
             # print("best move :")
             # print(best_move)
         if not api.make_move( move_to_chess_notation( best_move),is_my_turn):
@@ -97,9 +109,12 @@ def play_against_ai():
             print(best_move)
             print("*************************************")
         if erreur == NOMBRE_ERREUR_AVANT_ARRET_JEU :
-            os._exit(1)
+            exit()
+        time.sleep(ONE_SEC_SLEEP_TIME)
+    print(f"MATCH FINISHED: Winner is {api.winner}")
     stream_events_thread.join()
     stream_board_thread.join()
+    print(f"MATCH FINISHED: Winner is {api.winner}")
 
 def log_Error(plateau,errorMove):
     f = open("dump","w+b")
@@ -175,7 +190,25 @@ if __name__ == "__main__":
     # test_board_score_favoring_black()
     # test_board_score_favoring_white()
     # test_board_score_mid_control_nothing_mid()
-    #test_board_score_mid_control_pawn_in_mid()
-    
+    # test_board_score_mid_control_pawn_in_mid()
+    # print(f"Score : {threat_score_by_color(Board2().grille,BLANC)}")
+    # test_ia()
+    # test_threat_score_white_threatened()
+    # test_threat_score_black_threatened()
+    # test_situation2()
+    # test_situation2_1()
+    # test_situation3()
+    # test_situation4()
+    # test_situation5()
+    # test_situation6()
+    # test_situation7()
+    # test_situation8()
+    #test_situation8_alternatif()
+    # test_situation9()  
+    # test_dumpFile()
+    # test_situation10()
+    # test_situation11()
+    # test_situation12()
+    test_ia_spped()
     
     
