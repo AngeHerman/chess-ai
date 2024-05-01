@@ -26,8 +26,8 @@ def chess_notation_to_move(notation):
     start_coord = chess_notation_to_cell(notation[:2])
     end_coord = chess_notation_to_cell(notation[2:4])    
     # Check promotion
-    if len(notation) == 4:
-        return start_coord, end_coord
+    #if len(notation) == 4:
+    #   return start_coord, end_coord
     promotion = ''
     if len(notation) == 5:
         promotion = notation[4]
@@ -114,6 +114,14 @@ def getAllPieces(tab,color):
 
 def getAllPiecesFromColor(tab,color):
     return [getPiece(tab,(i,j)) for i in range (0, WIDTH) for j in range(0,HEIGHT) if checkPieceColor(tab,(i,j),color) ]
+
+def getAllPiecesWithName(tab,name):
+    return [getPiece(tab,(i,j)) for i in range (0, WIDTH) for j in range(0,HEIGHT) if checkPieceName(tab,(i,j),name)]
+
+def getAllPiecesWithNameColor(tab,name,color):
+    piecesFromColor = getAllPiecesFromColor(tab,color)
+    piecesWithName = getAllPiecesWithName(tab,name)
+    return list(set(piecesFromColor).intersection(piecesWithName))
 
 def checkPieceColor(tab,coord,color):
     if checkCaseEmpty(tab,coord): return False

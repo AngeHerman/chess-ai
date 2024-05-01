@@ -30,6 +30,7 @@ class Board2:
         self.pMoves = []
         self.spMoves = []
         self.isGameEnded = False
+        self.enPassantAllowed = 0
 
     def print_Board(self):
         for ligne in range(0,len(self.grille)):
@@ -68,6 +69,12 @@ class Board2:
         if coup in self.pMoves:
             piece = getPiece(self.grille,coup[0])
             piece.moveCount += 1
+
+            if(self.enPassantAllowed):
+                self.forbid_enPassant(piece.color)
+
+            if(self.check_EnPassant(piece,coup)):
+                self.allow_enPassant(piece)
 
             if self.checkRoque(piece,coup[1]):
                 self.doRoque(piece,coup[1])
@@ -300,8 +307,25 @@ class Board2:
 
         return False        
 
-                
+    def check_enPassant(self,piece,coup):
+        if checkPieceName(self.grille,piece.coordinates,"Pion"):
+            special_position = HEIGHT - 2
+            if piece.color == BLANC :
+                special_position = 1
+            return piece.coordinates[0] == special_position and coup[1][0] == special_position + 2
 
+
+    def allow_enPassant(self,piece):
+        self.enPassantAllowed = 1
+        adversaryPawns = getAllPiecesWithNameColor(self.grille,"Pion",-piece.color)
+        for i in range(len(adversaryPawns)):
+            adversaryPawns[i].en_passant = 1
+
+    def forbid_enPassant(self,color):
+        self.enPassantAllowed = 0
+        adversaryPawns = getAllPiecesWithNameColor(self.grille,"Pion",color)
+        for i in range(len(adversaryPawns)):
+            adversaryPawns[i].en_passant = 0
 
         
 
