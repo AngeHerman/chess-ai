@@ -3,7 +3,8 @@ from chess.utils import *
 from tests.test_board import *
 from tests.test_more import *
 from tests.test_ia import *
-
+from tests.test_alpha_beta_multiprocess_section import *
+from tests.test_genetic_algorithm import *
 
 from api.lichess import *
 from ai.monte_carlo import *
@@ -182,7 +183,7 @@ def test():
 if __name__ == "__main__":
     #test_dumpFile()
     #test_specificSituation()
-    play_against_ai()
+    # play_against_ai()
     #play_against_player()
     #test()
     # test_petit_roque()
@@ -214,5 +215,7 @@ if __name__ == "__main__":
     # test_ia_spped()
     # test_ia_speed2()
     # test_mps()
+    # test_abmp_situation_1()
+    test_genetic_algo()
     
     

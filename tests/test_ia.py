@@ -167,15 +167,15 @@ def test_ia_speed2():
     print("Temps d'exécution de alpha_beta_search multiThread :", execution_time, "secondes")
     print(m)
     print(move_to_chess_notation(m))
-    print("°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°")
-    start_time = time.time()
-    m = alpha_beta_multithread_no_copy(plateau,BLANC)
-    end_time = time.time()
-    execution_time = end_time - start_time
-    print("Temps d'exécution de alpha_beta sans copy du plateau, juste avec les moves jusqu'a maintenant : ", execution_time, "secondes")
-    # Ca fait 6 secondes avec les copy board envoyé ou non
-    print(m)
-    print(move_to_chess_notation(m))
+    # print("°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°")
+    # start_time = time.time()
+    # m = alpha_beta_multithread_no_copy(plateau,BLANC)
+    # end_time = time.time()
+    # execution_time = end_time - start_time
+    # print("Temps d'exécution de alpha_beta sans copy du plateau, juste avec les moves jusqu'a maintenant : ", execution_time, "secondes")
+    # # Ca fait 6 secondes avec les copy board envoyé ou non
+    # print(m)
+    # print(move_to_chess_notation(m))
     print("°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°")
     start_time = time.time()
     m = alpha_beta_multithread_no_copy_bad_version(plateau,BLANC)
@@ -220,9 +220,9 @@ def test_mps():
     print("Temps d'exécution de alpha_beta multiprocess avec section : ", execution_time, "secondes")
     print(m)
     print(move_to_chess_notation(m))
-    plateau.getAllMovesBasedOnTurn()
-    print(plateau.pMoves)
-    print(len(plateau.pMoves))
+    # plateau.getAllMovesBasedOnTurn()
+    # print(plateau.pMoves)
+    # print(len(plateau.pMoves))
     # sections = divide_tree(plateau.pMoves,6)
     # for section in sections:
     #     print("SECTION")

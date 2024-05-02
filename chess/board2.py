@@ -30,7 +30,6 @@ class Board2:
         self.pMoves = []
         self.spMoves = []
         self.isGameEnded = False
-        self.moves_until_now = []
 
     def print_Board(self):
         for ligne in range(0,len(self.grille)):
@@ -61,19 +60,16 @@ class Board2:
         if self.checkRoque(piece,coup[1]):
             self.doRoque(piece,coup[1])
             gagnant = self.endGame()
-            self.moves_until_now.append(coup)
             return True
         if len(coup) == 2:
             emptyCase(self.grille,coup[0])
             addPieceToCase(self.grille,coup[1],piece)
             self.turn += 1
             gagnant = self.endGame()
-            self.moves_until_now.append(coup)
             return True
         elif len(coup) > 2:
             self.promotePiece(piece,coup[-1],coup[1])
             gagnant = self.endGame()
-            self.moves_until_now.append(coup)
             return True
 
 
@@ -86,19 +82,16 @@ class Board2:
             if self.checkRoque(piece,coup[1]):
                 self.doRoque(piece,coup[1])
                 gagnant = self.endGame()
-                self.moves_until_now.append(coup)
                 return True
             if len(coup) == 2:
                 emptyCase(self.grille,coup[0])
                 addPieceToCase(self.grille,coup[1],piece)
                 self.turn += 1
                 gagnant = self.endGame()
-                self.moves_until_now.append(coup)
                 return True
             elif len(coup) > 2:
                 self.promotePiece(piece,coup[-1],coup[1])
                 gagnant = self.endGame()
-                self.moves_until_now.append(coup)
                 return True
 
         return False
@@ -124,10 +117,10 @@ class Board2:
         
         return gagnant
 
-    def moves(self, coord_depart):
-        pass
-        # Trouver un moyen de generrer les coups 
-       # pass  
+    def returnAllMovesBasedOnTurn(self):
+        color = BLANC if self.turn%2 == 1 else NOIR
+        return self.getAllAvailableMoves(color)  
+    
     def getAllMovesBasedOnTurn(self):
 
         color = BLANC if self.turn%2 == 1 else NOIR

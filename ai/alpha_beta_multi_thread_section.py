@@ -104,6 +104,7 @@ def min_value_section(board, depth, alpha, beta, max_depth, section):
         if current_value < value:
             value = current_value
             best_move = move
+        
         if value >= beta:
             break
         beta = min(beta, value)
