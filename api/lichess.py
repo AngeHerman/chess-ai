@@ -16,7 +16,9 @@ BASE_URL = "https://lichess.org"
 LEVEL_IA = 1
 CLOCK_LIMIT = 7200
 CLOCK_INCREMENT = 3
-COLOR = "black"
+WHITE_COLOR = "white"
+BLACK_COLOR = "black"
+COLOR = BLACK_COLOR
 # COLOR = "white"
 GAME_TYPE = "standard"
 load_dotenv()
@@ -170,10 +172,7 @@ class Lichess:
         # If our current game is finished
         if( self.game_id is not None and self.game_id == game.get("gameId")):
             self.is_game_finished = True
-            self.winner = game.get("winner")
-        
-        
-        
+            self.winner = game.get("winner") 
 
     def handle_challenge(self,event):
         challenge_info = event.get('challenge')
@@ -190,9 +189,9 @@ class Lichess:
         print(f"Status: {status}")
         print(f"Rated: {rated}")
         print(f"Color: {color}")
-        print(f"Final color: {final_color}")
+        print(f"Finale color: {final_color}")
         print(f"Speed: {speed}")
-        self.color = final_color
+        self.color = get_opposite_color(final_color)
         if self.game_id is None:
             self.accept_challenge(challenge_id)
     
@@ -219,3 +218,8 @@ class Lichess:
 def open_game_in_browser(game_id):
     url = f"{BASE_URL}/{game_id}"
     webbrowser.open(url)
+
+def get_opposite_color(color):
+    if color == BLACK_COLOR:
+        return WHITE_COLOR
+    return BLACK_COLOR   

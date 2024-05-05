@@ -4,6 +4,10 @@ from chess.board2 import *
 from ai.more import *
 import time
 import math
+import threading
+import multiprocessing
+
+
 
 SEQUENCE_LENGTH = 3 # How many moves on a sequence
 POPULATION_SIZE = 50
@@ -24,9 +28,33 @@ def generate_individual(board):
         sequence.append(generate_random_move())
     return sequence
 
+def generate_existing_individual(board):
+    sequence = []
+    copied_board = copy.deepcopy(board)
+    for i in range(SEQUENCE_LENGTH):
+        move = random.choice(copied_board.pMoves)
+        sequence.append(move)
+        copied_board.play_move(move)
+        copied_board.getAllMovesBasedOnTurn()
+    return sequence
+
+def generate_existing_population(board, color_of_player_turn):
+    board.getAllMovesBasedOnTurn()
+    population = []
+    for i in range(POPULATION_SIZE):
+        sequence = generate_existing_individual(board)
+        fitness = evaluate_fitness(board, color_of_player_turn, sequence)
+        population.append((fitness, sequence))
+    return population
+
 def generate_population(board, color_of_player_turn):
     board.getAllMovesBasedOnTurn()
-    return [(evaluate_fitness(board, color_of_player_turn, sequence), sequence) for sequence in [generate_individual(board) for i in range(POPULATION_SIZE)]]
+    population = []
+    for i in range(POPULATION_SIZE):
+        sequence = generate_individual(board)
+        fitness = evaluate_fitness(board, color_of_player_turn, sequence)
+        population.append((fitness, sequence))
+    return population
 
 def evaluate_fitness(board,color_of_player_turn, sequence):
     board_copy = copy.deepcopy(board)
@@ -45,12 +73,16 @@ def evaluate_fitness(board,color_of_player_turn, sequence):
             return math.inf
 
 def select_parents(population, color_of_player_turn):
+    selected_population = []
+    for individual in population:
+        if isinstance(individual[1], list):
+            selected_population.append(individual)
     if color_of_player_turn == BLANC:
-        sorted_population = sorted(population, key=lambda x: x[0],reverse=True)
+        sorted_population = sorted(selected_population, key=lambda x: x[0], reverse=True)
     else:
-        sorted_population = sorted(population, key=lambda x: x[0])
+        sorted_population = sorted(selected_population, key=lambda x: x[0])
 
-    selected_count = int(SELECTION_RATE * len(population))    
+    selected_count = int(SELECTION_RATE * len(selected_population))    
     return sorted_population[:selected_count]
 
 def crossover(parent1, parent2):
@@ -68,20 +100,32 @@ def get_mutation_point(board, sequence):
         mutation_point += 1
     return mutation_point
     
-        
+# Return the move that will replace the one at replacement point
+def get_replacement_move(board,sequence,mutatio_point):
+    copied_board = copy.deepcopy(board)
+    for i in range(mutatio_point):
+        copied_board.getAllMovesBasedOnTurn()
+        copied_board.play_move(sequence[i])
+    copied_board.getAllMovesBasedOnTurn()
+    new_move = random.choice(copied_board.pMoves)
+    return new_move
+
 def mutate(sequence, board):
     # print("Mutation")
     mutation_point = get_mutation_point(board,sequence)
     if  mutation_point < len(sequence):
-        turn = board.turn + mutation_point
-        color = BLANC if turn%2 == 1 else NOIR
-        moves = board.getAllAvailableMoves(color) # Can skip good moves, maybe need to be randomize
-        random.seed(time.time())
-        new_move = random.choice(moves)
+        # print("$$$$$$$$$$$$$$$ SHIT MUTATION")
+        # turn = board.turn + mutation_point
+        # color = BLANC if turn%2 == 1 else NOIR
+        # moves = board.getAllAvailableMoves(color) # Can skip good moves, maybe need to be randomize
+        # random.seed(time.time())
+        # new_move = random.choice(moves)
+        new_move = get_replacement_move(board,sequence,mutation_point)
         sequence_list = list(sequence)
         sequence_list[mutation_point] = new_move
         res = tuple(sequence_list)
         return res
+    # print("YESSSSSSSSSSSSSSSSS NO MUTATION")
     return sequence
 
 def evaluate_board(board):
@@ -96,31 +140,116 @@ def select_best_individuals(population,color_of_player_turn):
         sorted_population = sorted(population, key=lambda x: x[0])
     return sorted_population[:POPULATION_SIZE]
 
+def check_population_type(population):
+    for individual in population:
+        if not isinstance(individual[1], list):
+            # print(f"Je suis un mauvais individu : Me voici : {individual}")
+            pass
+
 def genetic_algorithm(board, color_of_player_turn):
-    population = generate_population(board,color_of_player_turn)
+    population = generate_existing_population(board,color_of_player_turn)
     fitness_fn = lambda sequence: evaluate_fitness(board,color_of_player_turn, sequence)
+    # check_population_type(population)
+    # print(population)
+    # print("Fin check")
 
     for generation in range(MAX_GENERATION):
-        print("GENERATION")
+        print(f"GENERATION : {generation}")
         parents = select_parents(population,color_of_player_turn)
-        offspring = []
+        # check_population_type(parents)
+        # print(f"Fin check Parent {len(parents)}")
+        # print(parents)
+        new_gen = []
         # POPULATION_SIZE instead of len(population) because len(population) is going exponential
-        while len(offspring) < POPULATION_SIZE:
-            parent1 = random.choice(parents)
-            parent2 = random.choice(parents)
+        while len(new_gen) < POPULATION_SIZE:
+            random.seed(time.time())
+            # parent1 = random.choice(parents)
+            # random.seed(time.time())
+            # parent2 = random.choice(parents)
+            parent1, parent2 = random.sample(parents, 2)
+            # print(f"Parent 1 {parent1}")
+            # print(f"Parent 2 {parent2}")
             child = crossover(parent1[1], parent2[1])
-            child = mutate(child, board)
-            offspring.append((fitness_fn(child), child))
+            # while evaluate_fitness(board,color_of_player_turn,child) == math.inf or evaluate_fitness(board,color_of_player_turn,child) == -math.inf:
+            #     child = mutate(child, board)
+            
+            # Only SEQUENCE_LENGTH - 1 moves need to be changed in the mutation
+            for i in range(SEQUENCE_LENGTH-1):
+                child = mutate(child, board)
+            new_gen.append((fitness_fn(child), child))
 
-        population += offspring
+        population += new_gen
         population = select_best_individuals(population,color_of_player_turn)
 
     best_sequence = max(population, key=lambda x: x[0])[1]
     return best_sequence
 
+# Handle each thread
+def thread_worker(parents, new_gen, board, color_of_player_turn, fitness_fn):
+    parent1, parent2 = random.sample(parents, 2)
+    child = crossover(parent1[1], parent2[1])
+    for i in range(SEQUENCE_LENGTH-1):
+        child = mutate(child, board)
+    new_gen.append((fitness_fn(child), child))
 
-# Utilisation de l'algorithme génétique pour trouver la meilleure séquence de coups
-# board = Board2()
-# genetic_algorithm = GeneticAlgorithmChess(board)
-# best_sequence = genetic_algorithm.run_genetic_algorithm()
-# print("Meilleure séquence de coups trouvée par l'algorithme génétique:", best_sequence)
+def genetic_algorithm_threads(board, color_of_player_turn):
+    population = generate_existing_population(board, color_of_player_turn)
+    fitness_fn = lambda sequence: evaluate_fitness(board, color_of_player_turn, sequence)
+    # check_population_type(population)
+
+    for generation in range(MAX_GENERATION):
+        # print(f"GENERATION : {generation}")
+        parents = select_parents(population, color_of_player_turn)
+        # print(parents)
+        new_gen = []
+
+        threads = []
+        for _ in range(POPULATION_SIZE):
+            thread = threading.Thread(target=thread_worker, args=(parents, new_gen, board, color_of_player_turn, fitness_fn))
+            thread.start()
+            threads.append(thread)
+
+        for thread in threads:
+            thread.join()
+
+        population += new_gen
+        population = select_best_individuals(population, color_of_player_turn)
+
+    best_sequence = max(population, key=lambda x: x[0])[1]
+    return best_sequence
+
+
+# Handle each process
+def processus_worker(parents, new_gen, board, color_of_player_turn, fitness_fn):
+    parent1, parent2 = random.sample(parents, 2)
+    child = crossover(parent1[1], parent2[1])
+    for i in range(SEQUENCE_LENGTH-1):
+        child = mutate(child, board)
+    new_gen.append((fitness_fn(child), child))
+
+def genetic_algorithm_processus(board, color_of_player_turn):
+    population = generate_existing_population(board, color_of_player_turn)
+    fitness_fn = lambda sequence: evaluate_fitness(board, color_of_player_turn, sequence)
+    # check_population_type(population)
+
+    for generation in range(MAX_GENERATION):
+        # print(f"GENERATION : {generation}")
+        parents = select_parents(population, color_of_player_turn)
+        # print(parents)
+        new_gen = []
+
+        processes = []
+        for _ in range(POPULATION_SIZE):
+            process = multiprocessing.Process(target=processus_worker, args=(parents, new_gen, board, color_of_player_turn, fitness_fn))
+            process.start()
+            processes.append(process)
+
+        for process in processes:
+            process.join()
+
+        population += new_gen
+        population = select_best_individuals(population, color_of_player_turn)
+
+    best_sequence = max(population, key=lambda x: x[0])[1]
+    return best_sequence
+
