@@ -28,7 +28,7 @@ headers = {
 }
 
 class Lichess:
-    def __init__(self):
+    def __init__(self,level= LEVEL_IA):
         self.moves = []
         self.game_against_player_started = False
         self.game_against_ai_started = False
@@ -37,6 +37,7 @@ class Lichess:
         self.color = None
         self.winner = None
         self.is_game_finished = False
+        self.ai_level = level
     
     def stream_events(self):
         url = BASE_URL+"/api/stream/event"
@@ -62,7 +63,7 @@ class Lichess:
     def challenge_ai(self):
         url = BASE_URL+"/api/challenge/ai"
         data = {
-            "level": LEVEL_IA,
+            "level": self.ai_level,
             "clock.limit": CLOCK_LIMIT,
             "clock.increment": CLOCK_INCREMENT,
             "color": COLOR,

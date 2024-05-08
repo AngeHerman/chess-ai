@@ -18,6 +18,7 @@ import time
 import os
 import pickle
 import random
+from interactions import *
 
 QUICK_SLEEP_TIME = 0
 ONE_SEC_SLEEP_TIME = 1
@@ -303,6 +304,7 @@ if __name__ == "__main__":
     # test_ia_speed2()
     # test_mps()
     # test_abmp_situation_1()
-    test_genetic_algo()
+    # test_genetic_algo()
+    menu()
     
     

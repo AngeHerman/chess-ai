@@ -83,11 +83,11 @@ def play_game(is_my_turn, plateau, api, current_moves):
 
     print(f"MATCH FINISHED: Winner is {api.winner}")
 
-def play_against_ai():
+def play_against_ai(lichess_level):
     is_my_turn = threading.Event()
     plateau = Board2()
     current_moves = []
-    api = Lichess()
+    api = Lichess(lichess_level)
 
     stream_events_thread = threading.Thread(target=api.stream_events)
     stream_events_thread.start()
@@ -109,10 +109,10 @@ def play_against_ai():
     stream_events_thread.join()
     stream_board_thread.join()
 
-def play_against_player():
+def play_against_player(lichess_level):
     is_my_turn = threading.Event()
     plateau = Board2()
-    api = Lichess()
+    api = Lichess(lichess_level)
     current_moves = []
 
     stream_events_thread = threading.Thread(target=api.stream_events)
@@ -134,6 +134,27 @@ def play_against_player():
     stream_events_thread.join()
     stream_board_thread.join()
 
+def choice_our_ai_againt_lichess_ai():
+    print("Vous avez choisi de lancer notre IA contre celle de Lichess.")
+    while True:
+        ia_level = input("Entrez le niveau de notre IA (1, 2 ou 3) : ")
+        lichess_level = input("Entrez le niveau de Lichess (1, 2, 3 ... 8) : ")
+        
+        if ia_level in ["1", "2", "3"] and lichess_level in ["1", "2", "3", "4","5", "6", "7", "8"]:
+            return ia_level, lichess_level
+        else:
+            print("Niveau invalide. Veuillez entrer 1, 2 ou 3 pour le niveau de notre IA et 1, 2,... 8 pour le niveau de Lichess.")
+            
+def choice_play_againt_our_ai():
+    print("Vous avez choisi de jouer contre notre IA.")    
+    while True:
+        ia_level = input("Entrez le niveau de notre IA (1, 2 ou 3) : ")
+        
+        if ia_level in ["1", "2", "3"]:
+            return ia_level
+        else:
+            print("Niveau invalide. Veuillez entrer 1, 2 ou 3 pour le niveau de notre IA")
+
 def menu():
     while True:
         print("Menu:")
@@ -144,12 +165,12 @@ def menu():
         choice = input("Entrez votre choix (1, 2, 3 ou 4) : ")
 
         if choice == "1":
-            print("Vous avez choisi de jouer contre notre IA.")
-            # Appeler la fonction pour jouer contre l'IA ici
+            ia_level = choice_play_againt_our_ai()
+            play_against_player()
             break
         elif choice == "2":
-            print("Vous avez choisi de lancer notre IA contre celle de Lichess.")
-            # Appeler la fonction pour lancer votre IA contre celle de Lichess ici
+            ia_level, lichess_level = choice_our_ai_againt_lichess_ai()
+            play_against_ai(lichess_level)
             break
         elif choice == "3":
             print("Vous avez choisi de lancer des tests.")

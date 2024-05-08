@@ -5,10 +5,11 @@ import random
 import math
 import copy
 
-# The max depth to checki if a move where we sacrificed a piece paid out etc ...
+# The max depth to check if a move where we sacrificed a piece paid out etc ...
 MAX_DEPTH_TO_CHECK_BAD_MOVE = 4
-INACCEPTABLE_SCORE_DIFFERENCE = 5
+INACCEPTABLE_SCORE_DIFFERENCE = 60
 MAX_SIMULATE_MOVE_FOR_DRAW = 200
+NOMBER_OF_ITERATIONS = 50
 
 class Node:
     def __init__(self, state,parent = None):
@@ -121,15 +122,15 @@ def backpropagate(node, reward,future_score,my_color):
             node.reward = calculate_reward_with_future_score(node.reward,future_score,node.parent.state_score,my_color)
         node = node.parent
 
-def mcts(state, iterations, my_color):
+def mcts(state, my_color):
     copie = copy.deepcopy(state)
     # copie.print_Board()
     root = Node(copie)
     expand(root)
     root.state_score = board_score(root.state.grille)
     i = 1
-    for _ in range(iterations):
-        print("Iteration "+str(i))
+    for _ in range(NOMBER_OF_ITERATIONS):
+        # print("Iteration "+str(i))
         i+= 1
         selected_node = select(root)
         if len(selected_node.children) == 0:
@@ -143,7 +144,7 @@ def mcts(state, iterations, my_color):
     best_action = max(root.children, key=lambda action: root.children[action].visits)
     return best_action
 
-def mcts_rapide(state, iterations, my_color):
+def mcts_rapide(state, my_color):
     copie = copy.deepcopy(state)
     copie.getAllMovesBasedOnTurn()
     random.shuffle(copie.pMoves)
