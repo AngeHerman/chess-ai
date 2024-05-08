@@ -7,7 +7,7 @@ class Pawn(Piece):
     def __init__(self, color):
         super().__init__(color, PION)
         self.direction = -1 if color == NOIR else 1
-        en_passant = 0
+        self.en_passant = 0
         
     def __str__(self) -> str:
         representation = PION_BLANC if self.color == BLANC else PION_NOIR
@@ -17,7 +17,6 @@ class Pawn(Piece):
             print(PION_BLANC,end="")
         else:
             print(PION_NOIR,end="")
-
 
     def pawn_movement(self,grille):
         movement_list = []
@@ -31,7 +30,6 @@ class Pawn(Piece):
             en_passant_pos = 5
 
         newCoordinates = self.coordinates[0] + self.direction
-
 
         if(areCoordinatesBounded(newCoordinates,self.coordinates[1] ) and checkCaseEmpty(grille,(newCoordinates,self.coordinates[1]))):
                 
@@ -68,4 +66,4 @@ class Pawn(Piece):
         ediblePos = [(self.coordinates[0],(self.coordinates[1] - 1)),(self.coordinates[0],(self.coordinates[1] + 1))]
         movingPos = [((self.coordinates[0] + self.direction),(self.coordinates[1] - 1)),((self.coordinates[0] + self.direction),(self.coordinates[1] + 1))]
 
-        return [movingPos[i] for i in range(0,len(ediblePos)) if checkCaseHasEdible(tab,self.coordinates,ediblePos[i]) and areCoordinatesBounded(movingPos[i][0],movingPos[i][1])]
+        return [(self.coordinates,movingPos[i],"enPassant") for i in range(0,len(ediblePos)) if checkCaseHasEdible(tab,self.coordinates,ediblePos[i]) and areCoordinatesBounded(movingPos[i][0],movingPos[i][1])]
