@@ -251,5 +251,5 @@ def genetic_algorithm_processus(board, color_of_player_turn):
         population = select_best_individuals(population, color_of_player_turn)
 
     best_sequence = max(population, key=lambda x: x[0])[1]
-    return best_sequence
+    return best_sequence[0]
 
