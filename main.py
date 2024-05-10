@@ -20,6 +20,7 @@ import pickle
 import random
 from interactions import *
 
+
 QUICK_SLEEP_TIME = 0
 ONE_SEC_SLEEP_TIME = 1
 
