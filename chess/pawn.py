@@ -22,12 +22,12 @@ class Pawn(Piece):
         movement_list = []
         promotion_position = 0
         special_position = HEIGHT - 2
-        en_passant_pos = 4
+        en_passant_pos = 3
 
         if self.color == BLANC :
             special_position = 1
             promotion_position = HEIGHT - 1
-            en_passant_pos = 5
+            en_passant_pos = 4
 
         newCoordinates = self.coordinates[0] + self.direction
 
@@ -66,4 +66,4 @@ class Pawn(Piece):
         ediblePos = [(self.coordinates[0],(self.coordinates[1] - 1)),(self.coordinates[0],(self.coordinates[1] + 1))]
         movingPos = [((self.coordinates[0] + self.direction),(self.coordinates[1] - 1)),((self.coordinates[0] + self.direction),(self.coordinates[1] + 1))]
 
-        return [(self.coordinates,movingPos[i],"enPassant") for i in range(0,len(ediblePos)) if checkCaseHasEdible(tab,self.coordinates,ediblePos[i]) and areCoordinatesBounded(movingPos[i][0],movingPos[i][1])]
+        return [(self.coordinates,movingPos[i],"") for i in range(0,len(ediblePos)) if checkCaseHasEdible(tab,self.coordinates,ediblePos[i]) and areCoordinatesBounded(movingPos[i][0],movingPos[i][1])]

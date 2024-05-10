@@ -60,13 +60,13 @@ class Board2:
             self.doRoque(piece,coup[1])
             gagnant = self.endGame()
             return True
-        if len(coup) == 2:
+        if coup[-1] == "":
             emptyCase(self.grille,coup[0])
             addPieceToCase(self.grille,coup[1],piece)
             self.turn += 1
             gagnant = self.endGame()
             return True
-        elif len(coup) > 2:
+        else:
             self.promotePiece(piece,coup[-1],coup[1])
             gagnant = self.endGame()
             return True
@@ -78,7 +78,7 @@ class Board2:
 
             if(self.enPassantAllowed):
                 self.forbid_enPassant(piece.color)
-                if(coup[-1] == "EnPassant"):
+                if(self.check_moveEnPassant(piece,coup)):
                     self.enPassantEatPiece(coup,piece)
                     return True
 
@@ -309,9 +309,10 @@ class Board2:
             if checkPieceName(self.grille,threatenedList[i],pieceName):
                 return True
 
-        return False        
+        return False     
+       
     def enPassantEatPiece(self,coup,piece):
-            emptyCase(self.grille,(piece.coordinates[0] + self.coordinates,piece.coordinates[1]))
+            emptyCase(self.grille,(coup[1][0] - piece.direction,coup[1][1] ))
             emptyCase(self.grille,coup[0])
             addPieceToCase(self.grille,coup[1],piece)
             self.turn += 1
@@ -319,15 +320,19 @@ class Board2:
 
     def check_enPassant(self,piece,coup):
         if checkPieceName(self.grille,piece.coordinates,PION):
-            special_position = HEIGHT - 2
+            special_position = 4
             if piece.color == BLANC :
-                special_position = 1
-            return piece.coordinates[0] == special_position and coup[1][0] == special_position + (2 * piece.direction)
-
+                special_position = 3
+            return coup[1][0] == special_position
+        
+    def check_moveEnPassant(self,piece,coup):
+        if checkPieceName(self.grille,piece.coordinates,PION):
+            diagonalMove = coup[1][1] == piece.coordinates[1] + 1 or coup[1][1] == piece.coordinates[1] - 1
+            return  diagonalMove and not(checkCaseHasEdible(self.grille,piece.coordinates,coup[1]))
 
     def allow_enPassant(self,piece):
         self.enPassantAllowed = 1
-        adversaryPawns = getAllPiecesWithNameColor(self.grille,PION,piece.color)
+        adversaryPawns = getAllPiecesWithNameColor(self.grille,PION,-piece.color)
         for i in range(len(adversaryPawns)):
             adversaryPawns[i].en_passant = 1
 
