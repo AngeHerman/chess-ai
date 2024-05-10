@@ -152,7 +152,13 @@ def get_move_base_on_ai_level(ai_level,board,color_of_player_turn):
     return move
 
 def choice_our_ai_againt_lichess_ai():
-    print("Vous avez choisi de lancer notre IA contre celle de Lichess.")
+    print("Vous avez choisi de lancer notre IA contre celle de Lichess. Voici les nivea de notre IA")
+    print("Niveau 0: Move hasardeux, surtout pour les tests")
+    print("Niveau 1: Mobte Carlo  (Prends beaucoup trop de temps)")
+    print("Niveau 2: Algorythme Genétique  (Prends beaucoup trop de temps aussi)")
+    print("Niveau 3: Alpha-Beta de profondeur 1  (1 seconde max)")
+    print("Niveau 4: Alpha-Beta de profondeur 2  (5 secondes max)")
+
     while True:
         ia_level = input(f"Entrez le niveau de notre IA {OUR_IA_LEVELS} : ")
         lichess_level = input(f"Entrez le niveau de Lichess {LICHESS_IA_LEVELS} : ")
@@ -163,7 +169,12 @@ def choice_our_ai_againt_lichess_ai():
             print(f"Niveau invalide. Veuillez entrer {OUR_IA_LEVELS} pour le niveau de notre IA et {LICHESS_IA_LEVELS} pour le niveau de Lichess.")
             
 def choice_play_againt_our_ai():
-    print("Vous avez choisi de jouer contre notre IA.")    
+    print("Vous avez choisi de jouer contre notre IA.")
+    print("Niveau 0: Move hasardeux, surtout pour les tests")
+    print("Niveau 1: Mobte Carlo  (Prends beaucoup trop de temps)")
+    print("Niveau 2: Algorythme Genétique  (Prends beaucoup trop de temps aussi)")
+    print("Niveau 3: Alpha-Beta de profondeur 1  (1 seconde max)")
+    print("Niveau 4: Alpha-Beta de profondeur 2  (5 secondes max)")
     while True:
         ia_level = input(f"Entrez le niveau de notre IA {OUR_IA_LEVELS} : ")
         

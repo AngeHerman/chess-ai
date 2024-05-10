@@ -26,8 +26,8 @@ def chess_notation_to_move(notation):
     start_coord = chess_notation_to_cell(notation[:2])
     end_coord = chess_notation_to_cell(notation[2:4])    
     # Check promotion
-    if len(notation) == 4:
-        return start_coord, end_coord
+    # if len(notation) == 4:
+    #     return start_coord, end_coord
     promotion = ''
     if len(notation) == 5:
         promotion = notation[4]
