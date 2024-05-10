@@ -23,6 +23,7 @@ class Rook(Piece):
             for j in range(1,len(straightPaths[i])):
                 if not(checkCaseEmpty(tab,straightPaths[i][j])) and not(checkCanEat(tab,self.coordinates,straightPaths[i][j])):
                     break
-                pMovements.append((self.coordinates,straightPaths[i][j]))
+                position = (straightPaths[i][j][0],straightPaths[i][j][1])
+                pMovements.append((self.coordinates,position,""))
 
         return pMovements

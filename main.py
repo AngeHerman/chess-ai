@@ -274,6 +274,8 @@ if __name__ == "__main__":
     #test_specificSituation()
     # play_against_ai()
     # play_against_player()
+    # test_dumpFile()
+    #play_against_player()
     #test()
     # test_petit_roque()
     # test_grand_roque()

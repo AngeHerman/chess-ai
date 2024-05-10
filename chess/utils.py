@@ -50,8 +50,6 @@ def isValueBounded(val,bound):
 def areCoordinatesBounded(x,y):
     return isValueBounded(x,WIDTH - 1) and isValueBounded(y,HEIGHT-1)
 
-
-
 def checkCanEat(board,coord,coord2):
 
     piece = getPiece(board,coord)
@@ -70,8 +68,6 @@ def addPieceToCase(board,coord,piece):
     piece.setCoordinates(coord)
 
     
-    
-
 def checkCaseHasEdible(board,coord,coord2):
     return not(checkCaseEmpty(board,coord2)) and checkCanEat(board,coord,coord2)
 """
@@ -114,6 +110,14 @@ def getAllPieces(tab,color):
 
 def getAllPiecesFromColor(tab,color):
     return [getPiece(tab,(i,j)) for i in range (0, WIDTH) for j in range(0,HEIGHT) if checkPieceColor(tab,(i,j),color) ]
+
+def getAllPiecesWithName(tab,name):
+    return [getPiece(tab,(i,j)) for i in range (0, WIDTH) for j in range(0,HEIGHT) if checkPieceName(tab,(i,j),name)]
+
+def getAllPiecesWithNameColor(tab,name,color):
+    piecesFromColor = getAllPiecesFromColor(tab,color)
+    piecesWithName = getAllPiecesWithName(tab,name)
+    return list(set(piecesFromColor).intersection(piecesWithName))
 
 def checkPieceColor(tab,coord,color):
     if checkCaseEmpty(tab,coord): return False

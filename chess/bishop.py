@@ -28,6 +28,7 @@ class Bishop(Piece):
             for j in range(1,len(diagonalPaths[i])):
                 if not(checkCaseEmpty(tab,diagonalPaths[i][j])) and not(checkCanEat(tab,self.coordinates,diagonalPaths[i][j])):
                     break
-                pMovements.append((self.coordinates,diagonalPaths[i][j]))
+                position = (diagonalPaths[i][j][0],diagonalPaths[i][j][1])
+                pMovements.append((self.coordinates,position,""))
         
         return pMovements

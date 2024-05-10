@@ -11,8 +11,6 @@ from chess.king import *
 
 import copy
 
-
-
 class Board2:
     def __init__(self):
         self.grille = [
@@ -30,6 +28,7 @@ class Board2:
         self.pMoves = []
         self.spMoves = []
         self.isGameEnded = False
+        self.enPassantAllowed = 0
 
     def print_Board(self):
         for ligne in range(0,len(self.grille)):
@@ -72,24 +71,31 @@ class Board2:
             gagnant = self.endGame()
             return True
 
-
     def play_move(self, coup):
-        #print(coup)
         if coup in self.pMoves:
             piece = getPiece(self.grille,coup[0])
             piece.moveCount += 1
+
+            if(self.enPassantAllowed):
+                self.forbid_enPassant(piece.color)
+                if(coup[-1] == "EnPassant"):
+                    self.enPassantEatPiece(coup,piece)
+                    return True
+
+            if(self.check_enPassant(piece,coup)):
+                self.allow_enPassant(piece)
 
             if self.checkRoque(piece,coup[1]):
                 self.doRoque(piece,coup[1])
                 gagnant = self.endGame()
                 return True
-            if len(coup) == 2:
+            if coup[-1] == "":
                 emptyCase(self.grille,coup[0])
                 addPieceToCase(self.grille,coup[1],piece)
                 self.turn += 1
                 gagnant = self.endGame()
                 return True
-            elif len(coup) > 2:
+            else:
                 self.promotePiece(piece,coup[-1],coup[1])
                 gagnant = self.endGame()
                 return True
@@ -113,8 +119,6 @@ class Board2:
             # print("Fin du jeu Blanc tour ",end=str(self.turn))
         # if(self.turn < 200):
         #     print("Continue jeu tour ",end=str(self.turn))
-
-        
         return gagnant
 
     def returnAllMovesBasedOnTurn(self):
@@ -251,8 +255,6 @@ class Board2:
 
         self.turn += 1
 
-
-
     def checkRoqueAvailability(self,kingCoordinates):
         kingPiece = getPiece(self.grille,kingCoordinates)
         specialMovement = []
@@ -281,7 +283,6 @@ class Board2:
         return specialMovement
     
 
-
     def promotePiece(self,piece,newPieceName,coord):
 
         newPiece = None
@@ -309,9 +310,32 @@ class Board2:
                 return True
 
         return False        
+    def enPassantEatPiece(self,coup,piece):
+            emptyCase(self.grille,(piece.coordinates[0] + self.coordinates,piece.coordinates[1]))
+            emptyCase(self.grille,coup[0])
+            addPieceToCase(self.grille,coup[1],piece)
+            self.turn += 1
+            self.endGame()
 
-                
+    def check_enPassant(self,piece,coup):
+        if checkPieceName(self.grille,piece.coordinates,PION):
+            special_position = HEIGHT - 2
+            if piece.color == BLANC :
+                special_position = 1
+            return piece.coordinates[0] == special_position and coup[1][0] == special_position + (2 * piece.direction)
 
+
+    def allow_enPassant(self,piece):
+        self.enPassantAllowed = 1
+        adversaryPawns = getAllPiecesWithNameColor(self.grille,PION,piece.color)
+        for i in range(len(adversaryPawns)):
+            adversaryPawns[i].en_passant = 1
+
+    def forbid_enPassant(self,color):
+        self.enPassantAllowed = 0
+        adversaryPawns = getAllPiecesWithNameColor(self.grille,PION,color)
+        for i in range(len(adversaryPawns)):
+            adversaryPawns[i].en_passant = 0
 
         
 

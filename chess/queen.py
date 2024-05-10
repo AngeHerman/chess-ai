@@ -21,6 +21,7 @@ class Queen(Piece):
             for j in range(1,len(differentPaths[i])):
                 if not(checkCaseEmpty(tab,differentPaths[i][j])) and not(checkCanEat(tab,self.coordinates,differentPaths[i][j])):
                     break
-                pMovements.append((self.coordinates,differentPaths[i][j]))
+                position = (differentPaths[i][j][0],differentPaths[i][j][1])
+                pMovements.append((self.coordinates,position,""))
 
         return pMovements

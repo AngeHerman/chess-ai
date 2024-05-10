@@ -23,11 +23,14 @@ class King(Piece):
         possible_positions  = []
 
         for i in range(len(differentPaths)):
+
             for j in range(1,len(differentPaths[i])):
                 if not(checkCaseEmpty(tab,differentPaths[i][j])) and not(checkCanEat(tab,self.coordinates,differentPaths[i][j])):
                     break
-                possible_positions.append((self.coordinates,differentPaths[i][j]))
-            
+                position = (differentPaths[i][j][0],differentPaths[i][j][1])
+                possible_positions.append((self.coordinates,position,""))
+                
+
         piecesToRemove = [self]
 
         """ We need to know whether or not the adjacents pieces to our king are protected, in order

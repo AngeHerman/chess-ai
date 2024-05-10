@@ -962,6 +962,20 @@ def test_situation11():
     # print(m)
     # print(move_to_chess_notation(m))
 
+def test_EnPassant():
+    plateau = Board2()
+    plateau.grille[4][3] = Pawn(BLANC)
+    plateau.initializeCoordinates()
+
+    plateau.turn += 1
+    plateau.getAllMovesBasedOnTurn()
+    print(plateau.pMoves)
+    print(plateau.play_move(((6,2),(4,2),'')))
+    
+    plateau.turn += 1
+
+    plateau.print_Board()
+
 
 def test_situation12():
     # https://lichess.org/JEafAHcd

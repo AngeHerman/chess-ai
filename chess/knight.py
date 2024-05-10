@@ -24,6 +24,6 @@ class Knight(Piece):
 
             if(areCoordinatesBounded(new_y,new_x)):
                 if(checkCaseEmpty(tab,(new_y,new_x)) or checkCanEat(tab,self.coordinates,(new_y,new_x))):
-                    movement_list.append((self.coordinates,(new_y,new_x)))
+                    movement_list.append((self.coordinates,(new_y,new_x),""))
 
         return movement_list
