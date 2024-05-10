@@ -42,7 +42,7 @@ class Pawn(Piece):
 
             if(self.coordinates[0] == special_position) and  checkCaseEmpty(grille,(self.coordinates[0] + self.direction * 2,self.coordinates[1])):
                 movement_list.append((self.coordinates,(self.coordinates[0]+ self.direction * 2,self.coordinates[1]),""))
-                
+
         if(self.en_passant == 1 and self.coordinates[0] == en_passant_pos):
             movement_list += self.pawn_enPassantMovements(grille)
 

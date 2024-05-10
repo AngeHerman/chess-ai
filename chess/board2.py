@@ -62,7 +62,6 @@ class Board2:
         return True
 
     def play_move(self, coup):
-        #print(coup)
         if coup in self.pMoves:
             piece = getPiece(self.grille,coup[0])
             piece.moveCount += 1
@@ -309,22 +308,22 @@ class Board2:
             self.endGame()
 
     def check_enPassant(self,piece,coup):
-        if checkPieceName(self.grille,piece.coordinates,"Pion"):
+        if checkPieceName(self.grille,piece.coordinates,PION):
             special_position = HEIGHT - 2
             if piece.color == BLANC :
                 special_position = 1
-            return piece.coordinates[0] == special_position and coup[1][0] == special_position + 2
+            return piece.coordinates[0] == special_position and coup[1][0] == special_position + (2 * piece.direction)
 
 
     def allow_enPassant(self,piece):
         self.enPassantAllowed = 1
-        adversaryPawns = getAllPiecesWithNameColor(self.grille,"Pion",-piece.color)
+        adversaryPawns = getAllPiecesWithNameColor(self.grille,PION,piece.color)
         for i in range(len(adversaryPawns)):
             adversaryPawns[i].en_passant = 1
 
     def forbid_enPassant(self,color):
         self.enPassantAllowed = 0
-        adversaryPawns = getAllPiecesWithNameColor(self.grille,"Pion",color)
+        adversaryPawns = getAllPiecesWithNameColor(self.grille,PION,color)
         for i in range(len(adversaryPawns)):
             adversaryPawns[i].en_passant = 0
 
