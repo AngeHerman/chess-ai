@@ -110,7 +110,7 @@ def min_value(board, depth, alpha, beta,max_depth):
 def evaluate_board(board):
     color = BLANC if board.turn%2 == 1 else NOIR
     move_of_current_player = board.getAllAvailableMoves(color)
-    return board_score(board.grille, color,board.endGame(),move_of_current_player)
+    return board_score(board, color,board.endGame(),move_of_current_player)
 
 
 

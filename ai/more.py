@@ -43,20 +43,12 @@ def bonus_center_control(row_index, color):
             score_bonus -= SCORE_POINT_FOR_MID_CONTROL
     return score_bonus
 
-def bonus_kings_protection(board, row_index, col_index, king_color):
-    score_bonus = 0
-    for dy in range(-1, 2):
-        for dx in range(-1, 2):
-            if dy == 0 and dx == 0:
-                continue  # Skip la king case
-            new_row_index = row_index + dy
-            new_col_index = col_index + dx
-            if areCoordinatesBounded(new_row_index, new_col_index):
-                adjacent_piece = board[new_row_index][new_col_index]
-                if adjacent_piece is not None and adjacent_piece.color == king_color:
-                    if king_color == BLANC:
-                        score_bonus += SCORE_POINT_FOR_KING_PROTECTION
-                    else : score_bonus += (-SCORE_POINT_FOR_KING_PROTECTION)
+def bonus_kings_protection(board, king_piece):
+    surrounding = board.getKingSurrondings(king_piece)
+    protection_list = board.getKingProtectionList(surrounding)
+    score_bonus = len(protection_list)
+    if king_piece.color == NOIR:
+        score_bonus = -score_bonus
     return score_bonus
 
 def board_score(board, color_of_player_turn,gagnant,move_of_current_player):
@@ -64,18 +56,18 @@ def board_score(board, color_of_player_turn,gagnant,move_of_current_player):
     
     #####
     score_total = 0
-    for row_index, row in enumerate(board):
+    for row_index, row in enumerate(board.grille):
         for col_index, piece in enumerate(row):
             if piece is not None:
                 score_total += scores_pieces[piece.name][piece.color]
-                # if piece.name == ROI:
-                #     score_total += bonus_kings_protection(board, row_index, col_index, piece.color)
+                if piece.name == ROI:
+                    score_total += bonus_kings_protection(board, piece)
                 score_total += bonus_center_control(row_index,piece.color)
     # print("Fin Evaluation")
     #We add the threat score for all case the actual player is threatning
     # score_total += threat_score_by_color(board,getAdvesaryColor(color_of_player_turn),move_of_current_player) 
     
-    score_total += threat_score(board,color_of_player_turn,move_of_current_player)
+    score_total += threat_score(board.grille,color_of_player_turn,move_of_current_player)
     if gagnant != 0:
         score_total += (gagnant * SCORE_MULTIPLICATOR_FOR_WINNER)
     return score_total

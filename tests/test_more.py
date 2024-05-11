@@ -4,7 +4,7 @@ from ai.more import *
 
 def test_board_score_0_point():
     plateau = Board2()
-    print(board_score(plateau.grille))
+    print(board_score(plateau))
     
 def test_board_score_favoring_black():
     plateau = Board2()
@@ -18,7 +18,7 @@ def test_board_score_favoring_black():
         [Pawn(NOIR),Pawn(NOIR),Pawn(NOIR),Pawn(NOIR),Pawn(NOIR),Pawn(NOIR),Pawn(NOIR),Pawn(NOIR)],
         [Rook(NOIR),Knight(NOIR), Bishop(NOIR),  King(NOIR), Queen(NOIR), Bishop(NOIR), Knight(NOIR), Rook(NOIR)]
     ]
-    print(board_score(plateau.grille))
+    print(board_score(plateau))
     
 
 def test_board_score_favoring_white():
@@ -33,7 +33,7 @@ def test_board_score_favoring_white():
         [Pawn(NOIR),Pawn(NOIR),Pawn(NOIR),Pawn(NOIR),Pawn(NOIR),Pawn(NOIR),Pawn(NOIR),Pawn(NOIR)],
         [Rook(NOIR),Knight(NOIR), None,  King(NOIR), None, Bishop(NOIR), Knight(NOIR), Rook(NOIR)]
     ]
-    print(board_score(plateau.grille))
+    print(board_score(plateau))
     
 def test_board_score_mid_control_nothing_mid():
     plateau = Board2()
@@ -47,8 +47,8 @@ def test_board_score_mid_control_nothing_mid():
         [None] * 8,
         [None,Pawn(NOIR), None, None, None, None, None, None]
     ]
-    print(board_score(plateau.grille))
-    assert(board_score(plateau.grille) == PION_NOIR_POINT)
+    print(board_score(plateau))
+    assert(board_score(plateau) == PION_NOIR_POINT)
     
 def test_board_score_mid_control_pawn_in_mid():
     plateau = Board2()
@@ -62,8 +62,8 @@ def test_board_score_mid_control_pawn_in_mid():
         [None] * 8,
         [None] * 8,
     ]
-    print(board_score(plateau.grille))
-    assert(board_score(plateau.grille) == (PION_BLANC_POINT + SCORE_POINT_FOR_MID_CONTROL))
+    print(board_score(plateau))
+    assert(board_score(plateau) == (PION_BLANC_POINT + SCORE_POINT_FOR_MID_CONTROL))
 
 
 def test_threat_score_white_threatened():
