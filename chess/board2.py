@@ -323,7 +323,7 @@ class Board2:
             special_position = 4
             if piece.color == BLANC :
                 special_position = 3
-            return coup[1][0] == special_position
+            return piece.coordinates[0] == special_position - (piece.direction * 2) and coup[1][0] == special_position
         
     def check_moveEnPassant(self,piece,coup):
         if checkPieceName(self.grille,piece.coordinates,PION):
