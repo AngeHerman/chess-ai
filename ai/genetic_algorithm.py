@@ -10,7 +10,7 @@ import multiprocessing
 
 
 SEQUENCE_LENGTH = 3 # How many moves on a sequence
-POPULATION_SIZE = 50
+POPULATION_SIZE = 40
 SELECTION_RATE = 0.2 # 20 % des bests
 MUTATION_RATE = 0.1
 MAX_GENERATION = 5
@@ -154,7 +154,7 @@ def genetic_algorithm(board, color_of_player_turn):
     # print("Fin check")
 
     for generation in range(MAX_GENERATION):
-        print(f"GENERATION : {generation}")
+        # print(f"GENERATION : {generation}")
         parents = select_parents(population,color_of_player_turn)
         # check_population_type(parents)
         # print(f"Fin check Parent {len(parents)}")

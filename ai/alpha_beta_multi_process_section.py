@@ -9,17 +9,17 @@ NUM_PROCESSES = 4
 
 def alpha_beta_search_mprocess_section(board, color, max_depth = MAX_DEPTH):
     if color == BLANC:
-        return max_value_multi_process(board, 0, -math.inf, math.inf, max_depth)
+        return max_value_multi_process(board, 0, -math.inf, math.inf, max_depth,color)
     else:
-        return min_value_multi_process(board, 0, -math.inf, math.inf, max_depth)
+        return min_value_multi_process(board, 0, -math.inf, math.inf, max_depth,color)
 
 def abmps(board, color, max_depth):
     if color == BLANC:
-        return max_value_multi_process(board, 0, -math.inf, math.inf, max_depth)
+        return max_value_multi_process(board, 0, -math.inf, math.inf, max_depth,color)
     else:
-        return min_value_multi_process(board, 0, -math.inf, math.inf, max_depth)
+        return min_value_multi_process(board, 0, -math.inf, math.inf, max_depth,color)
 
-def max_value_multi_process(board, depth, alpha, beta, max_depth):
+def max_value_multi_process(board, depth, alpha, beta, max_depth,my_color):
     print("ON MAXIMISE")
     
     if depth == max_depth or board.isGameEnded:
@@ -38,7 +38,7 @@ def max_value_multi_process(board, depth, alpha, beta, max_depth):
     with Pool(processes=NUM_PROCESSES) as pool:
         results = []
         for section in sections:
-            result = pool.apply_async(max_value_section, args=(board, depth, alpha, beta, max_depth,section))
+            result = pool.apply_async(max_value_section, args=(board, depth, alpha, beta, max_depth,section,my_color))
             results.append(result)
 
         for result in results:
@@ -55,7 +55,7 @@ def max_value_multi_process(board, depth, alpha, beta, max_depth):
     else:
         return value
     
-def min_value_multi_process(board, depth, alpha, beta, max_depth):
+def min_value_multi_process(board, depth, alpha, beta, max_depth,my_color):
     print("ON MINIMISE")
     if depth == max_depth or board.isGameEnded:
         return evaluate_board(board)
@@ -73,7 +73,7 @@ def min_value_multi_process(board, depth, alpha, beta, max_depth):
 
         results = []
         for section in sections:
-            result = pool.apply_async(min_value_section, args=(board, depth, alpha, beta, max_depth,section))
+            result = pool.apply_async(min_value_section, args=(board, depth, alpha, beta, max_depth,section,my_color))
             results.append(result)
 
         for result in results:
@@ -90,13 +90,13 @@ def min_value_multi_process(board, depth, alpha, beta, max_depth):
     else:
         return value
 
-def max_value_section(board, depth, alpha, beta, max_depth, section):
+def max_value_section(board, depth, alpha, beta, max_depth, section,my_color):
     value = -math.inf
     best_move = None
     for move in section:
         copied_board = copy.deepcopy(board)
         copied_board.play_move(move)
-        current_value = min_value(copied_board, depth + 1, alpha, beta, max_depth)
+        current_value = min_value(copied_board, depth + 1, alpha, beta, max_depth,my_color)
         if current_value > value:
             value = current_value
             best_move = move
@@ -106,7 +106,7 @@ def max_value_section(board, depth, alpha, beta, max_depth, section):
 
     return value, best_move
 
-def min_value_section(board, depth, alpha, beta, max_depth, section):
+def min_value_section(board, depth, alpha, beta, max_depth, section,my_color):
     
     value = math.inf
     best_move = None
@@ -114,7 +114,7 @@ def min_value_section(board, depth, alpha, beta, max_depth, section):
     for move in section:
         copied_board = copy.deepcopy(board)
         copied_board.play_move(move)
-        current_value = max_value(copied_board, depth + 1, alpha, beta, max_depth)
+        current_value = max_value(copied_board, depth + 1, alpha, beta, max_depth,my_color)
 
         if current_value < value:
             value = current_value
@@ -125,7 +125,7 @@ def min_value_section(board, depth, alpha, beta, max_depth, section):
 
     return value, best_move
 
-def max_value(board, depth, alpha, beta,max_depth):
+def max_value(board, depth, alpha, beta,max_depth,my_color):
     # print("Arrivé dans max")
     if depth == max_depth or board.isGameEnded:
         if depth == 0 and board.isGameEnded:
@@ -140,7 +140,7 @@ def max_value(board, depth, alpha, beta,max_depth):
     for move in board.pMoves:
         copied_board = copy.deepcopy(board)
         copied_board.play_move(move)
-        current_value = min_value(copied_board, depth + 1, alpha, beta,max_depth)
+        current_value = min_value(copied_board, depth + 1, alpha, beta,max_depth,my_color)
         if current_value > value:
             value = current_value
             best_move = move
@@ -154,7 +154,7 @@ def max_value(board, depth, alpha, beta,max_depth):
     else:
         return value
 
-def min_value(board, depth, alpha, beta,max_depth):
+def min_value(board, depth, alpha, beta,max_depth,my_color):
     # print("Arrivé dans min")
     if depth == max_depth or board.isGameEnded:
         if depth == 0 and board.isGameEnded:
@@ -170,7 +170,7 @@ def min_value(board, depth, alpha, beta,max_depth):
     for move in board.pMoves:
         copied_board = copy.deepcopy(board)
         copied_board.play_move(move)
-        current_value = max_value(copied_board, depth + 1, alpha, beta,max_depth)
+        current_value = max_value(copied_board, depth + 1, alpha, beta,max_depth,my_color)
         if current_value < value:
             value = current_value
             best_move = move
@@ -193,3 +193,12 @@ def evaluate_board(board):
     color = BLANC if board.turn%2 == 1 else NOIR
     move_of_current_player = board.getAllAvailableMoves(color)
     return board_score(board, color,board.endGame(),move_of_current_player)
+
+def evaluate_board_v2(board,my_color):
+    color = BLANC if board.turn%2 == 1 else NOIR
+    move_of_current_player = board.getAllAvailableMoves(color)
+    if board.turn < TURN_NUMBER_FOR_OPENING:
+        return opening_strategy(board, color,board.endGame(),move_of_current_player,my_color)
+    else:
+        return board_score(board, color,board.endGame(),move_of_current_player)
+    # return opening_strategy(board, color,board.endGame(),move_of_current_player,my_color)

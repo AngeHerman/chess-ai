@@ -77,16 +77,12 @@ def alpha_beta_search_mt_manual(board, color):
             thread = AlphaBetaThread(copied_board, color, 0, -math.inf, math.inf, MAX_DEPTH, result)
             threads.append(thread)
 
-    # Start threads
     for thread in threads:
         thread.start()
 
-    # Wait for all threads to finish
     for thread in threads:
         thread.join()
 
-    # Choose the best move based on the results from threads
-    # Return the best move
 def evaluate_board(board):
     color = BLANC if board.turn % 2 == 1 else NOIR
     move_of_current_player = board.getAllAvailableMoves(color)

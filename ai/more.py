@@ -1,13 +1,20 @@
 from ai.opening import *
 from chess.constants import *
 from chess.utils import *
+from chess.pawn import *
 
-SCORE_POINT_FOR_KING_PROTECTION = 1
+SCORE_POINT_FOR_KING_PROTECTION = 2
 SCORE_POINT_FOR_MID_CONTROL = 1
+PWAN_SCORE_POINT_FOR_MID_CONTROL = 1
 THREAT_MULTIPLICATOR = 1/3
 THREAT_MULTIPLICATOR_FOR_MY_PIECE_OPPONENT_CAN_POTENTILLY_CATCH = 1/8
 
 SCORE_MULTIPLICATOR_FOR_WINNER = 100000000
+
+TURN_NUMBER_FOR_OPENING = 6
+SCORE_POINT_FOR_ROQUE = 15
+
+DEVELOPPEMENT_MULTIPLICATOR = 1/2
 
 PION_BLANC_POINT = 1
 TOUR_BLANC_POINT = 50
@@ -46,11 +53,19 @@ def bonus_center_control(row_index, color):
 def bonus_kings_protection(board, king_piece):
     surrounding = board.getKingSurrondings(king_piece)
     protection_list = board.getKingProtectionList(surrounding)
-    score_bonus = len(protection_list)
+    score_bonus = len(protection_list)* SCORE_POINT_FOR_KING_PROTECTION
     if king_piece.color == NOIR:
         score_bonus = -score_bonus
     return score_bonus
 
+def development_score(board,my_color):
+    dev_score = 0
+    # Move is all our moves
+    moves = board.getAllAvailableMoves(my_color)
+    dev_score += (len(moves) * DEVELOPPEMENT_MULTIPLICATOR)
+    return dev_score
+
+# Mid et end-game strategy
 def board_score(board, color_of_player_turn,gagnant,move_of_current_player):
     # print("Debut Evaluation")
     
@@ -74,14 +89,13 @@ def board_score(board, color_of_player_turn,gagnant,move_of_current_player):
 
 def board_score_without_threat(board):
     score_total = 0
-    for row_index, row in enumerate(board):
+    for row_index, row in enumerate(board.grille):
         for col_index, piece in enumerate(row):
             if piece is not None:
                 score_total += scores_pieces[piece.name][piece.color]
-                # if piece.name == ROI:
-                #     score_total += bonus_kings_protection(board, row_index, col_index, piece.color)
+                if piece.name == ROI:
+                    score_total += bonus_kings_protection(board, piece)
                 score_total += bonus_center_control(row_index,piece.color)
-    # print("Fin Evaluation") 
     return score_total
     
 
@@ -93,15 +107,6 @@ def threat_score_by_color(board,color_of_opponent,move_of_current_player):
     score_threat = 0
     # A list of already seen case
     temp = []
-    #My moves that threat opponent cases
-    # my_threatened_moves =  getThreatenedCasesWithKing(board, color_of_opponent)
-    # for move in my_threatened_moves:
-    #     # if move in move_of_current_player
-    #     if move[1] not in temp:
-    #         piece = getPiece(board,move[1])
-    #         if piece is not None and piece.color == color_of_opponent:
-    #             score_threat += int(scores_pieces[piece.name][piece.color]*THREAT_MULTIPLICATOR)
-    #         temp.append(move[1])
     for move in move_of_current_player:
         if move[1] not in temp:
             piece = getPiece(board,move[1])
@@ -127,3 +132,35 @@ def threat_score_opponent(board,color_of_player_turn):
                 score_threat += int(scores_pieces[piece.name][piece.color]*THREAT_MULTIPLICATOR_FOR_MY_PIECE_OPPONENT_CAN_POTENTILLY_CATCH)
             temp.append(move[1])
     return -score_threat
+
+def roque_score(board,my_color):
+    if not board.check_petit_roque(my_color):
+        return 0
+    if my_color == BLANC:
+        return SCORE_POINT_FOR_ROQUE
+    else:
+        return - SCORE_POINT_FOR_ROQUE
+
+def central_pawn_defense_score(board):
+    row_d4,col_d4 = chess_notation_to_cell("d4")
+    row_e4,col_e4 = chess_notation_to_cell("e4")
+    row_d5,col_d5 = chess_notation_to_cell("d5")
+    row_e5,col_e5 = chess_notation_to_cell("e5")
+    total_score = 0
+    for row_index, row in enumerate(board.grille):
+        for col_index, piece in enumerate(row):
+            if piece is not None and isinstance(piece, Pawn):
+                # pion Blanc en d4 ou e4
+                if piece.color == BLANC and (col_index == col_d4 or col_index == col_e4) and row_index == row_d4:
+                    total_score += PWAN_SCORE_POINT_FOR_MID_CONTROL
+                # pion Noir en d5 ou e5
+                elif piece.color == NOIR and (col_index == col_d5 or col_index == col_e5) and row_index == row_d5:
+                    total_score -= PWAN_SCORE_POINT_FOR_MID_CONTROL
+    return total_score
+
+def opening_strategy(board, color_of_player_turn,gagnant,move_of_current_player,my_color):
+    score = 0
+    score += board_score_without_threat(board.grille)
+    score += roque_score(my_color)
+    score += central_pawn_defense_score(board)
+    return score

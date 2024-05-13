@@ -341,6 +341,19 @@ class Board2:
         adversaryPawns = getAllPiecesWithNameColor(self.grille,PION,color)
         for i in range(len(adversaryPawns)):
             adversaryPawns[i].en_passant = 0
+            
+    def check_petit_roque(self, color):
+        king_row = 0 if color == BLANC else 7
+        king = self.grille[king_row][3]  # Pos roi
+        rook = self.grille[king_row][0]  # Rook côté roi
+        
+        #Ckecking roque
+        if king is not None and rook is not None\
+        and isinstance(king, King) and isinstance(rook, Rook) \
+                and king.moveCount == 0 and rook.moveCount == 0 \
+                and all(self.grille[king_row][col] is None for col in range(1, 3)):
+            return True
+        return False
 
         
 

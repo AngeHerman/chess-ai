@@ -11,7 +11,6 @@ from tests.test_genetic_algorithm import *
 
 from api.lichess import *
 from ai.monte_carlo import *
-from ai.alpha_beta import *
 from ai.more import *
 from ai.opening import *
 from ai.alpha_beta_multi_process_section import *

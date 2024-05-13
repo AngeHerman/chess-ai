@@ -39,7 +39,7 @@ def max_value_multiThread(board, depth, alpha, beta, max_depth):
                 value = current_value
                 best_move = move
             if value >= beta:
-                print("Elagué")
+                # print("Elagué")
                 break
             alpha = max(alpha, value)
 
