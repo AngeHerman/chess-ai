@@ -270,7 +270,7 @@ class Board2:
             piecesInBetweenPath = self.getPieceCoordinatesInBetweenPath(straight[i])
             if len(piecesInBetweenPath) > 2:
                 continue
-            if checkPieceColor(self.grille,coordinates,kingPiece.color) and checkPieceName(self.grille,coordinates,"Tour"):
+            if checkPieceColor(self.grille,coordinates,kingPiece.color) and checkPieceName(self.grille,coordinates,TOUR):
                 piece = getPiece(self.grille,coordinates)
 
                 if piece.moveCount == 0:
@@ -278,7 +278,7 @@ class Board2:
                     direction = -1 if piece.coordinates[1] < kingCoordinates[1] else 1
                     kingNewCoordinates = (kingCoordinates[0],kingCoordinates[1]+direction*2)
                     rookNewCoordinates = (kingNewCoordinates[0],kingNewCoordinates[1]-direction)
-                    specialMovement.append((kingCoordinates,kingNewCoordinates))
+                    specialMovement.append((kingCoordinates,kingNewCoordinates,''))
         
         return specialMovement
     
