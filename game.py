@@ -60,13 +60,13 @@ def play_against_ai_o(ia_level,lichess_level):
         time.sleep(QUICK_SLEEP_TIME)
     open_game_in_browser(api.game_id)
     while not api.is_game_finished:
-        print(is_my_turn.is_set())
+        is_my_turn.is_set()
         is_my_turn.wait()
         if api.is_game_finished:
             break
         print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        print("api.moves")
-        print(api.moves)
+        # print("api.moves")
+        # print(api.moves)
         # print("Current moves avant")
         # print(current_moves)
         moves_en_trop = elements_en_trop(current_moves, api.moves)
@@ -77,7 +77,7 @@ def play_against_ai_o(ia_level,lichess_level):
         # print(moves_en_trop)
         # print(type(moves_en_trop))
         print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        print("tour est "+ str(plateau.turn))
+        # print("tour est "+ str(plateau.turn))
         for m in moves_en_trop:
             # print("le move envoyé est "+m)
             plateau.getAllMovesBasedOnTurn()
@@ -97,9 +97,10 @@ def play_against_ai_o(ia_level,lichess_level):
         best_move = next_move(plateau.turn,current_moves,api.color)
         if best_move is None:
             best_move = get_move_base_on_ai_level(ia_level,plateau,color_to_int(api.color))
-            print(f"API COLOR est {color_to_int(api.color)} et move est {best_move}")
+            # print(f"API COLOR est {color_to_int(api.color)} et move est {best_move}")
             
         else:
+            # print("°°°° OUVERTURE °°°°")
             best_move = chess_notation_to_move(best_move)
         if not api.make_move( move_to_chess_notation( best_move),is_my_turn):
             erreur += 1

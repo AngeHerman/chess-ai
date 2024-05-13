@@ -23,7 +23,8 @@ def max_value_multi_process(board, depth, alpha, beta, max_depth,my_color):
     print("ON MAXIMISE")
     
     if depth == max_depth or board.isGameEnded:
-        return evaluate_board(board)
+        # return evaluate_board(board)
+        return evaluate_board_v2(board,my_color)
 
     value = -math.inf
     best_move = None
@@ -58,7 +59,8 @@ def max_value_multi_process(board, depth, alpha, beta, max_depth,my_color):
 def min_value_multi_process(board, depth, alpha, beta, max_depth,my_color):
     print("ON MINIMISE")
     if depth == max_depth or board.isGameEnded:
-        return evaluate_board(board)
+        # return evaluate_board(board)
+        return evaluate_board_v2(board,my_color)
 
     value = math.inf
     best_move = None
@@ -131,7 +133,8 @@ def max_value(board, depth, alpha, beta,max_depth,my_color):
         if depth == 0 and board.isGameEnded:
             print(f"°°°PRESQUE FIN mais on continue")
         else:
-            return evaluate_board(board)
+            # return evaluate_board(board)
+            return evaluate_board_v2(board,my_color)
 
     value = -math.inf
     best_move = None
@@ -160,7 +163,8 @@ def min_value(board, depth, alpha, beta,max_depth,my_color):
         if depth == 0 and board.isGameEnded:
             print(f"°°°PRESQUE FIN mais on continue")
         else:
-            return evaluate_board(board)
+            # return evaluate_board(board)
+            return evaluate_board_v2(board,my_color)
 
     value = math.inf
     best_move = None
@@ -189,16 +193,19 @@ def divide_tree(moves, num_threads):
     sections = [moves[i:i+section_size] for i in range(0, num_moves, section_size)]
     return sections
 
-def evaluate_board(board):
-    color = BLANC if board.turn%2 == 1 else NOIR
-    move_of_current_player = board.getAllAvailableMoves(color)
-    return board_score(board, color,board.endGame(),move_of_current_player)
+# def evaluate_board(board):
+#     color = BLANC if board.turn%2 == 1 else NOIR
+#     move_of_current_player = board.getAllAvailableMoves(color)
+#     return board_score(board, color,board.endGame(),move_of_current_player)
 
 def evaluate_board_v2(board,my_color):
     color = BLANC if board.turn%2 == 1 else NOIR
     move_of_current_player = board.getAllAvailableMoves(color)
+    # print(f" tour {board.turn}")
     if board.turn < TURN_NUMBER_FOR_OPENING:
+        # print(f"000 OPENING 000{board.turn}")
         return opening_strategy(board, color,board.endGame(),move_of_current_player,my_color)
     else:
+        # print(f"000 VRAIE 000 {board.turn}")
         return board_score(board, color,board.endGame(),move_of_current_player)
     # return opening_strategy(board, color,board.endGame(),move_of_current_player,my_color)

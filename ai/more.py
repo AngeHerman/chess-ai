@@ -2,6 +2,7 @@ from ai.opening import *
 from chess.constants import *
 from chess.utils import *
 from chess.pawn import *
+from chess.knight import *
 
 SCORE_POINT_FOR_KING_PROTECTION = 2
 SCORE_POINT_FOR_MID_CONTROL = 1
@@ -11,8 +12,9 @@ THREAT_MULTIPLICATOR_FOR_MY_PIECE_OPPONENT_CAN_POTENTILLY_CATCH = 1/8
 
 SCORE_MULTIPLICATOR_FOR_WINNER = 100000000
 
-TURN_NUMBER_FOR_OPENING = 6
-SCORE_POINT_FOR_ROQUE = 15
+TURN_NUMBER_FOR_OPENING = 10
+SCORE_POINT_FOR_ROQUE_POSSIBLILITY = 15
+SCORE_POINT_FOR_KNIGHT_OUT = 9
 
 DEVELOPPEMENT_MULTIPLICATOR = 1/2
 
@@ -137,9 +139,9 @@ def roque_score(board,my_color):
     if not board.check_petit_roque(my_color):
         return 0
     if my_color == BLANC:
-        return SCORE_POINT_FOR_ROQUE
+        return SCORE_POINT_FOR_ROQUE_POSSIBLILITY
     else:
-        return - SCORE_POINT_FOR_ROQUE
+        return - SCORE_POINT_FOR_ROQUE_POSSIBLILITY
 
 def central_pawn_defense_score(board):
     row_d4,col_d4 = chess_notation_to_cell("d4")
@@ -158,9 +160,22 @@ def central_pawn_defense_score(board):
                     total_score -= PWAN_SCORE_POINT_FOR_MID_CONTROL
     return total_score
 
+def knight_out_score(board, my_color):
+    score = 0
+    for row_index, row in enumerate(board.grille):
+        for col_index, piece in enumerate(row):
+            if piece is not None and isinstance(piece, Knight) and piece.color == my_color:
+                if piece.moveCount > 0:
+                    score += SCORE_POINT_FOR_KNIGHT_OUT
+    if my_color == NOIR:
+        score = -score
+    return score
+    
 def opening_strategy(board, color_of_player_turn,gagnant,move_of_current_player,my_color):
     score = 0
-    score += board_score_without_threat(board.grille)
-    score += roque_score(my_color)
+    score += board_score_without_threat(board)
+    # score += board_score(board,color_of_player_turn,gagnant,move_of_current_player)
+    score += roque_score(board,my_color)
     score += central_pawn_defense_score(board)
+    score += knight_out_score(board,my_color)
     return score
