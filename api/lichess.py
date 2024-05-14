@@ -173,7 +173,9 @@ class Lichess:
         # If our current game is finished
         if( self.game_id is not None and self.game_id == game.get("gameId")):
             self.is_game_finished = True
-            self.winner = game.get("winner") 
+            self.winner = game.get("winner")
+            # print(f"MATCH FINISHED: Winner is {self.winner} et fin est {self.is_game_finished}")
+            
 
     def handle_challenge(self,event):
         challenge_info = event.get('challenge')

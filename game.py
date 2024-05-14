@@ -62,6 +62,7 @@ def play_against_ai_o(ia_level,lichess_level):
     while not api.is_game_finished:
         is_my_turn.is_set()
         is_my_turn.wait()
+        # print("Apres le wait")
         if api.is_game_finished:
             break
         print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
@@ -78,6 +79,7 @@ def play_against_ai_o(ia_level,lichess_level):
         # print(type(moves_en_trop))
         print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
         # print("tour est "+ str(plateau.turn))
+        # print("Avant move")    
         for m in moves_en_trop:
             # print("le move envoyé est "+m)
             plateau.getAllMovesBasedOnTurn()
@@ -94,6 +96,9 @@ def play_against_ai_o(ia_level,lichess_level):
                 log_Error(plateau,best_move)
                 
                 os._exit(1)
+        if api.is_game_finished:
+            break
+        # print("Apres API")
         best_move = next_move(plateau.turn,current_moves,api.color)
         if best_move is None:
             best_move = get_move_base_on_ai_level(ia_level,plateau,color_to_int(api.color))
@@ -114,9 +119,10 @@ def play_against_ai_o(ia_level,lichess_level):
         if erreur == NOMBRE_ERREUR_AVANT_ARRET_JEU :
             exit()
         time.sleep(ONE_SEC_SLEEP_TIME)
+        # print("SUITE")
+    print(f"MATCH FINISHED: Winner is {api.winner}")
     stream_events_thread.join()
     stream_board_thread.join()
-    print(f"MATCH FINISHED: Winner is {api.winner}")
 
 def play_against_player_o(ia_level):
     is_my_turn = threading.Event()
@@ -141,12 +147,12 @@ def play_against_player_o(ia_level):
         if api.is_game_finished:
             break
         print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        print("api.moves")
-        print(api.moves)
+        # print("api.moves")
+        # print(api.moves)
         moves_en_trop = elements_en_trop(current_moves, api.moves)
         current_moves.extend(moves_en_trop)
         print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        print("tour est "+ str(plateau.turn))
+        # print("tour est "+ str(plateau.turn))
         for m in moves_en_trop:
             # print("le move envoyé est "+m)
             plateau.getAllMovesBasedOnTurn()
@@ -163,10 +169,12 @@ def play_against_player_o(ia_level):
                 log_Error(plateau,best_move)
                 
                 os._exit(1)
+        if api.is_game_finished:
+            break
         best_move = next_move(plateau.turn,current_moves,api.color)
         if best_move is None:
             best_move = get_move_base_on_ai_level(ia_level,plateau,color_to_int(api.color))
-            print(f"API COLOR est {color_to_int(api.color)} et move est {best_move}")            
+            # print(f"API COLOR est {color_to_int(api.color)} et move est {best_move}")            
         else:
             best_move = chess_notation_to_move(best_move)
         if not api.make_move( move_to_chess_notation( best_move),is_my_turn):
@@ -181,10 +189,7 @@ def play_against_player_o(ia_level):
         if erreur == NOMBRE_ERREUR_AVANT_ARRET_JEU :
             exit()
         time.sleep(ONE_SEC_SLEEP_TIME)
-    stream_events_thread.join()
-    stream_board_thread.join()
     print(f"MATCH FINISHED: Winner is {api.winner}")
-    
     stream_events_thread.join()
     stream_board_thread.join()
     
