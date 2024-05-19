@@ -23,6 +23,9 @@ import random
 
 QUICK_SLEEP_TIME = 0
 ONE_SEC_SLEEP_TIME = 1
+SLEEP_TIME_FOR_PLAYER_CHALLENGE = 10
+HALF_SLEEP_TIME_FOR_PLAYER_CHALLENGE = 5
+
 
 ITERATION_RECHERCHER_COUP = 50
 NOMBRE_ERREUR_AVANT_ARRET_JEU = 1
@@ -41,6 +44,12 @@ def log_Error(plateau,errorMove):
     logFile.close()
 
 def play_against_ai_o(ia_level,lichess_level):
+    """Launch a game of our ai against a lichess ai which level is (lichess_level) 
+
+    Args:
+        ia_level (int): The level of our ai
+        lichess_level (int): The level of the lichess ai
+    """
     is_my_turn = threading.Event()
     plateau = Board2()
     # plateau.print_Board()
@@ -50,7 +59,7 @@ def play_against_ai_o(ia_level,lichess_level):
     stream_events_thread.start()
     time.sleep(2)
     if not api.challenge_ai():
-        os.exit(1)
+        return
     
     stream_board_thread = threading.Thread(target=api.stream_board_state, args=(is_my_turn,))
     stream_board_thread.start()
@@ -95,7 +104,7 @@ def play_against_ai_o(ia_level,lichess_level):
                 #Serialize object
                 log_Error(plateau,best_move)
                 
-                os._exit(1)
+                exit()
         if api.is_game_finished:
             break
         # print("Apres API")
@@ -117,14 +126,21 @@ def play_against_ai_o(ia_level,lichess_level):
             print(best_move)
             print("*************************************")
         if erreur == NOMBRE_ERREUR_AVANT_ARRET_JEU :
-            exit()
+            break
+        
         time.sleep(ONE_SEC_SLEEP_TIME)
         # print("SUITE")
     print(f"MATCH FINISHED: Winner is {api.winner}")
     stream_events_thread.join()
-    stream_board_thread.join()
+    stream_board_thread.join()    
+    return 
 
 def play_against_player_o(ia_level):
+    """Open our ai so it can be challenged on lichess.fr by players with account
+    
+    Args:
+        ia_level (int): ia_level (int): The level of our ai
+    """
     is_my_turn = threading.Event()
     plateau = Board2()
     api = Lichess()
@@ -133,14 +149,22 @@ def play_against_player_o(ia_level):
     stream_events_thread.start()
     erreur = 0
     print("Waiting for a challenge !!!!")
-    while(not api.game_started):
-        time.sleep(QUICK_SLEEP_TIME)
-    time.sleep(2)
+    time.sleep(SLEEP_TIME_FOR_PLAYER_CHALLENGE) # Wait for 10 sec
+    print(f"Sleep fini et start est {api.game_started}")
+    if not api.game_started:
+        api.close()
+        stream_events_thread.join()
+        print("Challenge not Found !!!!")
+        return
+        
+    # while(not api.game_started):
+    #     time.sleep(QUICK_SLEEP_TIME)
+    # time.sleep(2)
     stream_board_thread = threading.Thread(target=api.stream_board_state, args=(is_my_turn,))
     stream_board_thread.start()
     
-    while not api.game_started:
-        time.sleep(QUICK_SLEEP_TIME)
+    # while not api.game_started:
+    #     time.sleep(QUICK_SLEEP_TIME)
     while not api.is_game_finished:
         print(is_my_turn.is_set())
         is_my_turn.wait()
@@ -168,7 +192,7 @@ def play_against_player_o(ia_level):
                 #Serialize object
                 log_Error(plateau,best_move)
                 
-                os._exit(1)
+                exit()
         if api.is_game_finished:
             break
         best_move = next_move(plateau.turn,current_moves,api.color)
@@ -187,13 +211,25 @@ def play_against_player_o(ia_level):
             print(best_move)
             print("*************************************")
         if erreur == NOMBRE_ERREUR_AVANT_ARRET_JEU :
-            exit()
+            break
+        
         time.sleep(ONE_SEC_SLEEP_TIME)
     print(f"MATCH FINISHED: Winner is {api.winner}")
     stream_events_thread.join()
     stream_board_thread.join()
+    return
     
 def get_move_base_on_ai_level(ai_level,board,color_of_player_turn):
+    """Retur the best move according to ai_level
+
+    Args:
+        ai_level (_type_): level of the ai we want to call for the best move
+        board (_type_): the gameboard
+        color_of_player_turn (_type_): The color of the player that has to play
+
+    Returns:
+        _type_: _description_
+    """
     match ai_level:
         case "0":
             move = mcts_rapide(board,color_of_player_turn)

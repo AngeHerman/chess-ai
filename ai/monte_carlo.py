@@ -8,7 +8,7 @@ import copy
 # The max depth to check if a move where we sacrificed a piece paid out etc ...
 MAX_DEPTH_TO_CHECK_BAD_MOVE = 4
 INACCEPTABLE_SCORE_DIFFERENCE = 60
-MAX_SIMULATE_MOVE_FOR_DRAW = 200
+MAX_SIMULATE_MOVE_FOR_DRAW = 130
 NOMBER_OF_ITERATIONS = 50
 
 class Node:
@@ -22,6 +22,14 @@ class Node:
         self.state_score = None
 
 def select(node):
+    """Return the best child for expansion
+
+    Args:
+        node (Node): Parent Node
+
+    Returns:
+        Node: Best child node
+    """
     exploration_constant = math.sqrt(2)
     best_score = float('-inf')  
     selected_child = None
@@ -42,6 +50,11 @@ def select(node):
 
 
 def expand(node):
+    """Expand the Node ie create all his kids based on the moves
+
+    Args:
+        node (_type_): _description_
+    """
     # TODO
     # Ajouter booleen myturn au plateau et gameover ainsi que win
     try:
@@ -58,18 +71,15 @@ def expand(node):
         node.children[move] = new_node
 
 def simulate(node, my_color):
-    # state = node.state
-    # print("Avant deep copy")
+    """simulate the game until the end or max depth
+    """
     state = copy.deepcopy(node.state)
-    # print("Apres deep copy")
-    
-    # print("*")
     score = 0
     i = 0
     while not state.isGameEnded:
         if i == MAX_DEPTH_TO_CHECK_BAD_MOVE :
             # print("Avant score ")
-            score = board_score(state.grille)
+            score = evaluation(state)
             # print("Après score "+str(score))
         # print("Continue dans IA ",end=str(state.turn))
     # for _ in range(50):
@@ -90,23 +100,16 @@ def simulate(node, my_color):
     return calculate_reward(state, my_color),score
 
 def calculate_reward_with_future_score(old_reward,future_score,actual_score,my_color):
+    """If the future reward is too bad, we consider the actual reward as a defeat/lost
+    """
     difference = future_score - actual_score
     new_reward = old_reward
     if my_color == BLANC:
-        # The white want posittive score
-        # if difference <= -INACCEPTABLE_SCORE_DIFFERENCE:
-        #     new_reward = max(old_reward + difference,0)
-        
-        # if difference > INACCEPTABLE_SCORE_DIFFERENCE:
-        #     new_reward += 1
-        if difference <= -INACCEPTABLE_SCORE_DIFFERENCE:
+        # Check the white have a too bad score difference
+        if difference <= -INACCEPTABLE_SCORE_DIFFERENCE: 
             new_reward -= 1
     else:
-        # The black want a negative score
-        # if difference >= INACCEPTABLE_SCORE_DIFFERENCE:
-        #     new_reward = max(old_reward - difference,0)
-        # if difference < INACCEPTABLE_SCORE_DIFFERENCE:
-        #     new_reward += 1
+        # Check the black have a too bad score difference  
         if difference >= INACCEPTABLE_SCORE_DIFFERENCE:
             new_reward -= 1
     if new_reward < 0:
@@ -115,6 +118,8 @@ def calculate_reward_with_future_score(old_reward,future_score,actual_score,my_c
     return new_reward
     
 def backpropagate(node, reward,future_score,my_color):
+    """Propagate score to the main Node
+    """
     while node is not None:
         node.visits += 1
         node.reward += reward
@@ -127,7 +132,7 @@ def mcts(state, my_color):
     # copie.print_Board()
     root = Node(copie)
     expand(root)
-    root.state_score = board_score(root.state.grille)
+    root.state_score = evaluation(root.state)
     i = 1
     for _ in range(NOMBER_OF_ITERATIONS):
         # print("Iteration "+str(i))
@@ -161,6 +166,11 @@ def calculate_reward(state, my_color):
         return 1
     # print("Perdu")
     return 0
+
+def evaluation(board):
+    color = BLANC if board.turn%2 == 1 else NOIR
+    move_of_current_player = board.getAllAvailableMoves(color)
+    return board_score(board, color,board.endGame(),move_of_current_player)
 
 def print_tree(node, indent=0):
     print(' ' * indent + f"{node.visits}/{node.reward}")

@@ -16,12 +16,16 @@ MUTATION_RATE = 0.1
 MAX_GENERATION = 5
 
 def generate_random_move():
+    """Generate random move using board height and length
+    """
     random.seed(time.time())
     start_position = (random.randint(0, HEIGHT-1), random.randint(0, WIDTH - 1))
     end_position = (random.randint(0, HEIGHT - 1), random.randint(0, WIDTH - 1))
     return start_position, end_position
 
 def generate_individual(board):
+    """ Generate random moves of sequence length
+    """
     sequence = []
     sequence.append(random.choice(board.pMoves))
     for i in range(SEQUENCE_LENGTH-1):
@@ -29,6 +33,9 @@ def generate_individual(board):
     return sequence
 
 def generate_existing_individual(board):
+    """Generate individual/sequence but not random, using existing ones
+        every sequence is mathced with its evaluation 
+    """
     sequence = []
     copied_board = copy.deepcopy(board)
     for i in range(SEQUENCE_LENGTH):
@@ -39,6 +46,8 @@ def generate_existing_individual(board):
     return sequence
 
 def generate_existing_population(board, color_of_player_turn):
+    """Generate population we are sure exists
+    """
     board.getAllMovesBasedOnTurn()
     population = []
     for i in range(POPULATION_SIZE):
@@ -48,6 +57,8 @@ def generate_existing_population(board, color_of_player_turn):
     return population
 
 def generate_population(board, color_of_player_turn):
+    """Genrate random population of random move, most likely not possible moves
+    """
     board.getAllMovesBasedOnTurn()
     population = []
     for i in range(POPULATION_SIZE):
@@ -57,6 +68,9 @@ def generate_population(board, color_of_player_turn):
     return population
 
 def evaluate_fitness(board,color_of_player_turn, sequence):
+    """Return evaluation of baord after a sequence of moves
+        infinite for impossible sequence 
+    """
     board_copy = copy.deepcopy(board)
     moves_passed = True
     for move in sequence:
@@ -73,11 +87,15 @@ def evaluate_fitness(board,color_of_player_turn, sequence):
             return math.inf
 
 def select_parents(population, color_of_player_turn):
+    """Select best sequence that will serve as parents
+
+    """
     selected_population = []
     for individual in population:
         if isinstance(individual[1], list):
             selected_population.append(individual)
     if color_of_player_turn == BLANC:
+        # The white want to maximise score so their population is sorted from high to low
         sorted_population = sorted(selected_population, key=lambda x: x[0], reverse=True)
     else:
         sorted_population = sorted(selected_population, key=lambda x: x[0])
@@ -86,10 +104,14 @@ def select_parents(population, color_of_player_turn):
     return sorted_population[:selected_count]
 
 def crossover(parent1, parent2):
+    """return new child of parents
+    """
     crossover_point = random.randint(1, len(parent1) - 1)
     return parent1[:crossover_point] + parent2[crossover_point:]
 
 def get_mutation_point(board, sequence):
+    """Return the index of the not allowed move
+    """
     board_copy = copy.deepcopy(board)
     mutation_point = 0
     for move in sequence:
@@ -100,8 +122,10 @@ def get_mutation_point(board, sequence):
         mutation_point += 1
     return mutation_point
     
-# Return the move that will replace the one at replacement point
 def get_replacement_move(board,sequence,mutatio_point):
+    """Return the move that will replace the one at replacement point
+        in the sequence
+    """
     copied_board = copy.deepcopy(board)
     for i in range(mutatio_point):
         copied_board.getAllMovesBasedOnTurn()
@@ -111,6 +135,8 @@ def get_replacement_move(board,sequence,mutatio_point):
     return new_move
 
 def mutate(sequence, board):
+    """Mutate the sequence if needed
+    """
     # print("Mutation")
     mutation_point = get_mutation_point(board,sequence)
     if  mutation_point < len(sequence):
@@ -134,6 +160,8 @@ def evaluate_board(board):
     return board_score(board, color,board.endGame(),move_of_current_player)
 
 def select_best_individuals(population,color_of_player_turn):
+    """Select best sequence that will serve as parents
+    """
     if color_of_player_turn == BLANC:
         sorted_population = sorted(population, key=lambda x: x[0], reverse=True)
     else:
@@ -141,24 +169,29 @@ def select_best_individuals(population,color_of_player_turn):
     return sorted_population[:POPULATION_SIZE]
 
 def check_population_type(population):
+    """Check  mal-formed individuls/sequence
+    """
     for individual in population:
         if not isinstance(individual[1], list):
             # print(f"Je suis un mauvais individu : Me voici : {individual}")
             pass
 
 def genetic_algorithm(board, color_of_player_turn):
+    """Return best move
+
+    Args:
+        board (Board): board
+        color_of_player_turn (int): color of the player that has to play
+
+    Returns:
+        move: Best move
+    """
     population = generate_existing_population(board,color_of_player_turn)
     fitness_fn = lambda sequence: evaluate_fitness(board,color_of_player_turn, sequence)
-    # check_population_type(population)
-    # print(population)
-    # print("Fin check")
+
 
     for generation in range(MAX_GENERATION):
-        # print(f"GENERATION : {generation}")
         parents = select_parents(population,color_of_player_turn)
-        # check_population_type(parents)
-        # print(f"Fin check Parent {len(parents)}")
-        # print(parents)
         new_gen = []
         # POPULATION_SIZE instead of len(population) because len(population) is going exponential
         while len(new_gen) < POPULATION_SIZE:
@@ -167,8 +200,6 @@ def genetic_algorithm(board, color_of_player_turn):
             # random.seed(time.time())
             # parent2 = random.choice(parents)
             parent1, parent2 = random.sample(parents, 2)
-            # print(f"Parent 1 {parent1}")
-            # print(f"Parent 2 {parent2}")
             child = crossover(parent1[1], parent2[1])
             # while evaluate_fitness(board,color_of_player_turn,child) == math.inf or evaluate_fitness(board,color_of_player_turn,child) == -math.inf:
             #     child = mutate(child, board)
@@ -184,8 +215,9 @@ def genetic_algorithm(board, color_of_player_turn):
     best_sequence = max(population, key=lambda x: x[0])[1]
     return best_sequence
 
-# Handle each thread
 def thread_worker(parents, new_gen, board, color_of_player_turn, fitness_fn):
+    """Handle thread
+    """
     parent1, parent2 = random.sample(parents, 2)
     child = crossover(parent1[1], parent2[1])
     for i in range(SEQUENCE_LENGTH-1):
@@ -219,8 +251,9 @@ def genetic_algorithm_threads(board, color_of_player_turn):
     return best_sequence
 
 
-# Handle each process
 def processus_worker(parents, new_gen, board, color_of_player_turn, fitness_fn):
+    """Handle process
+    """
     parent1, parent2 = random.sample(parents, 2)
     child = crossover(parent1[1], parent2[1])
     for i in range(SEQUENCE_LENGTH-1):

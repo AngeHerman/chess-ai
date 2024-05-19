@@ -38,11 +38,14 @@ class Lichess:
         self.winner = None
         self.is_game_finished = False
         self.ai_level = level
+        self.my_turn = None
     
     def stream_events(self):
         url = BASE_URL+"/api/stream/event"
         with requests.get(url, headers=headers, stream=True) as response:
             for line in response.iter_lines():
+                if self.is_game_finished:
+                    break
                 if line:
                     event = ndjson.loads(line)
                     self.handle_event(event)
@@ -50,10 +53,12 @@ class Lichess:
                     time.sleep(STREAM_SLEEP_TIME)
 
     def stream_board_state(self,is_my_turn):
-        
+        self.my_turn = is_my_turn
         url = f"{BASE_URL}/api/bot/game/stream/{self.game_id}"
         with requests.get(url, headers=headers, stream=True) as response:
             for line in response.iter_lines():
+                if self.is_game_finished:
+                    break
                 if line:
                     state = ndjson.loads(line)
                     self.handle_board_state(state,is_my_turn)
@@ -174,6 +179,8 @@ class Lichess:
         if( self.game_id is not None and self.game_id == game.get("gameId")):
             self.is_game_finished = True
             self.winner = game.get("winner")
+            self.my_turn.set()
+            # print(f"suis je set ? {self.my_turn.is_set()}")
             # print(f"MATCH FINISHED: Winner is {self.winner} et fin est {self.is_game_finished}")
             
 
@@ -217,7 +224,9 @@ class Lichess:
     def handle_challenge_declined(self,event):
         print("Challenge declined")
         
-
+    def close(self):
+        self.is_game_finished = True
+        
 def open_game_in_browser(game_id):
     url = f"{BASE_URL}/{game_id}"
     webbrowser.open(url)
