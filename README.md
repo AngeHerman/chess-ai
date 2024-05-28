@@ -141,3 +141,18 @@ Nanjing Institute of Technology, Nanjing, China
 
 https://www.researchgate.net/publication/23751563_Progressive_Strategies_for_Monte-Carlo_Tree_Search - Progressive Strategies for Monte-Carlo Tree Search Article  in  New Mathematics and Natural Computation ·
 
+# Projet
+## Installation des librairies
+    pip install -r requirements.txt
+
+## Vidéo explicative du projet
+    [text](https://youtu.be/ML6Wx9bfmtQ)
+## Lancement du projet
+    make
+
+## Explication des niveaux de notre IA
+-   Niveau 0: Move hasardeux, surtout pour les tests
+-   Niveau 1: Mobte Carlo  (Prends beaucoup trop de temps et coup pas optimal)
+-   Niveau 2: Algorythme Genétique  (Prends beaucoup trop de temps et coup pas optimal)
+-   Niveau 3: Alpha-Beta de profondeur 1  (1 seconde max)
+-   Niveau 4: Alpha-Beta de profondeur 2  (5 secondes max)
