@@ -35,6 +35,12 @@ TOKEN=Votre_Token_Recu_De_Lichess
   make
   ```
 
+## Explication des niveaux de notre IA
+-   Niveau 0: Move hasardeux, surtout pour les tests
+-   Niveau 1: Mobte Carlo
+-   Niveau 2: Algorythme Genétique
+-   Niveau 3: Alpha-Beta de profondeur 1 
+-   Niveau 4: Alpha-Beta de profondeur 2
 ## Licence
 
 Ce projet est sous la [GNU General Public License v3.0 (GPL v3)](LICENSE). Pour plus de détails, veuillez consulter le fichier `LICENSE` dans ce répertoire.
@@ -43,18 +49,3 @@ Ce projet est sous la [GNU General Public License v3.0 (GPL v3)](LICENSE). Pour 
 - **Ange Herman KOUE-HEMAZRO**
 - **Eric NZABA**
 
-# Projet
-## Installation des librairies
-    pip install -r requirements.txt
-
-## Vidéo explicative du projet
-    [text](https://youtu.be/ML6Wx9bfmtQ)
-## Lancement du projet
-    make
-
-## Explication des niveaux de notre IA
--   Niveau 0: Move hasardeux, surtout pour les tests
--   Niveau 1: Mobte Carlo  (Prends beaucoup trop de temps et coup pas optimal)
--   Niveau 2: Algorythme Genétique  (Prends beaucoup trop de temps et coup pas optimal)
--   Niveau 3: Alpha-Beta de profondeur 1  (1 seconde max)
--   Niveau 4: Alpha-Beta de profondeur 2  (5 secondes max)
