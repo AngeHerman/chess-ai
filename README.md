@@ -37,7 +37,7 @@ TOKEN=Votre_Token_Recu_De_Lichess
 
 ## Explication des niveaux de notre IA
 -   Niveau 0: Move hasardeux, surtout pour les tests
--   Niveau 1: Mobte Carlo
+-   Niveau 1: Monte Carlo
 -   Niveau 2: Algorythme Genétique
 -   Niveau 3: Alpha-Beta de profondeur 1 
 -   Niveau 4: Alpha-Beta de profondeur 2
